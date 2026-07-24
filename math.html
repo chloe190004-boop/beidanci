@@ -65,6 +65,18 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
 .key:active{transform:scale(.96);background:#f0f5f6}
 .key.fn{background:#e6eff0;color:var(--brand);font-size:20px}
 .key.ok{background:var(--brand);color:#fff;font-size:19px;grid-column:span 2;box-shadow:0 4px 14px rgba(14,113,129,.3)}
+.mini{display:flex;gap:9px;flex-wrap:wrap}
+.mini>div{flex:1;min-width:86px;background:#f7fafa;border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.mini b{display:block;font-size:22px;font-variant-numeric:tabular-nums;line-height:1.2}
+.mini span{font-size:11px;color:var(--sub)}
+.spark{display:flex;align-items:flex-end;gap:5px;height:76px;margin-top:20px}
+.spark>div{flex:1;background:linear-gradient(180deg,var(--brand2),var(--brand));border-radius:5px 5px 0 0;min-height:4px;position:relative}
+.spark>div>i{position:absolute;top:-17px;left:-4px;right:-4px;text-align:center;font-size:10px;
+  color:var(--sub);font-weight:800;font-style:normal}
+.sparkcap{font-size:11px;color:var(--sub);text-align:center;margin-top:6px}
+.empty{font-size:13px;color:var(--sub);text-align:center;padding:10px 0}
+.rec{margin-top:14px;background:#fff8ec;border:1px solid #f0dfc0;border-radius:12px;padding:12px 14px;
+  font-size:14px;font-weight:700;line-height:1.9;text-align:left;color:#7a5a1e}
 .done{text-align:center;padding:26px 12px}
 .done .em{font-size:56px}
 .done h2{font-size:24px;margin:12px 0 6px}
@@ -89,6 +101,8 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
     <h1>🔢 数学计算练习</h1>
     <span class="badge">北师大 · 七年级全册</span>
   </header>
+
+  <div class="card" id="stats"></div>
 
   <div class="card">
     <div class="label">练什么（可多选）</div>
@@ -415,7 +429,42 @@ function eqVal(a,b){return !!a&&!!b&&a[0]*b[1]===b[0]*a[1];}
 const LS=JSON.parse(localStorage.getItem('mathcalc2')||'{}');
 LS.topics=Array.isArray(LS.topics)&&LS.topics.length?LS.topics:['add','mul'];
 LS.level=LS.level|0; LS.count=LS.count||10;
+LS.hist=Array.isArray(LS.hist)?LS.hist:[];
 function save(){localStorage.setItem('mathcalc2',JSON.stringify(LS));}
+function today(){const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dayDiff(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000);}
+function streak(){
+  const days=[...new Set(LS.hist.map(r=>r.d))].sort();
+  if(!days.length)return 0;
+  if(dayDiff(days[days.length-1],today())>1)return 0;
+  let n=1;
+  for(let i=days.length-1;i>0;i--){if(dayDiff(days[i-1],days[i])===1)n++;else break;}
+  return n;
+}
+function mmss(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function renderStats(){
+  const box=document.getElementById('stats'),H=LS.hist;
+  if(!H.length){box.innerHTML='<div class="label">我的记录</div>'+
+    '<div class="empty">还没有记录～做完第一组就会出现 🏁</div>';return;}
+  const st=streak(),totalQ=H.reduce((s,r)=>s+r.n,0),
+        bestRate=Math.max.apply(null,H.map(r=>r.rate)),
+        todayN=H.filter(r=>r.d===today()).length;
+  let html='<div class="label">我的记录</div><div class="mini">'+
+    '<div><b style="color:var(--warn)">'+st+'</b><span>🔥 连续天数</span></div>'+
+    '<div><b style="color:var(--ok)">'+bestRate+'%</b><span>🏅 最好正确率</span></div>'+
+    '<div><b>'+H.length+'</b><span>累计组数</span></div>'+
+    '<div><b>'+totalQ+'</b><span>累计题数</span></div></div>';
+  const last=H.slice(-10);
+  if(last.length>=2){
+    html+='<div class="spark">'+last.map(function(r){
+      return '<div style="height:'+Math.max(6,r.rate)+'%"><i>'+r.rate+'</i></div>';}).join('')+'</div>'+
+      '<div class="sparkcap">📈 最近 '+last.length+' 组的首次正确率（越高越好）</div>';
+  }
+  if(todayN)html+='<div class="sparkcap" style="margin-top:8px">今天已完成 <b>'+todayN+'</b> 组，很棒 👍</div>';
+  box.innerHTML=html;
+}
+renderStats();
 ORDER.forEach(k=>{
   const el=document.createElement('div');
   el.className='chip'+(LS.topics.includes(k)?' on':'');
@@ -534,15 +583,34 @@ document.addEventListener('keydown',e=>{
 function finish(){
   if(timerId)clearInterval(timerId);
   const s=Math.floor((Date.now()-t0)/1000),rate=Math.round(firstOK/initN*100);
+  const H=LS.hist;
+  const prevBestRate=H.length?Math.max.apply(null,H.map(r=>r.rate)):null;
+  const sameN=H.filter(r=>r.n===initN);
+  const prevBestTime=sameN.length?Math.min.apply(null,sameN.map(r=>r.t)):null;
+  const lastRate=H.length?H[H.length-1].rate:null;
+  H.push({d:today(),t:s,ok:firstOK,n:initN,rate:rate});
+  if(H.length>300)LS.hist=H.slice(-300);
+  save();
+  const st=streak();
+  let recs=[];
+  if(prevBestRate===null)recs.push('🏁 第一组完成！以后每组都会跟这次比');
+  else{
+    if(rate>prevBestRate)recs.push('🎉 新纪录！首次正确率 '+rate+'%（之前最好 '+prevBestRate+'%）');
+    else if(lastRate!==null&&rate>lastRate)recs.push('📈 比上一组进步了 '+(rate-lastRate)+' 个百分点');
+    if(prevBestTime!==null&&s<prevBestTime)recs.push('⚡ 速度新纪录！比最快的一次快了 '+(prevBestTime-s)+' 秒');
+  }
+  if(st>=2)recs.push('🔥 已经连续练了 '+st+' 天，别断哦');
   document.getElementById('play').style.display='none';
   document.getElementById('playdone').innerHTML=
     '<div class="card done"><div class="em">'+(rate>=90?'🎉':rate>=70?'💪':'📖')+'</div>'+
     '<h2>'+(rate>=90?'太棒了，几乎全对！':rate>=70?'完成，越来越稳了':'完成，多练几组就熟了')+'</h2>'+
     '<div class="stat">'+
-    '<div><b>'+Math.floor(s/60)+':'+String(s%60).padStart(2,'0')+'</b><span>用时</span></div>'+
+    '<div><b>'+mmss(s)+'</b><span>用时</span></div>'+
     '<div><b style="color:var(--ok)">'+firstOK+'/'+initN+'</b><span>首次做对</span></div>'+
     '<div><b style="color:'+(rate>=70?'var(--ok)':'var(--warn)')+'">'+rate+'%</b><span>首次正确率</span></div>'+
-    '</div><div style="display:grid;gap:10px;margin-top:16px">'+
+    '</div>'+
+    (recs.length?'<div class="rec">'+recs.join('<br>')+'</div>':'')+
+    '<div style="display:grid;gap:10px;margin-top:16px">'+
     '<button class="btn" onclick="start()">再来一组 →</button>'+
     '<button class="btn ghost" onclick="location.reload()">返回首页</button></div></div>';
   window.scrollTo(0,0);
