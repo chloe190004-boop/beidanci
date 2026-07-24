@@ -85,6 +85,15 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
 .stat b{font-size:26px;display:block}
 .stat span{font-size:12px;color:var(--sub)}
 .foot{text-align:center;font-size:12px;color:var(--sub);margin-top:8px}
+.wblist{max-height:240px;overflow-y:auto;border:1px solid var(--line);border-radius:12px;-webkit-overflow-scrolling:touch}
+.wbitem{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);font-size:14px}
+.wbitem:last-child{border-bottom:none}
+.wbitem b{font-weight:800;min-width:104px;word-break:break-word}
+.wbitem span{flex:1;color:var(--sub);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wbitem i,.wbitem em{font-style:normal;cursor:pointer;padding:5px 7px;border-radius:8px;font-size:14px;flex-shrink:0}
+.wbitem i:active,.wbitem em:active{background:#eef2fb}
+.wbitem em{color:var(--bad);font-weight:800}
+.wbempty{font-size:13px;color:var(--sub);text-align:center;padding:12px 0;line-height:1.6}
 /* iPad / 大屏 */
 @media (min-width:768px){
   .wrap{max-width:680px;padding:24px}
@@ -148,6 +157,8 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
     </div>
   </div>
 
+  <div class="card" id="wrongbook"></div>
+
   <button class="btn" onclick="start()">开始背诵 →</button>
   <div class="foot">进度自动保存 · 无需联网 · ★为课本星标词</div>
 </div>
@@ -200,7 +211,7 @@ GRADES.forEach(g=>{
   const el=document.createElement('div');
   el.className='grade'+(g===LS.grade?' on':'');
   el.innerHTML=`<div class="t">${g}</div><div class="d">${n}词</div>`;
-  el.onclick=()=>{LS.grade=g;save();document.querySelectorAll('.grade').forEach(x=>x.classList.remove('on'));el.classList.add('on');renderUnits();};
+  el.onclick=()=>{LS.grade=g;save();document.querySelectorAll('.grade').forEach(x=>x.classList.remove('on'));el.classList.add('on');renderUnits();renderWrong();};
   gBox.appendChild(el);
 });
 
@@ -256,30 +267,71 @@ function speak(w){ if(!('speechSynthesis'in window))return; speechSynthesis.canc
   u.rate=LS.slow?0.55:0.72; u.pitch=1;
   speechSynthesis.speak(u);}
 
-let queue=[], idx=0, right=0, wrong=0, mode='';
+let queue=[], idx=0, right=0, wrong=0, skipped=0, mode='', spellState='input';
+
+/* ---------- 错词本 ---------- */
+function renderWrong(){
+  const box=document.getElementById('wrongbook');
+  box.innerHTML='';
+  const list=DATA.filter(d=>d.g===LS.grade&&LS.marked[wkey(d)]);
+  const lab=document.createElement('div');lab.className='label';
+  lab.textContent='🔖 错词本 · '+LS.grade+(list.length?'（'+list.length+' 个）':'');
+  box.appendChild(lab);
+  if(!list.length){
+    const e=document.createElement('div');e.className='wbempty';
+    e.textContent='还没有记录～拼错的词、点过「不熟」的词会自动收进这里';
+    box.appendChild(e);return;
+  }
+  const wrap=document.createElement('div');wrap.className='wblist';
+  list.forEach(function(d){
+    const it=document.createElement('div');it.className='wbitem';
+    const w=document.createElement('b');w.textContent=d.w;
+    const m=document.createElement('span');m.textContent=d.m;
+    const sp=document.createElement('i');sp.textContent='🔊';
+    sp.onclick=function(){speak(d.w);};
+    const rm=document.createElement('em');rm.textContent='✕';
+    rm.onclick=function(){delete LS.marked[wkey(d)];save();renderWrong();};
+    it.appendChild(w);it.appendChild(m);it.appendChild(sp);it.appendChild(rm);
+    wrap.appendChild(it);
+  });
+  box.appendChild(wrap);
+  const btn=document.createElement('button');btn.className='btn ghost';
+  btn.style.marginTop='10px';btn.textContent='🔖 只背错词本（'+list.length+'）';
+  btn.onclick=function(){
+    LS.mode='review';save();
+    document.querySelectorAll('.mode').forEach(function(m){m.classList.toggle('on',m.dataset.mode==='review');});
+    start();
+  };
+  box.appendChild(btn);
+}
+
 function start(){
   const sel=LS.units[LS.grade]||[];
-  if(sel.length===0){alert('请先选至少一个单元');return;}
   mode=LS.mode;
   let pool;
   if(mode==='review'){ pool=DATA.filter(d=>d.g===LS.grade&&LS.marked[wkey(d)]);
-    if(pool.length===0){alert('这一册还没有标记「不熟」的单词～\n先用其它方式背，遇到不会的点「不熟」，就会进这里');return;} }
-  else pool=DATA.filter(d=>d.g===LS.grade&&sel.includes(d.u));
+    if(pool.length===0){alert('这一册的错词本还是空的～\n先用其它方式背，拼错或点「不熟」的词会自动收进错词本');return;} }
+  else { if(sel.length===0){alert('请先选至少一个单元');return;}
+    pool=DATA.filter(d=>d.g===LS.grade&&sel.includes(d.u)); }
   if(LS.shuffle) pool=shuffle(pool.slice());
-  queue=pool;idx=0;right=0;wrong=0;
+  queue=pool;idx=0;right=0;wrong=0;skipped=0;
   document.getElementById('home').style.display='none';
   document.getElementById('study').style.display='block';
   window.scrollTo(0,0); render();
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function goHome(){document.getElementById('study').style.display='none';document.getElementById('home').style.display='block';speechSynthesis&&speechSynthesis.cancel();}
+function goHome(){document.getElementById('study').style.display='none';
+  document.getElementById('home').style.display='block';
+  if(window.speechSynthesis)speechSynthesis.cancel();
+  renderWrong();}
 
 function exBlock(d){
   if(!LS.ex||!d.se) return '';
-  return `<div class="ex"><div class="en">${boldWord(d.se,d.w)}</div><div class="zh2">${esc(d.sz)}</div></div>`;
+  return '<div class="ex"><div class="en">'+boldWord(d.se,d.w)+'</div><div class="zh2">'+esc(d.sz)+'</div></div>';
 }
 function render(){
   const stage=document.getElementById('stage');
+  spellState='input';
   document.getElementById('bar').style.width=(idx/queue.length*100)+'%';
   document.getElementById('count').textContent=idx+'/'+queue.length;
   if(idx>=queue.length){done();return;}
@@ -290,49 +342,88 @@ function render(){
   const star=d.st?'<span class="star">★星标词</span>':'';
 
   if(realMode==='spell'){
-    stage.innerHTML=`
-      <div class="flash" style="cursor:default">
-        <span class="unittag">${tag}</span><span class="pos">${d.p}</span>${star}
-        <div class="zh">${d.m}</div>
-        <button class="speak" onclick="speak('${d.w}')">🔊 听发音</button>
-        <input class="spellin" id="sp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="拼出单词…">
-        <div class="hint" id="sphint">回车提交 · 提交后看答案与例句</div>
-        <div id="spex"></div>
-      </div>
-      <div class="acts"><button class="act wide" onclick="next()">跳过 / 下一个 →</button></div>`;
+    stage.innerHTML=
+      '<div class="flash" style="cursor:default">'+
+        '<span class="unittag">'+tag+'</span><span class="pos">'+d.p+'</span>'+star+
+        '<div class="zh">'+d.m+'</div>'+
+        '<button class="speak" onclick="replay()">🔊 再听一遍</button>'+
+        '<input class="spellin" id="sp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="拼出单词…">'+
+        '<div class="hint" id="sphint">拼好后点下面的「确定」</div>'+
+        '<div id="spex"></div>'+
+      '</div>'+
+      '<div class="acts" id="spacts">'+
+        '<button class="act no" onclick="spellGiveUp()">不会，看答案</button>'+
+        '<button class="act yes" onclick="checkSpell()">确定 ✓</button>'+
+      '</div>';
     const sp=document.getElementById('sp');sp.focus();
     if(LS.speak)speak(d.w);
-    sp.addEventListener('keydown',e=>{if(e.key==='Enter')checkSpell(d);});
+    sp.addEventListener('keydown',function(e){
+      if(e.key==='Enter'){e.preventDefault();
+        if(spellState==='input')checkSpell(); else next();}
+    });
     return;
   }
-  const front=realMode==='en2zh'?`<div class="word">${d.w}</div>`:`<div class="zh">${d.m}</div>`;
+  const front=realMode==='en2zh'?('<div class="word">'+d.w+'</div>'):('<div class="zh">'+d.m+'</div>');
   const answer=realMode==='en2zh'?d.m:d.w;
-  stage.innerHTML=`
-    <div class="flash" id="card" onclick="flip()">
-      <span class="unittag">${tag}</span><span class="pos">${d.p}</span>${star}
-      ${front}
-      <div class="hint">点卡片看答案</div>
-      <div class="answer" id="ans"><div class="a">${answer}</div>
-        <button class="speak" onclick="event.stopPropagation();speak('${d.w}')">🔊 发音</button>
-        ${exBlock(d)}</div>
-    </div>
-    <div class="acts">
-      <button class="act no" onclick="mark()">${marked?'🔖 已标记':'不熟 🔖'}</button>
-      <button class="act yes" onclick="markKnow()">记住了 ✓</button>
-    </div>`;
+  // 英译汉：单词已显示，正面就给发音按钮；汉译英：正面给发音会泄底，只在翻开后给
+  const frontSpeak = realMode==='en2zh'
+    ? '<button class="speak" onclick="event.stopPropagation();replay()">🔊 再听一遍</button>' : '';
+  stage.innerHTML=
+    '<div class="flash" id="card" onclick="flip()">'+
+      '<span class="unittag">'+tag+'</span><span class="pos">'+d.p+'</span>'+star+
+      front+frontSpeak+
+      '<div class="hint">点卡片看答案</div>'+
+      '<div class="answer" id="ans"><div class="a">'+answer+'</div>'+
+        '<button class="speak" onclick="event.stopPropagation();replay()">🔊 再听一遍</button>'+
+        exBlock(d)+'</div>'+
+    '</div>'+
+    '<div class="acts">'+
+      '<button class="act no" onclick="mark()">'+(marked?'🔖 已在错词本':'不熟 🔖')+'</button>'+
+      '<button class="act yes" onclick="markKnow()">记住了 ✓</button>'+
+    '</div>';
   if(realMode==='en2zh'&&LS.speak)speak(d.w);
 }
-function flip(){document.getElementById('ans').classList.add('show');
-  const d=queue[idx];if(mode==='zh2en')speak(d.w);}
-function checkSpell(d){
-  const sp=document.getElementById('sp');const val=sp.value.trim().toLowerCase();
-  if(!val)return;
+function replay(){const d=queue[idx];if(d)speak(d.w);}
+function flip(){const a=document.getElementById('ans');if(!a)return;
+  a.classList.add('show');
+  const d=queue[idx];if(mode==='zh2en'&&d)speak(d.w);}
+
+function checkSpell(){
+  if(spellState!=='input')return;
+  const d=queue[idx],sp=document.getElementById('sp');
+  const val=sp.value.trim().toLowerCase();
+  if(!val){document.getElementById('sphint').textContent='先拼出单词，或点「不会，看答案」';return;}
+  spellState='done';
   document.getElementById('spex').innerHTML=exBlock(d);
-  if(val===d.w.toLowerCase()){sp.classList.add('right');right++;save();
-    document.getElementById('sphint').innerHTML='✅ 正确！';speak(d.w);setTimeout(next,LS.ex&&d.se?1400:700);
-  }else{sp.classList.add('wrong');wrong++;LS.marked[wkey(d)]=1;save();
-    document.getElementById('sphint').innerHTML='❌ 正确拼写：<b style="color:var(--ok)">'+d.w+'</b> — 回车继续';
-    sp.addEventListener('keydown',function h(e){if(e.key==='Enter')next();},{once:true});}
+  const acts=document.getElementById('spacts');
+  if(val===d.w.toLowerCase()){
+    sp.classList.add('right');right++;
+    delete LS.marked[wkey(d)];save();
+    document.getElementById('sphint').innerHTML='✅ 正确！';
+    speak(d.w);
+    acts.innerHTML='<button class="act yes wide" onclick="next()">下一个 →</button>';
+    const myIdx=idx;
+    setTimeout(function(){if(idx===myIdx)next();},(LS.ex&&d.se)?1800:1000);
+  }else{
+    sp.classList.add('wrong');wrong++;
+    LS.marked[wkey(d)]=1;save();
+    document.getElementById('sphint').innerHTML=
+      '❌ 正确拼写：<b style="color:var(--ok)">'+esc(d.w)+'</b><br>已记入错词本 🔖';
+    speak(d.w);
+    acts.innerHTML='<button class="act no wide" onclick="next()">下一个 →</button>';
+  }
+}
+function spellGiveUp(){
+  if(spellState!=='input')return;
+  const d=queue[idx];
+  spellState='done';skipped++;
+  LS.marked[wkey(d)]=1;save();
+  document.getElementById('spex').innerHTML=exBlock(d);
+  document.getElementById('sphint').innerHTML=
+    '正确拼写：<b style="color:var(--ok)">'+esc(d.w)+'</b><br>已记入错词本 🔖';
+  speak(d.w);
+  document.getElementById('spacts').innerHTML=
+    '<button class="act no wide" onclick="next()">下一个 →</button>';
 }
 function mark(){const d=queue[idx];LS.marked[wkey(d)]=1;save();wrong++;next();}
 function markKnow(){const d=queue[idx];delete LS.marked[wkey(d)];save();right++;next();}
@@ -340,25 +431,37 @@ function next(){idx++;render();}
 
 function done(){
   document.getElementById('bar').style.width='100%';
-  const markedCount=Object.keys(LS.marked).filter(k=>k.startsWith(LS.grade+'|')).length;
-  document.getElementById('stage').innerHTML=`
-    <div class="card done">
-      <div class="em">${wrong===0?'🎉':'💪'}</div>
-      <h2>${wrong===0?'全部搞定！太棒了':'这轮完成'}</h2>
-      <div class="stat">
-        <div><b style="color:var(--ok)">${right}</b><span>记住 / 拼对</span></div>
-        <div><b style="color:var(--bad)">${wrong}</b><span>不熟 / 拼错</span></div>
-      </div>
-      <p>${LS.grade} 还有 <b>${markedCount}</b> 个标记为「不熟」的词</p>
-      <div style="margin-top:18px;display:grid;gap:10px">
-        ${markedCount?'<button class="btn" onclick="reviewMarked()">🔖 立即复习不熟的词</button>':''}
-        <button class="btn ghost" onclick="goHome()">返回首页</button>
-      </div>
-    </div>`;
+  const total=queue.length;
+  const perfect = total>0 && right===total;
+  const markedCount=Object.keys(LS.marked).filter(k=>k.indexOf(LS.grade+'|')===0).length;
+  let head, em;
+  if(total===0){em='📖';head='这轮没有单词';}
+  else if(perfect){em='🎉';head='全部搞定！太棒了';}
+  else if(right>0){em='💪';head='这轮完成';}
+  else{em='📖';head='这轮完成（都没答对，别急，再来一遍）';}
+  let statHtml=
+    '<div><b style="color:var(--ok)">'+right+'</b><span>记住 / 拼对</span></div>'+
+    '<div><b style="color:var(--bad)">'+wrong+'</b><span>不熟 / 拼错</span></div>';
+  if(skipped)statHtml+='<div><b style="color:var(--sub)">'+skipped+'</b><span>跳过没答</span></div>';
+  document.getElementById('stage').innerHTML=
+    '<div class="card done">'+
+      '<div class="em">'+em+'</div>'+
+      '<h2>'+head+'</h2>'+
+      '<div class="stat">'+statHtml+'</div>'+
+      '<p>'+LS.grade+' 错词本里现在有 <b>'+markedCount+'</b> 个词</p>'+
+      '<div style="margin-top:18px;display:grid;gap:10px">'+
+        (markedCount?'<button class="btn" onclick="reviewMarked()">🔖 立即复习错词本</button>':'')+
+        '<button class="btn ghost" onclick="goHome()">返回首页</button>'+
+      '</div>'+
+    '</div>';
 }
 function reviewMarked(){mode='review';
-  let pool=DATA.filter(d=>d.g===LS.grade&&LS.marked[wkey(d)]);if(LS.shuffle)pool=shuffle(pool.slice());
-  queue=pool;idx=0;right=0;wrong=0;render();}
+  let pool=DATA.filter(d=>d.g===LS.grade&&LS.marked[wkey(d)]);
+  if(!pool.length){goHome();return;}
+  if(LS.shuffle)pool=shuffle(pool.slice());
+  queue=pool;idx=0;right=0;wrong=0;skipped=0;render();}
+
+renderWrong();
 </script>
 </body>
 </html>
