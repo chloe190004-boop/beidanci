@@ -56,6 +56,12 @@ header p{margin:0;font-size:14px;color:var(--sub)}
 .namecard label{font-size:12px;color:var(--sub);font-weight:800;display:block;margin-bottom:2px}
 .namecard input{border:none;outline:none;font-size:18px;font-weight:800;color:var(--ink);width:100%;background:transparent;font-family:inherit;padding:0}
 .namecard input::placeholder{color:#b9c4c9;font-weight:700}
+
+.newban{background:linear-gradient(135deg,#fff6e6,#ffe9c9);border:1px solid #f0d9a8;border-radius:14px;
+  padding:12px 14px;margin-bottom:16px;display:flex;align-items:flex-start;gap:9px;font-size:13.5px;
+  font-weight:700;color:#7a5a1e;line-height:1.55}
+.newban .x{margin-left:auto;background:#7a5a1e;color:#fff;border:none;border-radius:16px;padding:7px 13px;
+  font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -64,6 +70,11 @@ header p{margin:0;font-size:14px;color:var(--sub)}
     <h1>学习小工具</h1>
     <p id="greet">选一个开始练</p>
   </header>
+
+  <div class="newban" id="newban" style="display:none">
+    <div><b>🎉 更新啦！</b><span id="newtext"></span></div>
+    <button class="x" onclick="dismissNew()">知道了</button>
+  </div>
 
   <div class="namecard">
     <span class="ni">🏅</span>
@@ -98,9 +109,13 @@ header p{margin:0;font-size:14px;color:var(--sub)}
     <p>用 Safari 打开这个页面 → 点分享按钮 → <b>添加到主屏幕</b>，桌面就会出现图标，以后点图标直接进。</p>
   </div>
 
-  <div class="foot">练习进度自动保存在本机 · 无需注册登录</div>
+  <div class="foot">练习进度自动保存在本机 · 无需注册登录<br><span id="ver"></span></div>
 </div>
 <script>
+/* ===== 每次更新只改这两行 ===== */
+var APP_VERSION='2026-07-25';
+var UPDATE_NOTE='英语背单词加了「我的记录」（连续天数·正确率·进步曲线），入口页可以填名字了。';
+/* ============================== */
 (function(){
   var key='learnerName', nm=document.getElementById('nm'), greet=document.getElementById('greet');
   nm.value=(localStorage.getItem(key)||'');
@@ -108,7 +123,18 @@ header p{margin:0;font-size:14px;color:var(--sub)}
     greet.textContent=n?('👋 你好，'+n+'，选一个开始练'):'选一个开始练';}
   upd();
   nm.addEventListener('input',function(){localStorage.setItem(key,nm.value.trim());upd();});
+
+  document.getElementById('ver').textContent='版本 '+APP_VERSION;
+  var seen=localStorage.getItem('seenVersion');
+  if(seen!==APP_VERSION){
+    document.getElementById('newtext').textContent=' '+UPDATE_NOTE;
+    document.getElementById('newban').style.display='flex';
+  }
 })();
+function dismissNew(){
+  localStorage.setItem('seenVersion',APP_VERSION);
+  document.getElementById('newban').style.display='none';
+}
 </script>
 </body>
 </html>
