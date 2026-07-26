@@ -110,6 +110,16 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
   .spellin{font-size:32px}
   .mode .big{font-size:26px}
 }
+.mini{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px}
+.mini>div{flex:1;min-width:80px;background:#f6f8fd;border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.mini b{display:block;font-size:22px;font-variant-numeric:tabular-nums;line-height:1.2}
+.mini span{font-size:11px;color:var(--sub)}
+.spark{display:flex;align-items:flex-end;gap:5px;height:70px;margin-top:20px}
+.spark>div{flex:1;background:linear-gradient(180deg,var(--brand2),var(--brand));border-radius:5px 5px 0 0;min-height:4px;position:relative}
+.spark>div>i{position:absolute;top:-16px;left:-4px;right:-4px;text-align:center;font-size:10px;color:var(--sub);font-weight:800;font-style:normal}
+.sparkcap{font-size:11px;color:var(--sub);text-align:center;margin-top:6px}
+.vempty{font-size:13px;color:var(--sub);text-align:center;padding:10px 0;line-height:1.6}
+.rec{margin-top:14px;background:#fff8ec;border:1px solid #f0dfc0;border-radius:12px;padding:12px 14px;font-size:14px;font-weight:700;line-height:1.9;text-align:left;color:#7a5a1e}
 </style>
 </head>
 <body>
@@ -121,6 +131,8 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
     <h1 style="flex:1;text-align:center">🦅 初中背单词</h1>
     <span class="badge" id="totalBadge"></span>
   </header>
+
+  <div class="card" id="vstats"></div>
 
   <div class="card">
     <div class="label">选课本（单选）</div>
@@ -191,7 +203,30 @@ LS.shuffle = LS.shuffle!==false;
 LS.speak = LS.speak!==false;
 LS.ex = LS.ex!==false;
 LS.slow = LS.slow===true;
+LS.hist = Array.isArray(LS.hist)?LS.hist:[];
 function save(){localStorage.setItem('vocabMS2',JSON.stringify(LS));}
+function vToday(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function vDiff(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000);}
+function vStreak(){var days=[...new Set(LS.hist.map(function(r){return r.d;}))].sort();
+  if(!days.length)return 0; if(vDiff(days[days.length-1],vToday())>1)return 0;
+  var n=1; for(var i=days.length-1;i>0;i--){if(vDiff(days[i-1],days[i])===1)n++;else break;} return n;}
+function learner(){return (localStorage.getItem('learnerName')||'').trim();}
+function renderVStats(){
+  var box=document.getElementById('vstats'),H=LS.hist,nm=learner();
+  var title=(nm?esc(nm)+' 的记录':'我的记录');
+  if(!H.length){box.innerHTML='<div class="label">🏅 '+title+'</div><div class="vempty">还没有记录～背完第一组就会出现 🏁</div>';return;}
+  var st=vStreak(),totalW=H.reduce(function(s,r){return s+r.n;},0),bestRate=Math.max.apply(null,H.map(function(r){return r.rate;}));
+  var html='<div class="label">🏅 '+title+'</div><div class="mini">'+
+    '<div><b style="color:var(--warn)">'+st+'</b><span>🔥 连续天数</span></div>'+
+    '<div><b style="color:var(--ok)">'+bestRate+'%</b><span>🏅 最好正确率</span></div>'+
+    '<div><b>'+H.length+'</b><span>累计组数</span></div>'+
+    '<div><b>'+totalW+'</b><span>累计词数</span></div></div>';
+  var last=H.slice(-10);
+  if(last.length>=2){html+='<div class="spark">'+last.map(function(r){
+    return '<div style="height:'+Math.max(6,r.rate)+'%"><i>'+r.rate+'</i></div>';}).join('')+
+    '</div><div class="sparkcap">📈 最近 '+last.length+' 组的正确率（越高越好）</div>';}
+  box.innerHTML=html;
+}
 
 function unitsOf(g){return [...new Set(DATA.filter(d=>d.g===g).map(d=>d.u))].sort((a,b)=>(+a.split(' ')[1])-(+b.split(' ')[1]));}
 function wkey(d){return d.g+'|'+d.w+'|'+d.m;}
@@ -326,7 +361,7 @@ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random
 function goHome(){document.getElementById('study').style.display='none';
   document.getElementById('home').style.display='block';
   if(window.speechSynthesis)speechSynthesis.cancel();
-  renderWrong();}
+  renderWrong();renderVStats();}
 
 function exBlock(d){
   if(!LS.ex||!d.se) return '';
@@ -437,6 +472,20 @@ function done(){
   const total=queue.length;
   const perfect = total>0 && right===total;
   const markedCount=Object.keys(LS.marked).filter(k=>k.indexOf(LS.grade+'|')===0).length;
+  const rate=total>0?Math.round(right/total*100):0;
+  let recs=[];
+  if(total>0){
+    const prevBest=LS.hist.length?Math.max.apply(null,LS.hist.map(function(r){return r.rate;})):null;
+    const lastRate=LS.hist.length?LS.hist[LS.hist.length-1].rate:null;
+    LS.hist.push({d:vToday(),mode:mode,n:total,ok:right,rate:rate});
+    if(LS.hist.length>300)LS.hist=LS.hist.slice(-300);
+    save();
+    const st=vStreak();
+    if(prevBest===null)recs.push('🏁 第一组完成！以后每组都跟这次比');
+    else{ if(rate>prevBest)recs.push('🎉 新纪录！这轮正确率 '+rate+'%（之前最好 '+prevBest+'%）');
+      else if(lastRate!==null&&rate>lastRate)recs.push('📈 比上一组进步了 '+(rate-lastRate)+' 个百分点'); }
+    if(st>=2)recs.push('🔥 已经连续背了 '+st+' 天，别断哦');
+  }
   let head, em;
   if(total===0){em='📖';head='这轮没有单词';}
   else if(perfect){em='🎉';head='全部搞定！太棒了';}
@@ -452,6 +501,7 @@ function done(){
       '<h2>'+head+'</h2>'+
       '<div class="stat">'+statHtml+'</div>'+
       '<p>'+LS.grade+' 错词本里现在有 <b>'+markedCount+'</b> 个词</p>'+
+      (recs.length?'<div class="rec">'+recs.join('<br>')+'</div>':'')+
       '<div style="margin-top:18px;display:grid;gap:10px">'+
         (markedCount?'<button class="btn" onclick="reviewMarked()">🔖 立即复习错词本</button>':'')+
         '<button class="btn ghost" onclick="goHome()">返回首页</button>'+
@@ -464,7 +514,7 @@ function reviewMarked(){mode='review';
   if(LS.shuffle)pool=shuffle(pool.slice());
   queue=pool;idx=0;right=0;wrong=0;skipped=0;render();}
 
-renderWrong();
+renderWrong();renderVStats();
 </script>
 </body>
 </html>

@@ -434,6 +434,7 @@ LS.topics=Array.isArray(LS.topics)&&LS.topics.length?LS.topics:['add','mul'];
 LS.level=LS.level|0; LS.count=LS.count||10;
 LS.hist=Array.isArray(LS.hist)?LS.hist:[];
 function save(){localStorage.setItem('mathcalc2',JSON.stringify(LS));}
+function mLearner(){return (localStorage.getItem('learnerName')||'').trim();}
 function today(){const d=new Date();
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function dayDiff(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000);}
@@ -448,12 +449,12 @@ function streak(){
 function mmss(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
 function renderStats(){
   const box=document.getElementById('stats'),H=LS.hist;
-  if(!H.length){box.innerHTML='<div class="label">我的记录</div>'+
+  if(!H.length){box.innerHTML='<div class="label">'+(mLearner()?esc(mLearner())+' 的记录':'我的记录')+'</div>'+
     '<div class="empty">还没有记录～做完第一组就会出现 🏁</div>';return;}
   const st=streak(),totalQ=H.reduce((s,r)=>s+r.n,0),
         bestRate=Math.max.apply(null,H.map(r=>r.rate)),
         todayN=H.filter(r=>r.d===today()).length;
-  let html='<div class="label">我的记录</div><div class="mini">'+
+  let html='<div class="label">'+(mLearner()?esc(mLearner())+' 的记录':'我的记录')+'</div><div class="mini">'+
     '<div><b style="color:var(--warn)">'+st+'</b><span>🔥 连续天数</span></div>'+
     '<div><b style="color:var(--ok)">'+bestRate+'%</b><span>🏅 最好正确率</span></div>'+
     '<div><b>'+H.length+'</b><span>累计组数</span></div>'+
