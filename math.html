@@ -180,7 +180,7 @@ function pick(a){return a[Math.floor(Math.random()*a.length)];}
 function par(v){return v<0?'('+v+')':(''+v);}
 function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;}
 function red(n,d){if(d<0){n=-n;d=-d;}const g=gcd(n,d);return [n/g,d/g];}
-function cop(d){let n;do{n=nz(-6,6);}while(gcd(n,d)!==1);return n;}
+function cop(d,R){R=R||6;let n;do{n=nz(-R,R);}while(gcd(n,d)!==1);return n;}
 const SUP={1:'',2:'²',3:'³',4:'⁴',5:'⁵',6:'⁶',7:'⁷',8:'⁸',9:'⁹'};
 function xp(k){return k===0?'':(k===1?'x':'x'+SUP[k]);}
 function term(c,k){ // 系数c 次数k → "3x²" / "-x" / "5"
@@ -198,7 +198,7 @@ function ansText(a){ return a[1]===1?(''+a[0]):(a[0]+'/'+a[1]); }
 const GEN={
 /* --- 七上：有理数 --- */
 add:{name:'有理数加减',grp:1,fn:function(h){
-  const n=h?ri(3,4):2,R=h?30:15;
+  const n=h?ri(4,5):ri(2,3),R=h?50:20;
   let first=(Math.random()<.5?-1:1)*ri(1,R);
   let d=''+first,c='('+first+')',s=first;
   const ops=[],valsq=[];
@@ -215,18 +215,31 @@ add:{name:'有理数加减',grp:1,fn:function(h){
   return {disp:d+' =',tpl:'__',blanks:[[s,1]],chkO:c,chkA:'('+s+')',steps:steps};
 }},
 mul:{name:'有理数乘除',grp:1,fn:function(h){
-  const R=h?12:9;
+  const R=h?15:12;
+  if(h&&Math.random()<.3){
+    const c=nz(-9,9),m=nz(-9,9),b=nz(-9,9),a=c*m,v=m*b;
+    return {disp:par(a)+' × '+par(b)+' ÷ '+par(c)+' =',tpl:'__',blanks:[[v,1]],
+      chkO:'('+a+')*('+b+')/('+c+')',chkA:'('+v+')',
+      steps:['乘除是同级运算，从左往右算','① 先算乘法：('+a+') × ('+b+') = '+(a*b),'② 再算除法：'+(a*b)+' ÷ '+par(c)+' = '+v]};
+  }
   if(Math.random()<.5){const a=nz(-R,R),b=nz(-R,R);const v=a*b;
     const sign=(a<0)!==(b<0)?'一负一正 → 结果为负':(a<0?'负×负 → 结果为正':'正×正 → 结果为正');
     return {disp:par(a)+' × '+par(b)+' =',tpl:'__',blanks:[[v,1]],chkO:'('+a+')*('+b+')',chkA:'('+v+')',
       steps:['① 先定符号：'+sign,'② 再算绝对值：'+Math.abs(a)+' × '+Math.abs(b)+' = '+Math.abs(v),'所以答案是 '+v]};}
-  const q=nz(-R,R),dv=nz(-9,9),dd=q*dv;
+  const q=nz(-R,R),dv=nz(-(h?12:9),h?12:9),dd=q*dv;
   const sign=(dd<0)!==(dv<0)?'一负一正 → 结果为负':(dd<0?'负÷负 → 结果为正':'正÷正 → 结果为正');
   return {disp:par(dd)+' ÷ '+par(dv)+' =',tpl:'__',blanks:[[q,1]],chkO:'('+dd+')/('+dv+')',chkA:'('+q+')',
     steps:['① 先定符号：'+sign,'② 再算绝对值：'+Math.abs(dd)+' ÷ '+Math.abs(dv)+' = '+Math.abs(q),'所以答案是 '+q]};
 }},
 pow:{name:'乘方',grp:1,fn:function(h){
-  const b=nz(-(h?7:5),h?7:5),e=ri(2,h?3:2),v=Math.pow(b,e);
+  if(h&&Math.random()<.35){
+    const e=ri(2,3),b=ri(2,e===2?12:7),v=-Math.pow(b,e);
+    return {disp:'−'+b+SUP[e]+' =',tpl:'__',blanks:[[v,1]],chkO:'-(('+b+')**'+e+')',chkA:'('+v+')',
+      steps:['注意：−'+b+SUP[e]+' 表示 −('+b+SUP[e]+')，指数只作用在 '+b+' 上，负号在外面',
+        b+SUP[e]+' = '+Math.pow(b,e)+'，所以 −'+b+SUP[e]+' = '+v,
+        '对比：(−'+b+')'+SUP[e]+' 才是把负号一起乘方'+(e%2===0?'，那样结果是正的':'')]};
+  }
+  const e=h?ri(2,4):ri(2,3),Rb=h?(e===2?12:e===3?8:5):6,b=nz(-Rb,Rb),v=Math.pow(b,e);
   const exp=Array(e).fill(b<0?'('+b+')':''+b).join(' × ');
   const steps=[(b<0?'('+b+')':''+b)+SUP[e]+' 表示 '+exp];
   if(b<0)steps.push(e%2===0?'负数的偶次方是正数':'负数的奇次方是负数');
@@ -234,7 +247,7 @@ pow:{name:'乘方',grp:1,fn:function(h){
   return {disp:(b<0?'('+b+')':''+b)+SUP[e]+' =',tpl:'__',blanks:[[v,1]],chkO:'('+b+')**'+e,chkA:'('+v+')',steps:steps};
 }},
 mix:{name:'混合运算',grp:1,fn:function(h){
-  const R=h?12:9,t=ri(0,4);let a,b,c,disp,v,chkO,steps;
+  const R=h?15:12,t=ri(0,h?6:4);let a,b,c,disp,v,chkO,steps;
   if(t===0){a=nz(-R,R);b=nz(-9,9);c=nz(-9,9);v=a+b*c;disp=par(a)+' + '+par(b)+' × '+par(c);chkO='('+a+')+('+b+')*('+c+')';
     steps=['先算乘法：('+b+') × ('+c+') = '+(b*c),'再算加法：'+a+' + '+par(b*c)+' = '+v];}
   else if(t===1){a=nz(-9,9);b=nz(-9,9);c=nz(-R,R);v=a*b-c;disp=par(a)+' × '+par(b)+' − '+par(c);chkO='('+a+')*('+b+')-('+c+')';
@@ -243,15 +256,23 @@ mix:{name:'混合运算',grp:1,fn:function(h){
     steps=['先算乘法：('+b+') × ('+c+') = '+(b*c),'再算减法：'+a+' − '+par(b*c)+' = '+v];}
   else if(t===3){a=nz(-9,9);b=nz(-9,9);c=nz(-9,9);v=(a+b)*c;disp='('+a+' + '+par(b)+') × '+par(c);chkO='(('+a+')+('+b+'))*('+c+')';
     steps=['先算括号：'+a+' + ('+b+') = '+(a+b),'再算乘法：('+(a+b)+') × ('+c+') = '+v];}
-  else{const q=nz(-5,5);b=nz(-9,9);c=nz(-9,9);v=q*q+b*c;disp=(q<0?'('+q+')':''+q)+'² + '+par(b)+' × '+par(c);chkO='('+q+')**2+('+b+')*('+c+')';
+  else if(t===4){const q=nz(-(h?9:5),h?9:5);b=nz(-9,9);c=nz(-9,9);v=q*q+b*c;disp=(q<0?'('+q+')':''+q)+'² + '+par(b)+' × '+par(c);chkO='('+q+')**2+('+b+')*('+c+')';
     steps=['先算乘方：'+(q<0?'('+q+')':q)+'² = '+(q*q),'再算乘法：('+b+') × ('+c+') = '+(b*c),'最后相加：'+(q*q)+' + '+par(b*c)+' = '+v];}
+  else if(t===5){a=nz(-9,9);b=nz(-9,9);c=nz(-9,9);const d=nz(-9,9);v=a*b+c*d;
+    disp=par(a)+' × '+par(b)+' + '+par(c)+' × '+par(d);chkO='('+a+')*('+b+')+('+c+')*('+d+')';
+    steps=['先算两个乘法：('+a+') × ('+b+') = '+(a*b)+'，('+c+') × ('+d+') = '+(c*d),
+      '再相加：'+(a*b)+' + '+par(c*d)+' = '+v];}
+  else{a=nz(-R,R);b=nz(-9,9);c=nz(-9,9);const d=nz(-5,5);v=a-(b+c)*d;
+    disp=par(a)+' − ('+b+' + '+par(c)+') × '+par(d);chkO='('+a+')-(('+b+')+('+c+'))*('+d+')';
+    steps=['先算括号：'+b+' + ('+c+') = '+(b+c),'再算乘法：('+(b+c)+') × '+par(d)+' = '+((b+c)*d),
+      '最后相减：'+a+' − '+par((b+c)*d)+' = '+v];}
   return {disp:disp+' =',tpl:'__',blanks:[[v,1]],chkO:chkO,chkA:'('+v+')',steps:steps};
 }},
 frac:{name:'分数·小数',grp:1,fn:function(h){
   const t=ri(0,2);
   if(t===0){
-    const DS=[2,3,4,5,6,8];const d1=pick(DS),d2=pick(DS);
-    const n1=cop(d1),n2=cop(d2),op=Math.random()<.5?'+':'-';
+    const DS=h?[3,4,5,6,8,9,12]:[2,3,4,5,6,8];const d1=pick(DS),d2=pick(DS);
+    const n1=cop(d1,h?9:6),n2=cop(d2,h?9:6),op=Math.random()<.5?'+':'-';
     const L=d1*d2/gcd(d1,d2);
     const N=op==='+'?n1*d2+n2*d1:n1*d2-n2*d1,D=d1*d2,r=red(N,D);
     const s2=fmtFrac(n2,d2);
@@ -264,8 +285,8 @@ frac:{name:'分数·小数',grp:1,fn:function(h){
       chkO:'('+n1+'/'+d1+')'+op+'('+n2+'/'+d2+')',chkA:'('+r[0]+'/'+r[1]+')',steps:steps};
   }
   if(t===1){
-    const DS=[2,3,4,5,6];const d1=pick(DS),d2=pick(DS);
-    const n1=cop(d1),n2=cop(d2);
+    const DS=h?[2,3,4,5,6,8,9]:[2,3,4,5,6];const d1=pick(DS),d2=pick(DS);
+    const n1=cop(d1,h?8:6),n2=cop(d2,h?8:6);
     if(Math.random()<.5){const r=red(n1*n2,d1*d2);
       const steps=['分子乘分子、分母乘分母：'+n1+'×'+par(n2)+' = '+(n1*n2)+'，'+d1+'×'+d2+' = '+(d1*d2),
         '得 '+fmtFrac(n1*n2,d1*d2)+(red(n1*n2,d1*d2).join('/')!==(n1*n2)+'/'+(d1*d2)?'，约分 = '+ansText(r):'')];
@@ -278,32 +299,42 @@ frac:{name:'分数·小数',grp:1,fn:function(h){
     return {disp:'('+fmtFrac(n1,d1)+') ÷ ('+fmtFrac(n2,d2)+') =',tpl:'__',blanks:[r],
       chkO:'('+n1+'/'+d1+')/('+n2+'/'+d2+')',chkA:'('+r[0]+'/'+r[1]+')',steps:steps};
   }
-  const ai=nz(-40,40),bi=nz(-40,40);
-  const A=fmtDec(ai,10),B=fmtDec(bi,10);
+  const den=h?100:10,R2=h?99:40,dp=String(den).length-1;
+  const ai=nz(-R2,R2),bi=nz(-R2,R2);
+  const A=fmtDec(ai,den),B=fmtDec(bi,den);
   const op=pick(['+','-','×']);
   let r,chkO,steps;
-  if(op==='+'){r=red(ai+bi,10);chkO='('+ai+'/10)+('+bi+'/10)';
-    steps=['小数点对齐相加：'+A+' + '+par(B)+' = '+fmtDec(ai+bi,10)];}
-  else if(op==='-'){r=red(ai-bi,10);chkO='('+ai+'/10)-('+bi+'/10)';
-    steps=['小数点对齐相减：'+A+' − '+par(B)+' = '+fmtDec(ai-bi,10)];}
-  else{r=red(ai*bi,100);chkO='('+ai+'/10)*('+bi+'/10)';
+  if(op==='+'){r=red(ai+bi,den);chkO='('+ai+'/'+den+')+('+bi+'/'+den+')';
+    steps=['小数点对齐相加：'+A+' + '+par(B)+' = '+fmtDec(ai+bi,den)];}
+  else if(op==='-'){r=red(ai-bi,den);chkO='('+ai+'/'+den+')-('+bi+'/'+den+')';
+    steps=['小数点对齐相减：'+A+' − '+par(B)+' = '+fmtDec(ai-bi,den)];}
+  else{r=red(ai*bi,den*den);chkO='('+ai+'/'+den+')*('+bi+'/'+den+')';
     steps=['先按整数算：'+Math.abs(ai)+' × '+Math.abs(bi)+' = '+Math.abs(ai*bi),
-      '两个因数共 2 位小数 → 结果点 2 位小数'+((ai<0)!==(bi<0)?'，符号为负':''),
-      '= '+fmtDec(ai*bi,100)];}
+      '两个因数共 '+(2*dp)+' 位小数 → 结果点 '+(2*dp)+' 位小数'+((ai<0)!==(bi<0)?'，符号为负':''),
+      '= '+fmtDec(ai*bi,den*den)];}
   return {disp:A+' '+op+' '+(bi<0?'('+B+')':B)+' =',tpl:'__',blanks:[r],chkO:chkO,chkA:'('+r[0]+'/'+r[1]+')',steps:steps};
 }},
 eq:{name:'解方程',grp:1,fn:function(h){
   const x=nz(-(h?12:9),h?12:9);
   function cf(a){return a===1?'x':a===-1?'-x':(a+'x');}
   function pc(b){return b===0?'':(b>0?' + '+b:' − '+(-b));}
-  if(!h){const a=nz(2,6),b=nz(-9,9),c=a*x+b;
+  if(!h){const a=nz(2,9),b=nz(-12,12),c=a*x+b;
     const steps=b===0?['两边同除以 '+a+'：x = '+c+' ÷ '+a+' = '+x]
       :['① 移项（'+(b>0?'+'+b:'−'+(-b))+' 移到右边要变号）：'+cf(a)+' = '+c+' '+(b>0?'−':'+')+' '+Math.abs(b),
         '② 合并：'+cf(a)+' = '+(c-b),
         '③ 两边同除以 '+a+'：x = '+(c-b)+' ÷ '+a+' = '+x];
     return {disp:cf(a)+pc(b)+' = '+c,tpl:'x = __',blanks:[[x,1]],isEq:true,eqChk:[a,b,0,c],steps:steps};}
-  let a=nz(-6,6),d=nz(-6,6);while(a===d)d=nz(-6,6);
-  const b=nz(-9,9),e=(a-d)*x+b;
+  if(Math.random()<.4){
+    let m=ri(2,6);if(Math.random()<.5)m=-m;
+    const p=nz(-9,9),q=nz(-9,9),r=m*(x+p)+q;
+    const bb=m*p+q,rb=r-bb;
+    const steps=['① 去括号：'+m+'(x '+(p<0?'− '+(-p):'+ '+p)+') = '+cf(m)+(m*p>=0?' + '+m*p:' − '+(-m*p))+'，方程变为 '+cf(m)+pc(bb)+' = '+r,
+      '② 移项合并：'+cf(m)+' = '+r+' '+(bb>0?'−':'+')+' '+Math.abs(bb)+' = '+rb,
+      '③ 两边同除以 '+par(m)+'：x = '+rb+' ÷ '+par(m)+' = '+x];
+    return {disp:m+'(x '+(p<0?'− '+(-p):'+ '+p)+')'+pc(q)+' = '+r,tpl:'x = __',blanks:[[x,1]],isEq:true,eqChk:[m,bb,0,r],steps:steps};
+  }
+  let a=nz(-8,8),d=nz(-8,8);while(a===d)d=nz(-8,8);
+  const b=nz(-12,12),e=(a-d)*x+b;
   const ca=a-d,ce=e-b;
   const steps=['① 把含 x 的项移到左边、常数移到右边（移项要变号）：',
     '　'+cf(a)+' − '+(d<0?'('+cf(d)+')':cf(d))+' = '+e+' '+(b>0?'−':'+')+' '+Math.abs(b),
@@ -313,7 +344,7 @@ eq:{name:'解方程',grp:1,fn:function(h){
 }},
 /* --- 整式 --- */
 poly:{name:'整式加减',grp:2,fn:function(h){
-  const t=ri(0,h?4:3);
+  const t=ri(0,h?5:3);
   if(t===0){
     const k=pick([1,2]),c1=nz(-9,9),c2=nz(-9,9);
     return {disp:term(c1,k)+' '+(c2<0?'− '+term(-c2,k):'+ '+term(c2,k))+' =',
@@ -345,16 +376,26 @@ poly:{name:'整式加减',grp:2,fn:function(h){
       steps:['去括号：把 '+m2+' 分别乘括号里的每一项'+(m2<0?'（注意变号）':''),
         m2+' × '+term(a,1)+' = '+term(m2*a,1)+'，'+m2+' × '+par(b)+' = '+(m2*b)]};
   }
-  const m2=nz(-4,4),a=nz(-6,6),b=nz(-9,9),c=nz(-6,6),d=nz(-9,9);
-  const A=m2*a+c,B=m2*b+d;
-  return {disp:(m2===1?'':(m2===-1?'−':m2))+'('+term(a,1)+' '+(b<0?'− '+(-b):'+ '+b)+') + ('+term(c,1)+' '+(d<0?'− '+(-d):'+ '+d)+') =',
+  if(t===4){
+    const m2=nz(-4,4),a=nz(-6,6),b=nz(-9,9),c=nz(-6,6),d=nz(-9,9);
+    const A=m2*a+c,B=m2*b+d;
+    return {disp:(m2===1?'':(m2===-1?'−':m2))+'('+term(a,1)+' '+(b<0?'− '+(-b):'+ '+b)+') + ('+term(c,1)+' '+(d<0?'− '+(-d):'+ '+d)+') =',
+      tpl:'__x + __',blanks:[[A,1],[B,1]],
+      chkO:'('+m2+')*(('+a+')*x+('+b+'))+(('+c+')*x+('+d+'))',chkA:'('+A+')*x+('+B+')',
+      steps:['① 去括号：'+m2+'×'+term(a,1)+' = '+term(m2*a,1)+'，'+m2+'×'+par(b)+' = '+(m2*b),
+        '② 合并同类项：x 项 '+(m2*a)+' + '+par(c)+' = '+A+'；常数 '+(m2*b)+' + '+par(d)+' = '+B]};
+  }
+  const a1=nz(-9,9),b1=nz(-9,9),a2=nz(-9,9),b2=nz(-9,9);
+  const A=a1-a2,B=b1-b2;
+  return {disp:'('+term(a1,1)+' '+(b1<0?'− '+(-b1):'+ '+b1)+') − ('+term(a2,1)+' '+(b2<0?'− '+(-b2):'+ '+b2)+') =',
     tpl:'__x + __',blanks:[[A,1],[B,1]],
-    chkO:'('+m2+')*(('+a+')*x+('+b+'))+(('+c+')*x+('+d+'))',chkA:'('+A+')*x+('+B+')',
-    steps:['① 去括号：'+m2+'×'+term(a,1)+' = '+term(m2*a,1)+'，'+m2+'×'+par(b)+' = '+(m2*b),
-      '② 合并同类项：x 项 '+(m2*a)+' + '+par(c)+' = '+A+'；常数 '+(m2*b)+' + '+par(d)+' = '+B]};
+    chkO:'(('+a1+')*x+('+b1+'))-(('+a2+')*x+('+b2+'))',chkA:'('+A+')*x+('+B+')',
+    steps:['减去一个括号 = 括号里每一项都变号',
+      '去括号：'+term(a1,1)+' '+(b1<0?'− '+(-b1):'+ '+b1)+' '+(a2>0?'− '+term(a2,1):'+ '+term(-a2,1))+' '+(b2>0?'− '+b2:'+ '+(-b2)),
+      'x 项：'+a1+' − '+par(a2)+' = '+A+'；常数：'+b1+' − '+par(b2)+' = '+B]};
 }},
 polymul:{name:'整式乘除·公式',grp:2,fn:function(h){
-  const t=ri(0,h?7:5);
+  const t=ri(0,h?8:5);
   if(t===0){
     const m2=ri(2,5),n=ri(2,4);
     return {disp:xp(m2)+' · '+xp(n)+' =',tpl:'x^__',blanks:[[m2+n,1]],
@@ -405,12 +446,22 @@ polymul:{name:'整式乘除·公式',grp:2,fn:function(h){
       chkO:'(x+('+p+'))*(x-('+p+'))',chkA:'x**2+('+(-p*p)+')',
       steps:['平方差公式：(x+a)(x−a) = x² − a²','本题 a = '+p+'，a² = '+(p*p),'所以 = x² − '+(p*p)+'，空里填 -'+(p*p)]};
   }
-  const c1=nz(-6,6),k1=ri(1,3),c2=nz(-6,6),k2=ri(1,3);
-  return {disp:term(c1,k1)+' · '+term(c2,k2)+' =',tpl:'__x^__',blanks:[[c1*c2,1],[k1+k2,1]],
-    chkO:'('+c1+')*x**'+k1+'*('+c2+')*x**'+k2,chkA:'('+c1*c2+')*x**'+(k1+k2),
-    steps:['单项式相乘：系数乘系数，同底数幂指数相加',
-      '系数：'+c1+' × '+par(c2)+' = '+(c1*c2),
-      '指数：'+k1+' + '+k2+' = '+(k1+k2)]};
+  if(t===7){
+    const c1=nz(-6,6),k1=ri(1,3),c2=nz(-6,6),k2=ri(1,3);
+    return {disp:term(c1,k1)+' · '+term(c2,k2)+' =',tpl:'__x^__',blanks:[[c1*c2,1],[k1+k2,1]],
+      chkO:'('+c1+')*x**'+k1+'*('+c2+')*x**'+k2,chkA:'('+c1*c2+')*x**'+(k1+k2),
+      steps:['单项式相乘：系数乘系数，同底数幂指数相加',
+        '系数：'+c1+' × '+par(c2)+' = '+(c1*c2),
+        '指数：'+k1+' + '+k2+' = '+(k1+k2)]};
+  }
+  const a=ri(2,5),b=nz(-9,9),c=ri(2,5),d=nz(-9,9);
+  return {disp:'('+term(a,1)+' '+(b<0?'− '+(-b):'+ '+b)+')('+term(c,1)+' '+(d<0?'− '+(-d):'+ '+d)+') =',
+    tpl:'__x² + __x + __',blanks:[[a*c,1],[a*d+b*c,1],[b*d,1]],
+    chkO:'(('+a+')*x+('+b+'))*(('+c+')*x+('+d+'))',chkA:'('+a*c+')*x**2+('+(a*d+b*c)+')*x+('+b*d+')',
+    steps:['多项式乘多项式：每一项分别相乘（共 4 次）',
+      term(a,1)+'·'+term(c,1)+' = '+term(a*c,2)+'；'+term(a,1)+'·'+par(d)+' = '+term(a*d,1),
+      par(b)+'·'+term(c,1)+' = '+term(b*c,1)+'；'+par(b)+'·'+par(d)+' = '+(b*d),
+      '合并 x 项：'+(a*d)+' + '+par(b*c)+' = '+(a*d+b*c)]};
 }}
 };
 const ORDER=['add','mul','pow','mix','frac','eq','poly','polymul'];
