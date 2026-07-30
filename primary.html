@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="算术乐园">
+<meta name="theme-color" content="#e8712b">
+<title>小学算术乐园 · 1-6 年级</title>
+<style>
+:root{
+  --bg:#fdf6ef; --card:#ffffff; --ink:#33261a; --sub:#8a7460;
+  --brand:#e8712b; --brand2:#ffb340; --ok:#18a06a; --warn:#c9772e; --bad:#e14b5a;
+  --line:#f0e2d2; --shadow:0 8px 30px rgba(120,70,20,.10);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--ink);min-height:100vh;padding:env(safe-area-inset-top) 0 24px}
+.wrap{max-width:600px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;justify-content:space-between;margin:6px 2px 14px}
+h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
+.badge{font-size:12px;color:var(--sub);background:#f7e9d8;padding:4px 10px;border-radius:20px}
+.card{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+.label{font-size:12px;color:var(--sub);font-weight:700;margin-bottom:10px;letter-spacing:.5px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:10px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;
+  font-size:14px;font-weight:700;color:var(--sub);cursor:pointer;transition:.15s;user-select:none}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:0 4px 12px rgba(232,113,43,.28)}
+.seg{display:flex;gap:8px}
+.seg .chip{flex:1;text-align:center}
+.btn{display:block;width:100%;padding:16px;border:none;border-radius:14px;background:var(--brand);
+  color:#fff;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(232,113,43,.32)}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:#f7e9d8;color:var(--brand);box-shadow:none}
+.hublink{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:800;text-decoration:none;padding:5px 11px;border-radius:20px;flex-shrink:0}
+.hublink{color:var(--brand);background:#f7e9d8}
+.foot{text-align:center;font-size:12px;color:var(--sub);margin-top:8px;line-height:1.6}
+#play{display:none}
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.back{font-size:24px;cursor:pointer;color:var(--sub);padding:4px 10px}
+.progress{flex:1;height:9px;background:#f2e2ce;border-radius:6px;overflow:hidden}
+.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--brand2));width:0;transition:.3s}
+.timer{font-size:14px;color:var(--sub);font-weight:800;min-width:60px;text-align:right;font-variant-numeric:tabular-nums}
+.qcard{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:24px 18px;text-align:center;position:relative}
+.qtag{position:absolute;top:14px;left:16px;font-size:11.5px;color:var(--sub);background:#f7e9d8;padding:3px 10px;border-radius:10px;font-weight:700}
+.qnum{position:absolute;top:14px;right:16px;font-size:11.5px;color:var(--sub);font-weight:700}
+.disp{font-size:34px;font-weight:800;line-height:1.35;word-break:break-word;margin:26px 0 4px;font-variant-numeric:tabular-nums}
+.tpl{font-size:32px;font-weight:800;line-height:1.9;margin-top:8px;font-variant-numeric:tabular-nums}
+.blk{display:inline-block;min-width:62px;padding:2px 10px;margin:0 3px;border:2px dashed #ecd3b5;border-radius:10px;
+  color:var(--brand);background:#fffaf4;cursor:pointer;vertical-align:middle}
+.blk.act{border-style:solid;border-color:var(--brand);background:#fdeedd;box-shadow:0 0 0 3px rgba(232,113,43,.12)}
+.blk.big{min-width:150px;font-size:36px;display:block;margin:10px auto}
+.blk.ok{border-color:var(--ok);color:var(--ok);background:#e6f6ee;border-style:solid}
+.blk.no{border-color:var(--bad);color:var(--bad);background:#fdeceb;border-style:solid}
+.blk .ph{color:#dcc6ab}
+.fb{min-height:26px;margin-top:14px;font-size:15px;font-weight:800;line-height:1.5}
+.steps{margin-top:12px;background:#fdf8f1;border:1px solid var(--line);border-radius:12px;
+  padding:12px 14px;text-align:left;font-size:14.5px;line-height:1.8;font-weight:600;color:var(--ink)}
+.steps .st{color:var(--brand);font-weight:800;font-size:12px;letter-spacing:.5px;display:block;margin-bottom:4px}
+.fb.ok{color:var(--ok)} .fb.no{color:var(--bad)}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:14px}
+.key{padding:18px 0;border-radius:14px;border:none;background:#fff;box-shadow:0 2px 8px rgba(120,70,20,.08);
+  font-size:24px;font-weight:800;color:var(--ink);cursor:pointer;user-select:none}
+.key:active{transform:scale(.96);background:#faf2e8}
+.key.fn{background:#f7e9d8;color:var(--brand);font-size:20px}
+.key.ok{background:var(--brand);color:#fff;font-size:19px;grid-column:span 2;box-shadow:0 4px 14px rgba(232,113,43,.3)}
+.mini{display:flex;gap:9px;flex-wrap:wrap}
+.mini>div{flex:1;min-width:86px;background:#fdf8f1;border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.mini b{display:block;font-size:22px;font-variant-numeric:tabular-nums;line-height:1.2}
+.mini span{font-size:11px;color:var(--sub)}
+.empty{font-size:13px;color:var(--sub);text-align:center;padding:10px 0}
+.rec{margin-top:14px;background:#fff8ec;border:1px solid #f0dfc0;border-radius:12px;padding:12px 14px;
+  font-size:14px;font-weight:700;line-height:1.9;text-align:left;color:#7a5a1e}
+.done{text-align:center;padding:26px 12px}
+.done .em{font-size:56px}
+.done h2{font-size:24px;margin:12px 0 6px}
+.stat{display:flex;justify-content:center;gap:24px;margin:18px 0}
+.stat b{font-size:26px;display:block;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--sub)}
+@media (min-width:768px){
+  .wrap{max-width:680px;padding:24px}
+  h1{font-size:24px}
+  .disp{font-size:42px} .tpl{font-size:38px}
+  .blk{min-width:74px} .blk.big{min-width:180px;font-size:44px}
+  .key{padding:22px 0;font-size:28px}
+  .btn{font-size:18px;padding:18px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="home">
+  <header>
+    <a class="hublink" href="./">‹ 切换</a>
+    <h1 style="flex:1;text-align:center">🎈 小学算术乐园</h1>
+    <span class="badge">1-6 年级</span>
+  </header>
+
+  <div class="card" id="stats"></div>
+
+  <div class="card">
+    <div class="label">我在读几年级？</div>
+    <div class="seg" id="stageSeg">
+      <div class="chip" data-s="0">一二年级</div>
+      <div class="chip" data-s="1">三四年级</div>
+      <div class="chip" data-s="2">五六年级</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">练什么（可多选）</div>
+    <div class="chips" id="s0"></div>
+    <div class="chips" id="s1"></div>
+    <div class="chips" id="s2"></div>
+  </div>
+
+  <div class="card">
+    <div class="label">难度</div>
+    <div class="seg" id="levelSeg">
+      <div class="chip on" data-lv="0">基础</div>
+      <div class="chip" data-lv="1">进阶</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">每组题量</div>
+    <div class="seg" id="countSeg">
+      <div class="chip on" data-n="10">10 题</div>
+      <div class="chip" data-n="20">20 题</div>
+      <div class="chip" data-n="30">30 题</div>
+    </div>
+  </div>
+
+  <button class="btn" onclick="start()">开始闯关 →</button>
+  <div class="foot">做对一题得一颗 ⭐，答错的题会再来一次，全对才通关<br>分数用 <b>/</b> 输入（如 3/4），小数用 <b>.</b></div>
+</div>
+
+<div id="play">
+  <div class="topbar">
+    <span class="back" onclick="goHome()">‹</span>
+    <div class="progress"><i id="bar"></i></div>
+    <span class="timer" id="timer">0:00</span>
+  </div>
+  <div class="qcard">
+    <span class="qtag" id="qtag"></span>
+    <span class="qnum" id="qnum"></span>
+    <div class="disp" id="disp"></div>
+    <div class="tpl" id="tplbox"></div>
+    <div class="fb" id="fb"></div>
+  </div>
+  <div class="pad">
+    <button class="key" onclick="kp('7')">7</button>
+    <button class="key" onclick="kp('8')">8</button>
+    <button class="key" onclick="kp('9')">9</button>
+    <button class="key fn" onclick="kp('del')">⌫</button>
+    <button class="key" onclick="kp('4')">4</button>
+    <button class="key" onclick="kp('5')">5</button>
+    <button class="key" onclick="kp('6')">6</button>
+    <button class="key fn" onclick="kp('/')">/</button>
+    <button class="key" onclick="kp('1')">1</button>
+    <button class="key" onclick="kp('2')">2</button>
+    <button class="key" onclick="kp('3')">3</button>
+    <button class="key fn" onclick="kp('.')">.</button>
+    <button class="key fn" onclick="kp('next')">下一空</button>
+    <button class="key" onclick="kp('0')">0</button>
+    <button class="key ok" onclick="kp('ok')" id="okBtn">确定</button>
+  </div>
+</div>
+
+<div id="playdone"></div>
+
+</div>
+
+<script>
+/* ========== 基础工具 ========== */
+function ri(a,b){return a+Math.floor(Math.random()*(b-a+1));}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){const t=a%b;a=b;b=t;}return a||1;}
+function red(n,d){if(d<0){n=-n;d=-d;}const g=gcd(n,d);return [n/g,d/g];}
+function fmtFrac(n,d){ if(d===1)return ''+n; return n+'/'+d; }
+function ansText(a){ return a[1]===1?(''+a[0]):(a[0]+'/'+a[1]); }
+
+/* ========== 出题引擎 ==========
+   每题 {disp, tpl, blanks:[[num,den]...], steps, chkO, chkA(自检用)}，stage: 0=一二年级 1=三四年级 2=五六年级 */
+const GEN={
+/* --- 一二年级 --- */
+a20:{name:'20以内加减',stage:0,fn:function(h){
+  if(h&&Math.random()<.4){ // 连加连减
+    const a=ri(2,9),b=ri(2,9),c=ri(1,20-a-b>1?Math.min(9,20-a-b):2);
+    if(Math.random()<.5&&a+b+c<=20){
+      return {disp:a+' + '+b+' + '+c+' =',tpl:'__',blanks:[[a+b+c,1]],chkO:a+'+'+b+'+'+c,chkA:'('+(a+b+c)+')',
+        steps:['先算 '+a+' + '+b+' = '+(a+b),'再算 '+(a+b)+' + '+c+' = '+(a+b+c)]};}
+    const s=ri(11,20),d1=ri(2,5),d2=ri(1,s-d1-1>0?Math.min(5,s-d1):1);
+    return {disp:s+' − '+d1+' − '+d2+' =',tpl:'__',blanks:[[s-d1-d2,1]],chkO:s+'-'+d1+'-'+d2,chkA:'('+(s-d1-d2)+')',
+      steps:['先算 '+s+' − '+d1+' = '+(s-d1),'再算 '+(s-d1)+' − '+d2+' = '+(s-d1-d2)]};
+  }
+  if(Math.random()<.5){const a=ri(2,18),b=ri(1,20-a);
+    const steps=a+b>10&&a<10&&b<10?['凑十法：'+a+' + '+(10-a)+' = 10，再加 '+(b-(10-a))+' 得 '+(a+b)]:['数一数：'+a+' + '+b+' = '+(a+b)];
+    return {disp:a+' + '+b+' =',tpl:'__',blanks:[[a+b,1]],chkO:a+'+'+b,chkA:'('+(a+b)+')',steps:steps};}
+  const a=ri(5,20),b=ri(1,a);
+  const steps=a>10&&b<10&&a-b<10?['破十法：先算 10 − '+b+' = '+(10-b)+'，再加 '+(a-10)+' 得 '+(a-b)]:['想加算减：'+(a-b)+' + '+b+' = '+a+'，所以 '+a+' − '+b+' = '+(a-b)];
+  return {disp:a+' − '+b+' =',tpl:'__',blanks:[[a-b,1]],chkO:a+'-'+b,chkA:'('+(a-b)+')',steps:steps};
+}},
+a100:{name:'100以内加减',stage:0,fn:function(h){
+  if(Math.random()<.5){const a=ri(h?15:11,89),b=ri(h?15:5,99-a);
+    return {disp:a+' + '+b+' =',tpl:'__',blanks:[[a+b,1]],chkO:a+'+'+b,chkA:'('+(a+b)+')',
+      steps:['先加整十：'+a+' + '+Math.floor(b/10)*10+' = '+(a+Math.floor(b/10)*10),
+        '再加个位：'+(a+Math.floor(b/10)*10)+' + '+(b%10)+' = '+(a+b)]};}
+  const a=ri(h?35:20,99),b=ri(h?15:3,a-1);
+  return {disp:a+' − '+b+' =',tpl:'__',blanks:[[a-b,1]],chkO:a+'-'+b,chkA:'('+(a-b)+')',
+    steps:['先减整十：'+a+' − '+Math.floor(b/10)*10+' = '+(a-Math.floor(b/10)*10),
+      '再减个位：'+(a-Math.floor(b/10)*10)+' − '+(b%10)+' = '+(a-b)]};
+}},
+mul9:{name:'乘法口诀',stage:0,fn:function(h){
+  const a=ri(2,9),b=ri(2,9);
+  const t=h?ri(0,2):0;
+  if(t===0)return {disp:a+' × '+b+' =',tpl:'__',blanks:[[a*b,1]],chkO:a+'*'+b,chkA:'('+(a*b)+')',
+    steps:['背口诀：'+Math.min(a,b)+''+Math.max(a,b)+'得'+(a*b>10?'':' ')+(a*b)+'（'+Math.min(a,b)+' × '+Math.max(a,b)+' = '+(a*b)+'）']};
+  if(t===1)return {disp:a*b+' ÷ '+a+' =',tpl:'__',blanks:[[b,1]],chkO:(a*b)+'/'+a,chkA:'('+b+')',
+    steps:['想口诀：'+a+' × 几 = '+(a*b)+'？',''+a+' × '+b+' = '+(a*b)+'，所以答案是 '+b]};
+  return {disp:a+' × ? = '+(a*b)+'，? =',tpl:'__',blanks:[[b,1]],chkO:(a*b)+'/'+a,chkA:'('+b+')',
+    steps:['想口诀：'+a+' × '+b+' = '+(a*b)+'，所以 ? = '+b]};
+}},
+/* --- 三四年级 --- */
+a1000:{name:'三位数加减',stage:1,fn:function(h){
+  if(Math.random()<.5){const a=ri(h?250:110,850),b=ri(h?150:100,999-a);
+    return {disp:a+' + '+b+' =',tpl:'__',blanks:[[a+b,1]],chkO:a+'+'+b,chkA:'('+(a+b)+')',
+      steps:['列竖式：个位对个位、十位对十位，满十进一','' +a+' + '+b+' = '+(a+b)]};}
+  const a=ri(h?400:200,999),b=ri(h?150:100,a-1);
+  return {disp:a+' − '+b+' =',tpl:'__',blanks:[[a-b,1]],chkO:a+'-'+b,chkA:'('+(a-b)+')',
+    steps:['列竖式：不够减就向前一位借一当十','' +a+' − '+b+' = '+(a-b)]};
+}},
+mulb:{name:'乘法',stage:1,fn:function(h){
+  if(h&&Math.random()<.5){const a=ri(11,25),b=ri(11,19);
+    return {disp:a+' × '+b+' =',tpl:'__',blanks:[[a*b,1]],chkO:a+'*'+b,chkA:'('+(a*b)+')',
+      steps:['拆开算：'+a+' × '+b+' = '+a+' × '+(Math.floor(b/10)*10)+' + '+a+' × '+(b%10),
+        '= '+(a*Math.floor(b/10)*10)+' + '+(a*(b%10))+' = '+(a*b)]};}
+  const a=ri(h?25:12,h?99:49),b=ri(2,9);
+  return {disp:a+' × '+b+' =',tpl:'__',blanks:[[a*b,1]],chkO:a+'*'+b,chkA:'('+(a*b)+')',
+    steps:['拆开算：'+a+' × '+b+' = '+(Math.floor(a/10)*10)+' × '+b+' + '+(a%10)+' × '+b,
+      '= '+(Math.floor(a/10)*10*b)+' + '+(a%10*b)+' = '+(a*b)]};
+}},
+divb:{name:'除法',stage:1,fn:function(h){
+  if(Math.random()<.5){const b=ri(2,9),q=ri(h?12:3,h?98:25);
+    return {disp:(b*q)+' ÷ '+b+' =',tpl:'__',blanks:[[q,1]],chkO:(b*q)+'/'+b,chkA:'('+q+')',
+      steps:['想乘法：'+b+' × 几 = '+(b*q)+'？','' +b+' × '+q+' = '+(b*q)+'，所以商是 '+q]};}
+  const b=ri(h?3:2,9),q=ri(h?12:3,h?40:12),r=ri(1,b-1),n=b*q+r;
+  return {disp:n+' ÷ '+b+' =',tpl:'商 __ 余 __',blanks:[[q,1],[r,1]],
+    chkO:''+n,chkA:'('+b+'*'+q+'+'+r+')',
+    steps:['找最接近的：'+b+' × '+q+' = '+(b*q)+'（不能超过 '+n+'）',
+      '余数：'+n+' − '+(b*q)+' = '+r,'检查：余数 '+r+' 比除数 '+b+' 小 ✓']};
+}},
+mix1:{name:'混合运算',stage:1,fn:function(h){
+  const t=ri(0,h?3:1);
+  if(t===0){const a=ri(5,h?90:30),b=ri(2,9),c=ri(2,9);
+    return {disp:a+' + '+b+' × '+c+' =',tpl:'__',blanks:[[a+b*c,1]],chkO:a+'+'+b+'*'+c,chkA:'('+(a+b*c)+')',
+      steps:['先乘除后加减！先算 '+b+' × '+c+' = '+(b*c),'再算 '+a+' + '+(b*c)+' = '+(a+b*c)]};}
+  if(t===1){const b=ri(2,9),c=ri(2,9),a=ri(b*c+1,b*c+(h?90:30));
+    return {disp:a+' − '+b+' × '+c+' =',tpl:'__',blanks:[[a-b*c,1]],chkO:a+'-'+b+'*'+c,chkA:'('+(a-b*c)+')',
+      steps:['先乘除后加减！先算 '+b+' × '+c+' = '+(b*c),'再算 '+a+' − '+(b*c)+' = '+(a-b*c)]};}
+  if(t===2){const a=ri(2,20),b=ri(2,20),c=ri(2,9);
+    return {disp:'('+a+' + '+b+') × '+c+' =',tpl:'__',blanks:[[(a+b)*c,1]],chkO:'('+a+'+'+b+')*'+c,chkA:'('+((a+b)*c)+')',
+      steps:['有括号先算括号：'+a+' + '+b+' = '+(a+b),'再算 '+(a+b)+' × '+c+' = '+((a+b)*c)]};}
+  const b=ri(2,9),q=ri(2,12),a=ri(1,50);
+  return {disp:a+' + '+(b*q)+' ÷ '+b+' =',tpl:'__',blanks:[[a+q,1]],chkO:a+'+'+(b*q)+'/'+b,chkA:'('+(a+q)+')',
+    steps:['先乘除后加减！先算 '+(b*q)+' ÷ '+b+' = '+q,'再算 '+a+' + '+q+' = '+(a+q)]};
+}},
+/* --- 五六年级 --- */
+dec5:{name:'小数计算',stage:2,fn:function(h){
+  const t=ri(0,2);
+  if(t===0){const a=ri(11,h?899:99),b=ri(11,h?899:99);
+    return {disp:(a/10)+' + '+(b/10)+' =',tpl:'__',blanks:[red(a+b,10)],
+      chkO:'('+a+'+'+b+')/10',chkA:'('+(a+b)+'/10)',
+      steps:['小数点对齐再加：'+(a/10)+' + '+(b/10)+' = '+((a+b)/10)]};}
+  if(t===1){let a=ri(21,h?899:99),b=ri(11,a-1);
+    return {disp:(a/10)+' − '+(b/10)+' =',tpl:'__',blanks:[red(a-b,10)],
+      chkO:'('+a+'-'+b+')/10',chkA:'('+(a-b)+'/10)',
+      steps:['小数点对齐再减：'+(a/10)+' − '+(b/10)+' = '+((a-b)/10)]};}
+  const a=ri(11,h?99:49),b=ri(2,9);
+  return {disp:(a/10)+' × '+b+' =',tpl:'__',blanks:[red(a*b,10)],
+    chkO:'('+a+'*'+b+')/10',chkA:'('+(a*b)+'/10)',
+    steps:['先按整数算：'+a+' × '+b+' = '+(a*b),'一位小数 → 结果点一位小数：'+(a*b/10)]};
+}},
+frac5:{name:'分数加减',stage:2,fn:function(h){
+  if(!h){const d=pick([3,4,5,6,7,8,9,10]);let n1=ri(1,d-1),n2=ri(1,d-1);
+    if(Math.random()<.5){const r=red(n1+n2,d);
+      return {disp:n1+'/'+d+' + '+n2+'/'+d+' =',tpl:'__',blanks:[r],
+        chkO:'('+n1+'+'+n2+')/'+d,chkA:'('+r[0]+'/'+r[1]+')',
+        steps:['同分母：分母不变，分子相加','' +n1+' + '+n2+' = '+(n1+n2)+'，得 '+fmtFrac(n1+n2,d)+
+          (r.join('/')!==(n1+n2)+'/'+d?'，约分 = '+ansText(r):'')]};}
+    if(n1<n2){const t=n1;n1=n2;n2=t;} if(n1===n2)n1=Math.min(d-1,n1+1);
+    const r=red(n1-n2,d);
+    return {disp:n1+'/'+d+' − '+n2+'/'+d+' =',tpl:'__',blanks:[r],
+      chkO:'('+n1+'-'+n2+')/'+d,chkA:'('+r[0]+'/'+r[1]+')',
+      steps:['同分母：分母不变，分子相减','' +n1+' − '+n2+' = '+(n1-n2)+'，得 '+fmtFrac(n1-n2,d)+
+        (r.join('/')!==(n1-n2)+'/'+d?'，约分 = '+ansText(r):'')]};}
+  const d1=pick([2,3,4,5,6]),d2s=[2,3,4,5,6].filter(x=>x!==d1),d2=pick(d2s);
+  const n1=ri(1,d1-1),n2=ri(1,d2-1),L=d1*d2/gcd(d1,d2);
+  const nn1=n1*L/d1,nn2=n2*L/d2,op=(nn1>nn2&&Math.random()<.5)?'-':'+';
+  const N=op==='+'?nn1+nn2:nn1-nn2,r=red(N,L);
+  return {disp:n1+'/'+d1+' '+(op==='+'?'+':'−')+' '+n2+'/'+d2+' =',tpl:'__',blanks:[r],
+    chkO:'('+n1+'/'+d1+')'+op+'('+n2+'/'+d2+')',chkA:'('+r[0]+'/'+r[1]+')',
+    steps:['先通分：'+d1+' 和 '+d2+' 的最小公倍数是 '+L,
+      n1+'/'+d1+' = '+nn1+'/'+L+'，'+n2+'/'+d2+' = '+nn2+'/'+L,
+      '分子相'+(op==='+'?'加':'减')+'：'+nn1+' '+op+' '+nn2+' = '+N+'，得 '+fmtFrac(N,L)+
+      (r.join('/')!==N+'/'+L?'，约分 = '+ansText(r):'')]};
+}},
+smart:{name:'简便运算',stage:2,fn:function(h){
+  const t=ri(0,h?3:2);
+  if(t===0){const n=pick([3,7,9,11,13,17,21,23,27]);
+    return {disp:'25 × '+n+' × 4 =',tpl:'__',blanks:[[100*n,1]],chkO:'25*'+n+'*4',chkA:'('+(100*n)+')',
+      steps:['调换位置凑整：25 × 4 = 100','100 × '+n+' = '+(100*n)]};}
+  if(t===1){const n=pick([3,7,9,11,13,17]);
+    return {disp:'125 × '+n+' × 8 =',tpl:'__',blanks:[[1000*n,1]],chkO:'125*'+n+'*8',chkA:'('+(1000*n)+')',
+      steps:['调换位置凑整：125 × 8 = 1000','1000 × '+n+' = '+(1000*n)]};}
+  if(t===2){const a=ri(3,h?86:29);
+    return {disp:a+' × 99 + '+a+' =',tpl:'__',blanks:[[100*a,1]],chkO:a+'*99+'+a,chkA:'('+(100*a)+')',
+      steps:['提出来：'+a+' × 99 + '+a+' × 1 = '+a+' × (99 + 1)','= '+a+' × 100 = '+(100*a)]};}
+  const a=ri(3,86);
+  return {disp:a+' × 101 − '+a+' =',tpl:'__',blanks:[[100*a,1]],chkO:a+'*101-'+a,chkA:'('+(100*a)+')',
+    steps:['提出来：'+a+' × 101 − '+a+' × 1 = '+a+' × (101 − 1)','= '+a+' × 100 = '+(100*a)]};
+}}
+};
+const ORDER=['a20','a100','mul9','a1000','mulb','divb','mix1','dec5','frac5','smart'];
+
+/* ========== 答案解析 ========== */
+function parseVal(s){
+  s=(s||'').trim(); if(s===''||s==='/'||s==='.')return null;
+  if(s.indexOf('/')>=0){const p=s.split('/');if(p.length!==2)return null;
+    const n=Number(p[0]),d=Number(p[1]);
+    if(!isFinite(n)||!isFinite(d)||d===0)return null;return red(n,d);}
+  if(s.indexOf('.')>=0){const v=Number(s);if(!isFinite(v))return null;
+    const dec=(s.split('.')[1]||'').length,den=Math.pow(10,dec);
+    return red(Math.round(v*den),den);}
+  const v=Number(s);if(!isFinite(v))return null;return [v,1];
+}
+function eqVal(a,b){return !!a&&!!b&&a[0]*b[1]===b[0]*a[1];}
+
+/* ========== 设置 ========== */
+const LS=JSON.parse(localStorage.getItem('primarycalc1')||'{}');
+LS.stage=[0,1,2].includes(LS.stage)?LS.stage:0;
+LS.topics=LS.topics&&typeof LS.topics==='object'&&!Array.isArray(LS.topics)?LS.topics:{};
+LS.level=LS.level|0; LS.count=LS.count||10;
+LS.hist=Array.isArray(LS.hist)?LS.hist:[];
+if(typeof LS.tot!=='number')LS.tot=LS.hist.reduce(function(s,r){return s+(r.n||0);},0);
+if(typeof LS.stars!=='number')LS.stars=LS.hist.reduce(function(s,r){return s+(r.ok||0);},0);
+function save(){localStorage.setItem('primarycalc1',JSON.stringify(LS));}
+function today(){const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dayDiff(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000);}
+function streak(){
+  const days=[...new Set(LS.hist.map(r=>r.d))].sort();
+  if(!days.length)return 0;
+  if(dayDiff(days[days.length-1],today())>1)return 0;
+  let n=1;
+  for(let i=days.length-1;i>0;i--){if(dayDiff(days[i-1],days[i])===1)n++;else break;}
+  return n;
+}
+function mmss(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function renderStats(){
+  const box=document.getElementById('stats'),H=LS.hist;
+  if(!H.length){box.innerHTML='<div class="label">我的星星</div>'+
+    '<div class="empty">还没有星星～做对一题就有一颗 ⭐</div>';return;}
+  const st=streak(),totalQ=LS.tot,
+        bestRate=Math.max.apply(null,H.map(r=>r.rate)),
+        todayStar=H.filter(r=>r.d===today()).reduce((s,r)=>s+r.ok,0);
+  box.innerHTML='<div class="label">我的星星</div><div class="mini">'+
+    '<div><b style="color:var(--warn)">'+LS.stars+'</b><span>⭐ 总星星</span></div>'+
+    '<div><b style="color:#e8712b">'+st+'</b><span>🔥 连续天数</span></div>'+
+    '<div><b>'+totalQ+'</b><span>累计题数</span></div>'+
+    '<div><b style="color:var(--ok)">'+bestRate+'%</b><span>🏅 最好正确率</span></div></div>'+
+    (todayStar?'<div class="empty" style="padding:8px 0 0">今天已收获 '+todayStar+' 颗 ⭐，真棒！</div>':'');
+}
+renderStats();
+function topicsOfStage(){
+  if(!Array.isArray(LS.topics[LS.stage])||!LS.topics[LS.stage].length){
+    LS.topics[LS.stage]=ORDER.filter(k=>GEN[k].stage===LS.stage).slice(0,2);
+  }
+  return LS.topics[LS.stage];
+}
+function renderChips(){
+  [0,1,2].forEach(s=>{
+    const box=document.getElementById('s'+s);
+    box.style.display=s===LS.stage?'flex':'none';
+    if(box.childElementCount)return;
+    ORDER.filter(k=>GEN[k].stage===s).forEach(k=>{
+      const el=document.createElement('div');
+      el.className='chip';el.textContent=GEN[k].name;el.setAttribute('data-k',k);
+      el.onclick=()=>{el.classList.toggle('on');
+        LS.topics[LS.stage]=ORDER.filter(x=>{
+          const c=document.querySelector('#s'+LS.stage+' [data-k="'+x+'"]');
+          return c&&c.classList.contains('on');});
+        save();};
+      box.appendChild(el);
+    });
+  });
+  const cur=topicsOfStage();
+  document.querySelectorAll('#s'+LS.stage+' .chip').forEach(c=>{
+    c.classList.toggle('on',cur.includes(c.getAttribute('data-k')));});
+}
+document.querySelectorAll('#stageSeg .chip').forEach(c=>{
+  c.classList.toggle('on',+c.dataset.s===LS.stage);
+  c.onclick=()=>{
+    document.querySelectorAll('#stageSeg .chip').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');LS.stage=+c.dataset.s;save();renderChips();};
+});
+renderChips();
+function seg(id,key){
+  const box=document.getElementById(id);
+  box.querySelectorAll('.chip').forEach(c=>{c.onclick=()=>{
+    box.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');
+    LS[key]=+(c.dataset.lv!==undefined?c.dataset.lv:c.dataset.n);save();};});
+}
+seg('levelSeg','level');seg('countSeg','count');
+document.querySelectorAll('#levelSeg .chip').forEach(c=>c.classList.toggle('on',+c.dataset.lv===LS.level));
+document.querySelectorAll('#countSeg .chip').forEach(c=>c.classList.toggle('on',+c.dataset.n===LS.count));
+
+/* ========== 练习 ========== */
+let queue=[],initN=0,done=0,firstOK=0,prob=null,vals=[],active=0,locked=false,t0=0,timerId=null,okFlags=[],finished=false;
+
+function start(){
+  const tp=topicsOfStage();
+  if(!tp.length){alert('请至少选一个练习类型');return;}
+  initN=LS.count;done=0;firstOK=0;queue=[];finished=false;
+  for(let i=0;i<initN;i++){
+    const k=pick(tp);const p=GEN[k].fn(LS.level===1);
+    p.topic=GEN[k].name;p.first=true;queue.push(p);
+  }
+  document.getElementById('home').style.display='none';
+  document.getElementById('play').style.display='block';
+  document.getElementById('playdone').innerHTML='';
+  window.scrollTo(0,0);
+  t0=Date.now();if(timerId)clearInterval(timerId);
+  timerId=setInterval(updTimer,1000);updTimer();nextQ();
+}
+function updTimer(){const s=Math.floor((Date.now()-t0)/1000);
+  document.getElementById('timer').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+function goHome(){if(timerId)clearInterval(timerId);
+  document.getElementById('play').style.display='none';
+  document.getElementById('home').style.display='block';renderStats();}
+function nextQ(){
+  if(queue.length===0){finish();return;}
+  prob=queue.shift();vals=prob.blanks.map(()=>'');active=0;locked=false;okFlags=[];
+  document.getElementById('bar').style.width=(done/initN*100)+'%';
+  document.getElementById('qtag').textContent=prob.topic;
+  document.getElementById('qnum').textContent='已过 '+done+'/'+initN;
+  document.getElementById('disp').textContent=prob.disp;
+  document.getElementById('fb').textContent='';document.getElementById('fb').className='fb';
+  renderTpl();updOk();
+}
+function renderTpl(){
+  const parts=prob.tpl.split('__');let html='',bi=0;
+  const big=prob.blanks.length===1;
+  parts.forEach((p,i)=>{
+    html+=esc(p);
+    if(i<parts.length-1){
+      const v=vals[bi];
+      let cls='blk'+(big?' big':'')+(bi===active&&!locked?' act':'');
+      if(locked&&okFlags.length)cls+=okFlags[bi]?' ok':' no';
+      html+='<span class="'+cls+'" onclick="setActive('+bi+')">'+(v===''?'<span class="ph">?</span>':esc(v))+'</span>';
+      bi++;
+    }
+  });
+  document.getElementById('tplbox').innerHTML=html;
+}
+function setActive(i){if(locked)return;active=i;renderTpl();updOk();}
+function updOk(){
+  const b=document.getElementById('okBtn');
+  if(locked){b.textContent='下一题 →';return;}
+  b.textContent=(active<prob.blanks.length-1)?'下一空 →':'确定';
+}
+function kp(k){
+  if(locked){if(k==='ok')nextQ();return;}
+  let v=vals[active];
+  if(k==='del')v=v.slice(0,-1);
+  else if(k==='next'){if(prob.blanks.length>1){active=(active+1)%prob.blanks.length;renderTpl();updOk();}return;}
+  else if(k==='ok'){
+    if(active<prob.blanks.length-1){ if(v==='')return; active++;renderTpl();updOk();return;}
+    submit();return;
+  }
+  else if(k==='/'){if(v===''||v.indexOf('/')>=0)return;v+='/';}
+  else if(k==='.'){if(v.indexOf('.')>=0)return;v+='.';}
+  else{if(v==='0')v='';v+=k;}
+  vals[active]=v;renderTpl();
+}
+function submit(){
+  if(vals.some(v=>parseVal(v)===null))return;
+  okFlags=prob.blanks.map((b,i)=>eqVal(parseVal(vals[i]),b));
+  const allOK=okFlags.every(Boolean);
+  const fb=document.getElementById('fb');
+  locked=true;renderTpl();updOk();
+  if(allOK){
+    fb.className='fb ok';fb.textContent=pick(['⭐ 答对啦！','⭐ 真棒！','⭐ 太厉害了！','⭐ 完全正确！']);
+    done++;if(prob.first){firstOK++;LS.stars++;save();}
+    setTimeout(()=>{if(locked)nextQ();},600);
+  }else{
+    fb.className='fb no';
+    let stepsHtml='';
+    if(prob.steps&&prob.steps.length){
+      stepsHtml='<div class="steps"><span class="st">💡 怎么算</span>'+prob.steps.map(esc).join('<br>')+'</div>';
+    }
+    fb.innerHTML='还差一点点！正确答案：'+esc(prob.tpl.split('__').reduce((s,p,i)=>
+      s+p+(i<prob.blanks.length?ansText(prob.blanks[i]):''),''))+stepsHtml+'<div style="margin-top:6px">看懂了点「下一题」，这题等会儿再来一次</div>';
+    prob.first=false;queue.push(prob);
+  }
+}
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('play').style.display!=='block')return;
+  if(/^[0-9]$/.test(e.key))kp(e.key);
+  else if(e.key==='/')kp('/');
+  else if(e.key==='.')kp('.'); else if(e.key==='Backspace')kp('del');
+  else if(e.key==='Enter')kp('ok');
+});
+function finish(){
+  if(finished)return;finished=true;
+  if(timerId)clearInterval(timerId);
+  const s=Math.floor((Date.now()-t0)/1000),rate=Math.round(firstOK/initN*100);
+  const H=LS.hist;
+  const prevBestRate=H.length?Math.max.apply(null,H.map(r=>r.rate)):null;
+  H.push({d:today(),t:s,ok:firstOK,n:initN,rate:rate});
+  if(H.length>300)LS.hist=H.slice(-300);
+  LS.tot=(LS.tot||0)+initN;
+  save();
+  const st=streak();
+  let recs=[];
+  recs.push('⭐ 这一关收获 '+firstOK+' 颗星星，一共 '+LS.stars+' 颗啦！');
+  if(prevBestRate!==null&&rate>prevBestRate)recs.push('🎉 新纪录！正确率 '+rate+'%（之前最好 '+prevBestRate+'%）');
+  if(st>=2)recs.push('🔥 已经连续练了 '+st+' 天，明天也要来哦');
+  document.getElementById('play').style.display='none';
+  document.getElementById('playdone').innerHTML=
+    '<div class="card done"><div class="em">'+(rate>=90?'🏆':rate>=70?'🎈':'🌱')+'</div>'+
+    '<h2>'+(rate>=90?'太棒了，闯关成功！':rate>=70?'通关啦，越来越厉害！':'通关啦，多练就更棒！')+'</h2>'+
+    '<div class="stat">'+
+    '<div><b>'+mmss(s)+'</b><span>用时</span></div>'+
+    '<div><b style="color:var(--warn)">'+firstOK+'</b><span>⭐ 星星</span></div>'+
+    '<div><b style="color:'+(rate>=70?'var(--ok)':'var(--warn)')+'">'+rate+'%</b><span>一次做对</span></div>'+
+    '</div>'+
+    (recs.length?'<div class="rec">'+recs.join('<br>')+'</div>':'')+
+    '<div style="display:grid;gap:10px;margin-top:16px">'+
+    '<button class="btn" onclick="start()">再闯一关 →</button>'+
+    '<button class="btn ghost" onclick="location.reload()">返回首页</button></div></div>';
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>

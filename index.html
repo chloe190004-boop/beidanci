@@ -30,8 +30,11 @@ header p{margin:0;font-size:14px;color:var(--sub)}
 .app::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px}
 .app-en::before{background:linear-gradient(180deg,var(--en2),var(--en))}
 .app-ma::before{background:linear-gradient(180deg,var(--ma2),var(--ma))}
+.app-pr::before{background:linear-gradient(180deg,#ffb340,#e8712b)}
 .app-en:hover{border-color:var(--en)}
 .app-ma:hover{border-color:var(--ma)}
+.app-pr:hover{border-color:#e8712b}
+.app-pr .go{color:#e8712b}
 .ic{font-size:42px;line-height:1;flex-shrink:0;width:56px;text-align:center}
 .tx{flex:1;min-width:0}
 .tx b{display:block;font-size:19px;font-weight:800;margin-bottom:3px}
@@ -131,8 +134,18 @@ header p{margin:0;font-size:14px;color:var(--sub)}
     <div class="ic">🔢</div>
     <div class="tx">
       <b>数学计算练习</b>
-      <span>北师大 · 七年级全册</span>
-      <small>有理数 · 分数小数 · 解方程 · 整式 · 答错自动讲思路</small>
+      <span>北师大 · 七年级 ~ 九年级</span>
+      <small>有理数 · 整式 · 实数 · 分式 · 因式分解 · 方程组 · 二次方程 · 函数 · 答错自动讲思路</small>
+    </div>
+    <div class="go">›</div>
+  </a>
+
+  <a class="app app-pr" href="./primary.html">
+    <div class="ic">🎈</div>
+    <div class="tx">
+      <b>小学算术乐园</b>
+      <span>1-6 年级 · 分年级练</span>
+      <small>口算 · 乘法口诀 · 余数除法 · 小数分数 · 简便运算 · 攒星星 ⭐</small>
     </div>
     <div class="go">›</div>
   </a>
@@ -147,7 +160,7 @@ header p{margin:0;font-size:14px;color:var(--sub)}
 <script>
 /* ===== 每次更新只改这两行 ===== */
 var APP_VERSION='2026-07-30';
-var UPDATE_NOTE='首页新增「战绩榜」：段位·战力·连胜·今日任务·本周战报，背单词和做数学都能涨战力，跟上周的自己比一比！';
+var UPDATE_NOTE='首页新增「战绩榜」（段位·战力·连胜·今日任务·本周战报）；数学扩到八/九年级：实数·分式·因式分解·不等式·方程组·二次方程·函数！';
 /* ============================== */
 (function(){
   var key='learnerName', nm=document.getElementById('nm'), greet=document.getElementById('greet');

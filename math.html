@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="算术练习">
 <meta name="theme-color" content="#0E7181">
-<title>数学计算练习 · 北师大七升八</title>
+<title>数学计算练习 · 北师大初中</title>
 <style>
 :root{
   --bg:#f2f7f8; --card:#ffffff; --ink:#16242a; --sub:#5f7178;
@@ -113,6 +113,10 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
     <div class="chips" id="g1"></div>
     <div class="grp">七上/七下 · 整式（八年级地基）</div>
     <div class="chips" id="g2"></div>
+    <div class="grp">八年级 · 实数与式</div>
+    <div class="chips" id="g3"></div>
+    <div class="grp">八/九年级 · 方程·不等式·函数</div>
+    <div class="chips" id="g4"></div>
   </div>
 
   <div class="card">
@@ -462,9 +466,157 @@ polymul:{name:'整式乘除·公式',grp:2,fn:function(h){
       term(a,1)+'·'+term(c,1)+' = '+term(a*c,2)+'；'+term(a,1)+'·'+par(d)+' = '+term(a*d,1),
       par(b)+'·'+term(c,1)+' = '+term(b*c,1)+'；'+par(b)+'·'+par(d)+' = '+(b*d),
       '合并 x 项：'+(a*d)+' + '+par(b*c)+' = '+(a*d+b*c)]};
+}},
+/* --- 八上：实数与二次根式 --- */
+sqrt:{name:'实数·二次根式',grp:3,fn:function(h){
+  const t=ri(0,h?5:4);
+  if(t===0){const n=ri(2,h?25:12);
+    return {disp:'√'+(n*n)+' =',tpl:'__',blanks:[[n,1]],chkO:'('+(n*n)+')**0.5',chkA:'('+n+')',
+      steps:['√'+(n*n)+' 表示"哪个正数的平方是 '+(n*n)+'"',n+'² = '+(n*n)+'，所以 √'+(n*n)+' = '+n]};}
+  if(t===1){const n=h?nz(-9,9):ri(2,5),c=n*n*n;
+    return {disp:'³√'+par(c)+' =',tpl:'__',blanks:[[n,1]],chkO:'Math.cbrt('+c+')',chkA:'('+n+')',
+      steps:['³√'+par(c)+' 表示"哪个数的立方是 '+c+'"',
+        (n<0?'负数的立方根是负数：':'')+par(n)+'³ = '+c+'，所以答案是 '+n]};}
+  if(t===2){const p=ri(2,h?10:6),q=ri(2,h?10:6),a=p*p*q;
+    return {disp:'√'+a+' × √'+q+' =',tpl:'__',blanks:[[p*q,1]],
+      chkO:'(('+a+')**0.5)*(('+q+')**0.5)',chkA:'('+p*q+')',
+      steps:['根式相乘：√a × √b = √(a×b)','√'+a+' × √'+q+' = √'+(a*q)+' = √('+(p*q)+'²) = '+(p*q)]};}
+  if(t===3){const p=ri(2,h?10:6),q=ri(2,h?10:6),a=p*p*q;
+    return {disp:'√'+a+' ÷ √'+q+' =',tpl:'__',blanks:[[p,1]],
+      chkO:'(('+a+')**0.5)/(('+q+')**0.5)',chkA:'('+p+')',
+      steps:['根式相除：√a ÷ √b = √(a÷b)','√'+a+' ÷ √'+q+' = √'+(a/q)+' = √('+p+'²) = '+p]};}
+  if(t===4){const n=ri(2,h?30:15);
+    return {disp:'(√'+n+')² =',tpl:'__',blanks:[[n,1]],chkO:'(('+n+')**0.5)**2',chkA:'('+n+')',
+      steps:['开方和平方互相抵消：(√a)² = a','所以 (√'+n+')² = '+n]};}
+  const a=ri(2,15),b=ri(2,12);
+  return {disp:'|−'+a+'| + √'+(b*b)+' =',tpl:'__',blanks:[[a+b,1]],
+    chkO:'Math.abs(-'+a+')+('+(b*b)+')**0.5',chkA:'('+(a+b)+')',
+    steps:['|−'+a+'| = '+a+'（绝对值一定非负）','√'+(b*b)+' = '+b,a+' + '+b+' = '+(a+b)]};
+}},
+fs:{name:'分式',grp:3,fn:function(h){
+  const t=ri(0,h?3:2);
+  function sn(v){return v<0?'− '+(-v):'+ '+v;}
+  if(t===0){let p=nz(-9,9),q=nz(-9,9);while(p+q===0)q=nz(-9,9);
+    return {disp:p+'/x '+sn(q)+'/x =',tpl:'__/x',blanks:[[p+q,1]],
+      chkO:'('+p+')/x+('+q+')/x',chkA:'('+(p+q)+')/x',
+      steps:['同分母分式相加减：分母不变，分子相加减','分子：'+p+' + '+par(q)+' = '+(p+q)+'，得 '+(p+q)+'/x']};}
+  if(t===1){const a=nz(-9,9),b=nz(2,9),r=red(a,b);
+    return {disp:'('+a+'/x) × (x/'+b+') =',tpl:'__',blanks:[r],
+      chkO:'(('+a+')/x)*(x/('+b+'))',chkA:'('+r[0]+'/'+r[1]+')',
+      steps:['分子乘分子、分母乘分母：('+a+'×x)/(x×'+b+')','x 约掉，得 '+fmtFrac(a,b)+(r[1]!==b?'，约分 = '+ansText(r):'')]};}
+  if(t===2){let a=ri(2,9),k=nz(-9,9);while(k===a)k=nz(-9,9);
+    return {disp:'当 x = '+k+' 时，(x² − '+(a*a)+') ÷ (x − '+a+') =',tpl:'__',blanks:[[k+a,1]],
+      chkO:'(('+k+')**2-('+(a*a)+'))/(('+k+')-('+a+'))',chkA:'('+(k+a)+')',
+      steps:['先化简再代入：分子是平方差 x² − '+(a*a)+' = (x + '+a+')(x − '+a+')',
+        '约去 (x − '+a+')，原式 = x + '+a,'代入 x = '+k+'：'+k+' + '+a+' = '+(k+a)]};}
+  const a=nz(-9,9);
+  return {disp:'(x² '+sn(a)+'x) ÷ x =',tpl:'x + __',blanks:[[a,1]],
+    chkO:'(x**2+('+a+')*x)/x',chkA:'x+('+a+')',
+    steps:['分子提公因式 x：x² '+sn(a)+'x = x(x '+sn(a)+')','约去 x，得 x '+sn(a)]};
+}},
+fact:{name:'因式分解',grp:3,fn:function(h){
+  const t=ri(0,3);
+  function sn(v){return v<0?'− '+(-v):'+ '+v;}
+  if(t===0){const a=ri(2,h?9:6),b=nz(-9,9);
+    return {disp:a+'x '+sn(a*b)+' =',tpl:'__(x + __)',blanks:[[a,1],[b,1]],
+      chkO:'('+a+')*x+('+(a*b)+')',chkA:'('+a+')*(x+('+b+'))',
+      steps:['提公因式：两项的公因数是 '+a,a+'x '+sn(a*b)+' = '+a+'(x '+sn(b)+')','第二个空填 '+b+'（负数就填负号）']};}
+  if(t===1){const n=ri(2,h?12:9);
+    return {disp:'x² − '+(n*n)+' =',tpl:'(x + __)(x − __)',blanks:[[n,1],[n,1]],
+      chkO:'x**2-('+(n*n)+')',chkA:'(x+('+n+'))*(x-('+n+'))',
+      steps:['平方差公式：a² − b² = (a+b)(a−b)',''+(n*n)+' = '+n+'²，所以 x² − '+(n*n)+' = (x + '+n+')(x − '+n+')']};}
+  if(t===2){const a=ri(2,h?9:6),neg=Math.random()<.5;
+    return {disp:'x² '+(neg?'− ':'+ ')+(2*a)+'x + '+(a*a)+' =',tpl:'(x '+(neg?'−':'+')+' __)²',blanks:[[a,1]],
+      chkO:'x**2+('+(neg?-2*a:2*a)+')*x+('+(a*a)+')',chkA:'(x+('+(neg?-a:a)+'))**2',
+      steps:['完全平方公式：a² ± 2ab + b² = (a ± b)²','中间项 '+(2*a)+'x = 2·x·'+a+'，末项 '+(a*a)+' = '+a+'²','所以 = (x '+(neg?'−':'+')+' '+a+')²']};}
+  let p,q;
+  if(h){p=nz(-9,9);do{q=nz(-9,9);}while(q===p||p+q===0);}
+  else{p=ri(1,9);do{q=ri(1,9);}while(q===p);}
+  return {disp:'x² '+sn(p+q)+'x '+sn(p*q)+' =',tpl:'(x + __)(x + __)',blanks:[[p,1],[q,1]],anyOrder:true,
+    chkO:'x**2+('+(p+q)+')*x+('+p*q+')',chkA:'(x+('+p+'))*(x+('+q+'))',
+    steps:['十字相乘：找两个数，相乘 = '+(p*q)+'，相加 = '+(p+q),
+      par(p)+' × '+par(q)+' = '+(p*q)+'，'+par(p)+' + '+par(q)+' = '+(p+q),
+      '所以 = (x '+sn(p)+')(x '+sn(q)+')；两个空可交换，负数直接填负号']};
+}},
+/* --- 八/九年级：方程·不等式·函数 --- */
+ineq:{name:'解不等式',grp:4,fn:function(h){
+  const m=nz(-9,9),a=h?nz(-9,9):ri(2,9),b=nz(-(h?12:9),h?12:9),c=a*m+b;
+  const syms=['<','>','≤','≥'],si=ri(0,3),s0=syms[si];
+  const flip={'<':'>','>':'<','≤':'≥','≥':'≤'};
+  const s1=a>0?s0:flip[s0];
+  function cf(x){return x===1?'x':x===-1?'-x':(x+'x');}
+  function pc(x){return x===0?'':(x>0?' + '+x:' − '+(-x));}
+  const steps=['① 移项：'+cf(a)+' '+s0+' '+c+' '+(b>0?'−':'+')+' '+Math.abs(b)+'，即 '+cf(a)+' '+s0+' '+(c-b),
+    '② 两边同除以 '+par(a)+(a<0?'：除以负数，不等号要变向！':'：'),
+    '　x '+s1+' '+m];
+  return {disp:cf(a)+pc(b)+' '+s0+' '+c+'，解为：',tpl:'x '+s1+' __',blanks:[[m,1]],
+    chkO:'('+a+')*('+m+')+('+b+')',chkA:'('+c+')',steps:steps};
+}},
+sys:{name:'二元一次方程组',grp:4,fn:function(h){
+  const x0=nz(-9,9),y0=nz(-9,9);
+  let a1,b1,a2,b2;
+  if(!h){a1=1;b1=1;a2=1;b2=-1;}
+  else{const P=pick([[2,1,1,-1],[1,2,1,1],[2,3,1,-1],[3,1,2,-1],[1,3,1,-2]]);a1=P[0];b1=P[1];a2=P[2];b2=P[3];}
+  const c1=a1*x0+b1*y0,c2=a2*x0+b2*y0;
+  function eq(a,b,c){return (a===1?'x':a+'x')+(b>0?' + '+(b===1?'y':b+'y'):' − '+(-b===1?'y':(-b)+'y'))+' = '+c;}
+  const det=a1*b2-a2*b1;
+  const steps=['加减消元：①×'+b2+' − ②×'+b1+'，消去 y',
+    '('+(a1*b2)+' − '+par(a2*b1)+')x = '+(c1*b2)+' − '+par(c2*b1)+'，即 '+det+'x = '+(c1*b2-c2*b1),
+    'x = '+x0+'；代回①：'+(b1===1?'y':b1+'y')+' = '+c1+' − '+par(a1*x0)+' = '+(b1*y0)+'，y = '+y0];
+  return {disp:'① '+eq(a1,b1,c1)+'　② '+eq(a2,b2,c2),tpl:'x = __ ，y = __',blanks:[[x0,1],[y0,1]],
+    chkO:'('+a1+')*('+x0+')+('+b1+')*('+y0+')',chkA:'('+c1+')',
+    chk2O:'('+a2+')*('+x0+')+('+b2+')*('+y0+')',chk2A:'('+c2+')',steps:steps};
+}},
+quad:{name:'一元二次方程',grp:4,fn:function(h){
+  const t=ri(0,h?2:1);
+  function sn(v){return v<0?'− '+(-v):'+ '+v;}
+  if(t===0){const n=ri(2,h?15:9);
+    return {disp:'x² = '+(n*n)+'，解为：',tpl:'x = ±__',blanks:[[n,1]],
+      chkO:'('+n+')**2',chkA:'('+(n*n)+')',
+      steps:['直接开平方：x = ±√'+(n*n),'√'+(n*n)+' = '+n+'，所以 x = ±'+n+'（正负都是解）']};}
+  if(t===1){let r1,r2;
+    if(h){r1=nz(-9,9);do{r2=nz(-9,9);}while(r2===r1);}
+    else{r1=ri(1,9);do{r2=ri(1,9);}while(r2===r1);}
+    const b=-(r1+r2),c=r1*r2;
+    return {disp:'x² '+sn(b)+'x '+sn(c)+' = 0，解为：',tpl:'x₁ = __ ，x₂ = __',blanks:[[r1,1],[r2,1]],anyOrder:true,
+      chkO:'('+r1+')**2+('+b+')*('+r1+')+('+c+')',chkA:'(0)',
+      chk2O:'('+r2+')**2+('+b+')*('+r2+')+('+c+')',chk2A:'(0)',
+      steps:['因式分解法：找两个数相乘 = '+c+'、相加 = '+(r1+r2),
+        '分解为 (x − '+par(r1)+')(x − '+par(r2)+') = 0',
+        '所以 x₁ = '+r1+'，x₂ = '+r2+'（两个空可交换）']};}
+  const b=nz(-9,9);
+  return {disp:'x² '+sn(b)+'x = 0，解为：',tpl:'x₁ = __ ，x₂ = __',blanks:[[0,1],[-b,1]],anyOrder:true,
+    chkO:'(0)**2+('+b+')*(0)',chkA:'(0)',
+    chk2O:'('+(-b)+')**2+('+b+')*('+(-b)+')',chk2A:'(0)',
+    steps:['提公因式 x：x(x '+sn(b)+') = 0','两个因式至少一个为 0：x = 0 或 x '+sn(b)+' = 0',
+      '所以 x₁ = 0，x₂ = '+(-b)]};
+}},
+fn:{name:'函数求值',grp:4,fn:function(h){
+  const t=h?ri(0,2):pick([0,2]);
+  function cf(x){return x===1?'x':x===-1?'-x':(x+'x');}
+  function pc(x){return x===0?'':(x>0?' + '+x:' − '+(-x));}
+  if(t===0){const a=nz(-9,9),b=nz(-9,9),k=nz(-9,9),v=a*k+b;
+    return {disp:'y = '+cf(a)+pc(b)+'，当 x = '+k+' 时，y =',tpl:'__',blanks:[[v,1]],
+      chkO:'('+a+')*('+k+')+('+b+')',chkA:'('+v+')',
+      steps:['把 x = '+k+' 代入：y = '+a+' × '+par(k)+(b>0?' + '+b:b<0?' − '+(-b):''),
+        '= '+(a*k)+(b>0?' + '+b:b<0?' − '+(-b):'')+' = '+v]};}
+  if(t===1){const a=nz(-3,3),b=nz(-9,9),c=nz(-9,9),k=nz(-5,5),v=a*k*k+b*k+c;
+    return {disp:'y = '+(a===1?'':a===-1?'-':a)+'x²'+(b>0?' + '+cf(b):b<0?' − '+cf(-b):'')+pc(c)+'，当 x = '+k+' 时，y =',
+      tpl:'__',blanks:[[v,1]],
+      chkO:'('+a+')*('+k+')**2+('+b+')*('+k+')+('+c+')',chkA:'('+v+')',
+      steps:['先算 x²：'+par(k)+'² = '+(k*k),
+        'y = '+a+' × '+(k*k)+' + '+par(b)+' × '+par(k)+' + '+par(c),
+        '= '+(a*k*k)+' + '+par(b*k)+' + '+par(c)+' = '+v]};}
+  let a=nz(-9,9),b;
+  if(h){b=nz(-9,9);}else{const m=nz(-9,9);b=-a*m;}
+  const r=red(-b,a);
+  return {disp:'直线 y = '+cf(a)+pc(b)+' 与 x 轴交点的横坐标 x =',tpl:'__',blanks:[r],
+    chkO:'('+a+')*('+r[0]+'/'+r[1]+')+('+b+')',chkA:'(0)',
+    steps:['与 x 轴相交时 y = 0：'+cf(a)+pc(b)+' = 0',
+      '解得 x = '+par(-b)+' ÷ '+par(a)+' = '+ansText(r)]};
 }}
 };
-const ORDER=['add','mul','pow','mix','frac','eq','poly','polymul'];
+const ORDER=['add','mul','pow','mix','frac','eq','poly','polymul','sqrt','fs','fact','ineq','sys','quad','fn'];
 
 /* ========== 答案解析 ========== */
 function parseVal(s){
@@ -528,7 +680,7 @@ ORDER.forEach(k=>{
   el.onclick=()=>{el.classList.toggle('on');
     LS.topics=ORDER.filter(x=>document.querySelector('[data-k="'+x+'"]').classList.contains('on'));save();};
   el.setAttribute('data-k',k);
-  document.getElementById(GEN[k].grp===1?'g1':'g2').appendChild(el);
+  document.getElementById('g'+GEN[k].grp).appendChild(el);
 });
 function seg(id,key){
   const box=document.getElementById(id);
@@ -611,6 +763,10 @@ function kp(k){
 function submit(){
   if(vals.some(v=>parseVal(v)===null))return;
   okFlags=prob.blanks.map((b,i)=>eqVal(parseVal(vals[i]),b));
+  if(prob.anyOrder&&prob.blanks.length===2&&!okFlags.every(Boolean)&&
+     eqVal(parseVal(vals[0]),prob.blanks[1])&&eqVal(parseVal(vals[1]),prob.blanks[0])){
+    okFlags=[true,true];
+  }
   const allOK=okFlags.every(Boolean);
   const fb=document.getElementById('fb');
   locked=true;renderTpl();updOk();
