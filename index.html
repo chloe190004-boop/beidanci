@@ -114,6 +114,7 @@ header p{margin:0;font-size:14px;color:var(--sub)}
     </div>
     <div class="b-mini" id="bMini"></div>
     <div class="b-today" id="bToday"></div>
+    <div class="b-today" id="bWeek" style="margin-top:8px"></div>
   </div>
 
   <a class="app app-en" href="./english.html">
@@ -145,8 +146,8 @@ header p{margin:0;font-size:14px;color:var(--sub)}
 </div>
 <script>
 /* ===== 每次更新只改这两行 ===== */
-var APP_VERSION='2026-07-29';
-var UPDATE_NOTE='首页新增「战绩榜」：段位·战力·连胜·今日任务，背单词和做数学都能涨战力，一眼看到自己的进步！';
+var APP_VERSION='2026-07-30';
+var UPDATE_NOTE='首页新增「战绩榜」：段位·战力·连胜·今日任务·本周战报，背单词和做数学都能涨战力，跟上周的自己比一比！';
 /* ============================== */
 (function(){
   var key='learnerName', nm=document.getElementById('nm'), greet=document.getElementById('greet');
@@ -230,6 +231,25 @@ function dismissNew(){
   else if(xp>0)t='连胜断了没关系，今天练一组，重新点火 🔥';
   else t='今天练一组，点燃你的连胜之火 🔥';
   document.getElementById('bToday').textContent=t;
+
+  /* 本周战报：本周（周一起）vs 上周，跟过去的自己比 */
+  function weekStart(off){var d=new Date();var wd=(d.getDay()+6)%7;d.setDate(d.getDate()-wd-(off||0));
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  var thisMon=weekStart(0),lastMon=weekStart(7);
+  function xpIn(from,to){ // [from,to) 区间战力，to 为 null 表示不设上限
+    function f(h,w){return h.reduce(function(s,r){
+      return s+((r.d>=from&&(!to||r.d<to))?(r.n||0)*w:0);},0);}
+    return f(vh,1)+f(mh,2);
+  }
+  var wXp=xpIn(thisMon,null),lXp=xpIn(lastMon,thisMon);
+  var wDays=[...new Set(vh.concat(mh).filter(function(r){return r.d>=thisMon;}).map(function(r){return r.d;}))].length;
+  var wt='📅 本周战报：战力 +'+wXp+' · 出战 '+wDays+' 天｜';
+  if(wXp===0&&lXp===0)wt+='新的一周，从今天第一组开始 🏁';
+  else if(lXp===0)wt+='上周没出战，本周已经开张，开门红 🚀';
+  else if(wXp>lXp)wt+='已超上周（上周 +'+lXp+'），稳了 🚀';
+  else if(wXp===lXp)wt+='刚好追平上周，再练一组就反超 ⚡';
+  else wt+='还差 '+(lXp-wXp)+' 战力追平上周，冲一把 💪';
+  document.getElementById('bWeek').textContent=wt;
 
   document.getElementById('nm').addEventListener('input',function(){
     var n=this.value.trim();
