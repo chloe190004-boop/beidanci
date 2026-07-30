@@ -62,6 +62,24 @@ header p{margin:0;font-size:14px;color:var(--sub)}
   font-weight:700;color:#7a5a1e;line-height:1.55}
 .newban .x{margin-left:auto;background:#7a5a1e;color:#fff;border:none;border-radius:16px;padding:7px 13px;
   font-size:12px;font-weight:800;cursor:pointer;flex-shrink:0;white-space:nowrap}
+
+.board{background:linear-gradient(135deg,#1c2b38,#274a5e);border-radius:20px;box-shadow:var(--shadow);
+  padding:18px;margin-bottom:16px;color:#fff}
+.b-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px}
+.b-title{font-size:14px;font-weight:800;letter-spacing:.5px}
+.b-xp{font-size:12px;font-weight:800;color:#9fd8e8}
+.b-rank{display:flex;align-items:center;gap:14px}
+.b-emoji{font-size:44px;line-height:1;flex-shrink:0}
+.b-rank b{display:block;font-size:22px;font-weight:800;letter-spacing:1px}
+.b-barwrap{height:8px;background:rgba(255,255,255,.18);border-radius:5px;overflow:hidden;margin:7px 0 5px}
+.b-barwrap i{display:block;height:100%;background:linear-gradient(90deg,#ffd76e,#ffb340);border-radius:5px;transition:.4s}
+.b-next{font-size:11.5px;color:#bcd6de;font-weight:700}
+.b-mini{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.b-mini>div{flex:1;min-width:72px;background:rgba(255,255,255,.09);border-radius:12px;padding:9px 4px;text-align:center}
+.b-mini b{display:block;font-size:19px;font-variant-numeric:tabular-nums;line-height:1.25}
+.b-mini span{font-size:10.5px;color:#bcd6de;font-weight:700}
+.b-today{margin-top:12px;background:rgba(255,255,255,.09);border-radius:12px;padding:10px 12px;
+  font-size:13px;font-weight:700;line-height:1.7}
 </style>
 </head>
 <body>
@@ -82,6 +100,20 @@ header p{margin:0;font-size:14px;color:var(--sub)}
       <label>挑战者</label>
       <input id="nm" placeholder="写上你的名字" maxlength="12" autocomplete="off" spellcheck="false">
     </div>
+  </div>
+
+  <div class="board" id="board">
+    <div class="b-top"><span class="b-title" id="bTitle">⚔️ 我的战绩</span><span class="b-xp" id="bXp"></span></div>
+    <div class="b-rank">
+      <span class="b-emoji" id="bEmoji">🥉</span>
+      <div style="flex:1;min-width:0">
+        <b id="bRank">青铜</b>
+        <div class="b-barwrap"><i id="bBar"></i></div>
+        <span class="b-next" id="bNext"></span>
+      </div>
+    </div>
+    <div class="b-mini" id="bMini"></div>
+    <div class="b-today" id="bToday"></div>
   </div>
 
   <a class="app app-en" href="./english.html">
@@ -113,8 +145,8 @@ header p{margin:0;font-size:14px;color:var(--sub)}
 </div>
 <script>
 /* ===== 每次更新只改这两行 ===== */
-var APP_VERSION='2026-07-25';
-var UPDATE_NOTE='英语背单词加了「我的记录」（连续天数·正确率·进步曲线），入口页可以填名字了。';
+var APP_VERSION='2026-07-29';
+var UPDATE_NOTE='首页新增「战绩榜」：段位·战力·连胜·今日任务，背单词和做数学都能涨战力，一眼看到自己的进步！';
 /* ============================== */
 (function(){
   var key='learnerName', nm=document.getElementById('nm'), greet=document.getElementById('greet');
@@ -135,6 +167,75 @@ function dismissNew(){
   localStorage.setItem('seenVersion',APP_VERSION);
   document.getElementById('newban').style.display='none';
 }
+
+/* ===== 战绩榜：汇总英语 + 数学的练习记录 ===== */
+(function(){
+  function app(key){try{var o=JSON.parse(localStorage.getItem(key)||'{}');
+    return {hist:Array.isArray(o.hist)?o.hist:[],tot:typeof o.tot==='number'?o.tot:null};}catch(e){return {hist:[],tot:null};}}
+  var vA=app('vocabMS2'),mA=app('mathcalc2'),vh=vA.hist,mh=mA.hist;   // 英语 / 数学
+  function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  function dayDiff(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000);}
+
+  function sumN(h){return h.reduce(function(s,r){return s+(r.n||0);},0);}
+  var words=vA.tot!==null?vA.tot:sumN(vh);      // 累计练过的单词次数（tot 不受 hist 300 条上限影响）
+  var maths=mA.tot!==null?mA.tot:sumN(mh);      // 累计数学题数
+  var xp=words+maths*2;                                          // 战力：1词=1，1题=2
+  var bestArr=vh.concat(mh).map(function(r){return r.rate||0;});
+  var best=bestArr.length?Math.max.apply(null,bestArr):null;
+
+  var days=[...new Set(vh.concat(mh).map(function(r){return r.d;}))].sort();
+  var streak=0;
+  if(days.length&&dayDiff(days[days.length-1],today())<=1){
+    streak=1;
+    for(var i=days.length-1;i>0;i--){if(dayDiff(days[i-1],days[i])===1)streak++;else break;}
+  }
+
+  var RANKS=[['青铜','🥉',0],['白银','🥈',150],['黄金','🥇',400],['铂金','💠',900],
+             ['钻石','💎',1800],['星耀','🌟',3200],['王者','👑',5000]];
+  var ri=0;while(ri<RANKS.length-1&&xp>=RANKS[ri+1][2])ri++;
+  var name=RANKS[ri][0],emoji=RANKS[ri][1],pct,nextTxt;
+  if(ri<RANKS.length-1){
+    var lo=RANKS[ri][2],hi=RANKS[ri+1][2];
+    pct=(xp-lo)/(hi-lo)*100;
+    nextTxt='还差 '+(hi-xp)+' 战力升 '+RANKS[ri+1][0]+' '+RANKS[ri+1][1]+'（练一组 ≈ +30）';
+  }else{
+    var star=1+Math.floor((xp-5000)/1000),nxt=5000+star*1000;
+    name='王者 '+'★'.repeat(Math.min(star,5))+(star>5?'×'+star:'');
+    pct=(xp-(nxt-1000))/1000*100;
+    nextTxt='还差 '+(nxt-xp)+' 战力点亮下一颗星';
+  }
+
+  var nm=(localStorage.getItem('learnerName')||'').trim();
+  document.getElementById('bTitle').textContent='⚔️ '+(nm?nm+' 的战绩':'我的战绩');
+  document.getElementById('bXp').textContent='战力 '+xp;
+  document.getElementById('bEmoji').textContent=emoji;
+  document.getElementById('bRank').textContent=name;
+  document.getElementById('bBar').style.width=Math.max(2,Math.min(100,pct))+'%';
+  document.getElementById('bNext').textContent=xp===0?'完成第一组练习，即刻定级 🏁':nextTxt;
+
+  document.getElementById('bMini').innerHTML=
+    '<div><b style="color:#ffb340">'+streak+'</b><span>🔥 连胜天数</span></div>'+
+    '<div><b>'+words+'</b><span>📚 累计单词</span></div>'+
+    '<div><b>'+maths+'</b><span>🧮 数学题数</span></div>'+
+    '<div><b style="color:#7fe3a8">'+(best===null?'—':best+'%')+'</b><span>🎯 最高正确率</span></div>';
+
+  var td=today();
+  var vToday=vh.filter(function(r){return r.d===td;}).reduce(function(s,r){return s+(r.n||0);},0);
+  var mToday=mh.filter(function(r){return r.d===td;}).reduce(function(s,r){return s+(r.n||0);},0);
+  var t;
+  if(vToday&&mToday)t='今日双杀 ✅✅　英语 '+vToday+' 词 · 数学 '+mToday+' 题，战力 +'+(vToday+mToday*2)+'，明天见！';
+  else if(vToday)t='今日任务：📚 英语 ✅ '+vToday+' 词 · 🧮 数学 ⏳ 还没打——双杀就差一步！';
+  else if(mToday)t='今日任务：🧮 数学 ✅ '+mToday+' 题 · 📚 英语 ⏳ 还没打——双杀就差一步！';
+  else if(streak>0)t='今天还没出战 ⏳ 练一组就能保住 🔥'+streak+' 天连胜！';
+  else if(xp>0)t='连胜断了没关系，今天练一组，重新点火 🔥';
+  else t='今天练一组，点燃你的连胜之火 🔥';
+  document.getElementById('bToday').textContent=t;
+
+  document.getElementById('nm').addEventListener('input',function(){
+    var n=this.value.trim();
+    document.getElementById('bTitle').textContent='⚔️ '+(n?n+' 的战绩':'我的战绩');
+  });
+})();
 </script>
 </body>
 </html>

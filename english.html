@@ -204,6 +204,7 @@ LS.speak = LS.speak!==false;
 LS.ex = LS.ex!==false;
 LS.slow = LS.slow===true;
 LS.hist = Array.isArray(LS.hist)?LS.hist:[];
+if(typeof LS.tot!=='number')LS.tot=LS.hist.reduce(function(s,r){return s+(r.n||0);},0);
 function save(){localStorage.setItem('vocabMS2',JSON.stringify(LS));}
 function vToday(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function vDiff(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000);}
@@ -478,6 +479,7 @@ function done(){
     const prevBest=LS.hist.length?Math.max.apply(null,LS.hist.map(function(r){return r.rate;})):null;
     const lastRate=LS.hist.length?LS.hist[LS.hist.length-1].rate:null;
     LS.hist.push({d:vToday(),mode:mode,n:total,ok:right,rate:rate});
+    LS.tot=(LS.tot||0)+total;
     if(LS.hist.length>300)LS.hist=LS.hist.slice(-300);
     save();
     const st=vStreak();

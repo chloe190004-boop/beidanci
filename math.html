@@ -484,6 +484,7 @@ const LS=JSON.parse(localStorage.getItem('mathcalc2')||'{}');
 LS.topics=Array.isArray(LS.topics)&&LS.topics.length?LS.topics:['add','mul'];
 LS.level=LS.level|0; LS.count=LS.count||10;
 LS.hist=Array.isArray(LS.hist)?LS.hist:[];
+if(typeof LS.tot!=='number')LS.tot=LS.hist.reduce(function(s,r){return s+(r.n||0);},0);
 function save(){localStorage.setItem('mathcalc2',JSON.stringify(LS));}
 function mLearner(){return (localStorage.getItem('learnerName')||'').trim();}
 function today(){const d=new Date();
@@ -540,11 +541,11 @@ document.querySelectorAll('#levelSeg .chip').forEach(c=>c.classList.toggle('on',
 document.querySelectorAll('#countSeg .chip').forEach(c=>c.classList.toggle('on',+c.dataset.n===LS.count));
 
 /* ========== 练习 ========== */
-let queue=[],initN=0,done=0,firstOK=0,prob=null,vals=[],active=0,locked=false,t0=0,timerId=null,okFlags=[];
+let queue=[],initN=0,done=0,firstOK=0,prob=null,vals=[],active=0,locked=false,t0=0,timerId=null,okFlags=[],finished=false;
 
 function start(){
   if(LS.topics.length===0){alert('请至少选一个练习类型');return;}
-  initN=LS.count;done=0;firstOK=0;queue=[];
+  initN=LS.count;done=0;firstOK=0;queue=[];finished=false;
   for(let i=0;i<initN;i++){
     const k=pick(LS.topics);const p=GEN[k].fn(LS.level===1);
     p.topic=GEN[k].name;p.first=true;queue.push(p);
@@ -636,6 +637,7 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='Enter')kp('ok');
 });
 function finish(){
+  if(finished)return;finished=true;
   if(timerId)clearInterval(timerId);
   const s=Math.floor((Date.now()-t0)/1000),rate=Math.round(firstOK/initN*100);
   const H=LS.hist;
@@ -644,6 +646,7 @@ function finish(){
   const prevBestTime=sameN.length?Math.min.apply(null,sameN.map(r=>r.t)):null;
   const lastRate=H.length?H[H.length-1].rate:null;
   H.push({d:today(),t:s,ok:firstOK,n:initN,rate:rate});
+  LS.tot=(LS.tot||0)+initN;
   if(H.length>300)LS.hist=H.slice(-300);
   save();
   const st=streak();
