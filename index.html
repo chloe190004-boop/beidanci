@@ -31,6 +31,9 @@ header p{margin:0;font-size:14px;color:var(--sub)}
 .app-en::before{background:linear-gradient(180deg,var(--en2),var(--en))}
 .app-ma::before{background:linear-gradient(180deg,var(--ma2),var(--ma))}
 .app-pr::before{background:linear-gradient(180deg,#ffb340,#e8712b)}
+.app-pw::before{background:linear-gradient(180deg,#f78fb3,#e0489a)}
+.app-pw:hover{border-color:#e0489a}
+.app-pw .go{color:#e0489a}
 .app-en:hover{border-color:var(--en)}
 .app-ma:hover{border-color:var(--ma)}
 .app-pr:hover{border-color:#e8712b}
@@ -140,6 +143,16 @@ header p{margin:0;font-size:14px;color:var(--sub)}
     <div class="go">›</div>
   </a>
 
+  <a class="app app-pw" href="./primary-words.html">
+    <div class="ic">🐣</div>
+    <div class="tx">
+      <b>小学背单词</b>
+      <span>沪教牛津 · 三年级上 ~ 六年级下 全八册 · 1067 词</span>
+      <small>翻卡自测 · 拼写测试 · 真人发音 · 错词本</small>
+    </div>
+    <div class="go">›</div>
+  </a>
+
   <a class="app app-pr" href="./primary.html">
     <div class="ic">🎈</div>
     <div class="tx">
@@ -159,8 +172,8 @@ header p{margin:0;font-size:14px;color:var(--sub)}
 </div>
 <script>
 /* ===== 每次更新只改这两行 ===== */
-var APP_VERSION='2026-07-30b';
-var UPDATE_NOTE='英语单词库扩到全六册 1590 词（新增八下·九上·九下，全部带例句）；数学已扩到八/九年级；首页有「战绩榜」，小学生有「算术乐园」！';
+var APP_VERSION='2026-07-30c';
+var UPDATE_NOTE='新增「小学背单词」：沪教牛津三年级~六年级全八册 1067 词，翻卡·拼写·发音·错词本全都有；初中单词库也已扩到全六册 1590 词！';
 /* ============================== */
 (function(){
   var key='learnerName', nm=document.getElementById('nm'), greet=document.getElementById('greet');
