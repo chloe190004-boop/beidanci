@@ -127,6 +127,8 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
 .bw{display:inline-block;background:#fff;border:1px solid #e3eaf2;border-radius:8px;padding:2px 8px;margin:2px 3px;font-size:13px;font-weight:700}
 .bw i{color:#7b8894;font-style:normal;font-weight:600;font-size:12px}
 .bw.dim{opacity:.5}
+.grade .gp{height:5px;background:#e8eef4;border-radius:3px;margin-top:6px;overflow:hidden}
+.grade .gp i{display:block;height:100%;background:linear-gradient(90deg,#5b8def,#3b6ef0);width:0;transition:.3s}
 </style>
 </head>
 <body>
@@ -211,6 +213,7 @@ LS.speak = LS.speak!==false;
 LS.ex = LS.ex!==false;
 LS.slow = LS.slow===true;
 LS.hist = Array.isArray(LS.hist)?LS.hist:[];
+LS.learn=(LS.learn&&typeof LS.learn==='object')?LS.learn:{};
 if(typeof LS.tot!=='number')LS.tot=LS.hist.reduce(function(s,r){return s+(r.n||0);},0);
 function save(){localStorage.setItem('vocabMS2',JSON.stringify(LS));}
 function vToday(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -256,11 +259,13 @@ GRADES.forEach(g=>{
   const n=DATA.filter(d=>d.g===g).length;
   const el=document.createElement('div');
   el.className='grade'+(g===LS.grade?' on':'');
-  el.innerHTML=`<div class="t">${g}</div><div class="d">${n}词</div>`;
+  el.setAttribute('data-g',g);
+  el.innerHTML=`<div class="t">${g}</div><div class="d" data-role="cnt">${n}词</div><div class="gp"><i></i></div>`;
   el.onclick=()=>{LS.grade=g;save();document.querySelectorAll('.grade').forEach(x=>x.classList.remove('on'));el.classList.add('on');renderUnits();renderWrong();};
   gBox.appendChild(el);
 });
 
+updProgress();
 const uBox=document.getElementById('units');
 function renderUnits(){
   const us=unitsOf(LS.grade);
@@ -306,6 +311,7 @@ function loadVoice(){
         || vs.find(v=>/^en/i.test(v.lang)) || null;
 }
 if('speechSynthesis'in window){ loadVoice(); speechSynthesis.onvoiceschanged=loadVoice; }
+if(/HarmonyOS|HUAWEI|HMSCore|HuaweiBrowser/i.test(navigator.userAgent))window.__noTTS=true;
 function ttsFallback(txt){ /* 无本地英文语音引擎（如鸿蒙/华为浏览器）时用有道在线发音 */
   try{
     if(window.__ttsA){window.__ttsA.pause();}
@@ -316,7 +322,7 @@ function ttsFallback(txt){ /* 无本地英文语音引擎（如鸿蒙/华为浏�
 }
 function speak(w){
   let txt=cleanSpeak(w);
-  if(/^[A-Za-z]{2}$/.test(w)&&w[0].toLowerCase()===w[1].toLowerCase())txt=w[0].toUpperCase()+'.';
+  if(/^[A-Za-z]{2}$/.test(w)&&w[0].toLowerCase()===w[1].toLowerCase())txt=w[0].toUpperCase();
   if(window.__noTTS||!('speechSynthesis'in window)){ttsFallback(txt);return;}
   speechSynthesis.cancel();
   if(!ENVOICE)loadVoice();
@@ -517,7 +523,7 @@ function checkSpell(){
   spellState='done';
   document.getElementById('spex').innerHTML=exBlock(d);
   const acts=document.getElementById('spacts');
-  if(val===d.w.toLowerCase()){
+  if(val===d.w.toLowerCase()){LS.learn[wkey(d)]=1;save();
     sp.classList.add('right');right++;
     delete LS.marked[wkey(d)];save();
     document.getElementById('sphint').innerHTML='✅ 正确！';
@@ -547,10 +553,22 @@ function spellGiveUp(){
     '<button class="act no wide" onclick="next()">下一个 →</button>';
 }
 function mark(){const d=queue[idx];LS.marked[wkey(d)]=1;save();wrong++;next();}
-function markKnow(){const d=queue[idx];delete LS.marked[wkey(d)];save();right++;next();}
+function markKnow(){const d=queue[idx];delete LS.marked[wkey(d)];LS.learn[wkey(d)]=1;save();right++;next();}
 function next(){idx++;render();}
+function updProgress(){
+  document.querySelectorAll('.grade').forEach(function(el){
+    const g=el.getAttribute('data-g');if(!g)return;
+    const n=DATA.filter(d=>d.g===g).length;
+    const k=Object.keys(LS.learn).filter(x=>x.indexOf(g+'|')===0).length;
+    const c=el.querySelector('[data-role="cnt"]');
+    if(c)c.textContent=k?('已背 '+Math.min(k,n)+' / '+n):(n+'词');
+    const i=el.querySelector('.gp i');
+    if(i)i.style.width=(n?Math.min(100,Math.round(k/n*100)):0)+'%';
+  });
+}
 
 function done(){
+  updProgress();
   document.getElementById('bar').style.width='100%';
   const total=queue.length;
   const perfect = total>0 && right===total;
