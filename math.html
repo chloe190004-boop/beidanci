@@ -93,6 +93,17 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
   .key{padding:22px 0;font-size:28px}
   .btn{font-size:18px;padding:18px}
 }
+.draftbtn{font-size:12px;font-weight:800;color:var(--brand);background:rgba(0,0,0,.06);
+  padding:6px 10px;border-radius:12px;cursor:pointer;flex-shrink:0;user-select:none}
+#draft{position:fixed;left:0;right:0;bottom:0;height:58vh;background:#fffdf5;z-index:60;
+  border-radius:18px 18px 0 0;box-shadow:0 -10px 34px rgba(20,40,50,.25);display:none;flex-direction:column}
+.draft-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px dashed #d8d2c0}
+.draft-bar b{flex:1;font-size:13.5px;color:#7a6a45}
+.draft-bar button{border:none;border-radius:12px;padding:7px 14px;font-size:12.5px;font-weight:800;cursor:pointer}
+.draft-clear{background:#f2ead6;color:#7a6a45}
+.draft-close{background:var(--brand);color:#fff}
+#dcanvas{flex:1;touch-action:none;width:100%;display:block;
+  background-image:linear-gradient(#efe9d8 1px,transparent 1px);background-size:100% 26px}
 </style>
 </head>
 <body>
@@ -145,6 +156,7 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
     <span class="back" onclick="goHome()">‹</span>
     <div class="progress"><i id="bar"></i></div>
     <span class="timer" id="timer">0:00</span>
+    <span class="draftbtn" onclick="openDraft()">✏️ 草稿</span>
   </div>
   <div class="qcard">
     <span class="qtag" id="qtag"></span>
@@ -711,10 +723,40 @@ function start(){
 }
 function updTimer(){const s=Math.floor((Date.now()-t0)/1000);
   document.getElementById('timer').textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+
+/* ===== 草稿纸 ===== */
+let dctx=null,__drawing=false,__lx=0,__ly=0;
+function openDraft(){
+  const d=document.getElementById('draft');d.style.display='flex';
+  const c=document.getElementById('dcanvas');
+  const r=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+  if(c.width!==Math.round(r.width*dpr)||c.height!==Math.round(r.height*dpr)){
+    c.width=Math.round(r.width*dpr);c.height=Math.round(r.height*dpr);
+    dctx=c.getContext('2d');dctx.scale(dpr,dpr);
+    dctx.lineWidth=3;dctx.lineCap='round';dctx.lineJoin='round';dctx.strokeStyle='#2a3a46';
+  }
+  if(!c.__bound){c.__bound=1;
+    function pos(e){const rr=c.getBoundingClientRect();const t=e.touches?e.touches[0]:e;
+      return [t.clientX-rr.left,t.clientY-rr.top];}
+    function down(e){e.preventDefault();__drawing=true;const p=pos(e);__lx=p[0];__ly=p[1];}
+    function move(e){if(!__drawing)return;e.preventDefault();const p=pos(e);
+      dctx.beginPath();dctx.moveTo(__lx,__ly);dctx.lineTo(p[0],p[1]);dctx.stroke();__lx=p[0];__ly=p[1];}
+    function up(){__drawing=false;}
+    c.addEventListener('mousedown',down);c.addEventListener('mousemove',move);window.addEventListener('mouseup',up);
+    c.addEventListener('touchstart',down,{passive:false});
+    c.addEventListener('touchmove',move,{passive:false});
+    c.addEventListener('touchend',up);
+  }
+}
+function clearDraft(){const c=document.getElementById('dcanvas');
+  if(dctx)dctx.clearRect(0,0,c.width,c.height);}
+function closeDraft(){document.getElementById('draft').style.display='none';}
+
 function goHome(){if(timerId)clearInterval(timerId);
   document.getElementById('play').style.display='none';
   document.getElementById('home').style.display='block';}
 function nextQ(){
+  if(dctx)clearDraft();
   if(queue.length===0){finish();return;}
   prob=queue.shift();vals=prob.blanks.map(()=>'');active=0;locked=false;okFlags=[];
   document.getElementById('bar').style.width=(done/initN*100)+'%';
@@ -830,6 +872,12 @@ function finish(){
   window.scrollTo(0,0);
 }
 </script>
+<div id="draft">
+  <div class="draft-bar"><b>✏️ 草稿纸（用手指或鼠标写）</b>
+    <button class="draft-clear" onclick="clearDraft()">🧹 擦掉重写</button>
+    <button class="draft-close" onclick="closeDraft()">收起 ▾</button></div>
+  <canvas id="dcanvas"></canvas>
+</div>
 <script data-goatcounter="https://chloechan.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
