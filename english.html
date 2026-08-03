@@ -524,7 +524,9 @@ function checkSpell(){
   spellState='done';
   document.getElementById('spex').innerHTML=exBlock(d);
   const acts=document.getElementById('spacts');
-  if(val===d.w.toLowerCase()){LS.learn[wkey(d)]=1;save();
+  const __norm=function(t){return t.toLowerCase().replace(/[.。．]+$/,'').replace(/\s+/g,' ').trim();};
+  const __ok=[__norm(d.w),__norm(d.w.replace(/\([^)]*\)/g,' ')),__norm(d.w.replace(/[()]/g,' '))].indexOf(__norm(val))>=0;
+  if(__ok){LS.learn[wkey(d)]=1;save();
     sp.classList.add('right');right++;
     delete LS.marked[wkey(d)];save();
     document.getElementById('sphint').innerHTML='✅ 正确！';
