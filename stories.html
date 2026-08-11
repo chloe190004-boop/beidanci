@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="英语小故事">
+<meta name="theme-color" content="#0e9f6e">
+<title>英语小故事 · 读一读</title>
+<style>
+:root{
+  --bg:#f4f8f6; --card:#ffffff; --ink:#1c2434; --sub:#6b7688;
+  --brand:#0e9f6e; --brand2:#2fbc8a; --ok:#18a06a; --warn:#e8813a; --bad:#e14b5a;
+  --gold:#d9a441; --line:#e4ece8; --shadow:0 8px 30px rgba(20,70,50,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--ink);min-height:100vh;padding:env(safe-area-inset-top) 0 30px}
+.wrap{max-width:600px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;justify-content:space-between;margin:6px 2px 14px}
+h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
+.badge{font-size:12px;color:var(--sub);background:#e8f4ef;padding:4px 10px;border-radius:20px}
+.hublink{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:800;text-decoration:none;
+  padding:5px 11px;border-radius:20px;flex-shrink:0;color:var(--brand);background:#e8f4ef}
+.card{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+.label{font-size:12px;color:var(--sub);font-weight:700;margin-bottom:8px;letter-spacing:.5px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:9px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;
+  font-size:13.5px;font-weight:700;color:var(--sub);cursor:pointer;transition:.15s;user-select:none}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:0 4px 12px rgba(14,159,110,.28)}
+.mini{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px}
+.mini>div{flex:1;min-width:80px;background:#f2f8f5;border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.mini b{display:block;font-size:22px;font-variant-numeric:tabular-nums;line-height:1.2}
+.mini span{font-size:11px;color:var(--sub)}
+.vempty{font-size:13px;color:var(--sub);text-align:center;padding:10px 0;line-height:1.6}
+/* 故事列表 */
+.st{display:flex;align-items:center;gap:13px;background:var(--card);border-radius:16px;box-shadow:var(--shadow);
+  padding:14px 15px;margin-bottom:11px;cursor:pointer;border:2px solid transparent;transition:.15s;position:relative}
+.st:active{transform:scale(.99)}
+.st.done{border-color:#bfe6d4;background:#f7fdfa}
+.st .em{font-size:34px;line-height:1;flex-shrink:0;width:44px;text-align:center}
+.st .tx{flex:1;min-width:0}
+.st .tx b{display:block;font-size:16.5px;font-weight:800;line-height:1.3}
+.st .tx span{display:block;font-size:12.5px;color:var(--sub);font-weight:700;margin-top:2px}
+.st .tx small{display:block;font-size:11px;color:var(--sub);margin-top:5px;opacity:.9}
+.st .go{font-size:22px;color:var(--brand);font-weight:800;flex-shrink:0}
+.st .tx small .lvtag{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:8px;margin-right:5px}
+.lv1{background:#e8f4ef;color:#0e9f6e} .lv2{background:#fff2e2;color:#c9702a} .lv3{background:#ece9fb;color:#6c53d9}
+.tick{position:absolute;top:9px;right:12px;font-size:12px;color:var(--ok);font-weight:800}
+/* 阅读 */
+#read,#quiz{display:none}
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.back{font-size:24px;cursor:pointer;color:var(--sub);padding:4px 10px}
+.rtitle{flex:1;min-width:0;text-align:center}
+.rtitle b{display:block;font-size:16px;font-weight:800;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rtitle span{display:block;font-size:11.5px;color:var(--sub);font-weight:700}
+.tools{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tool{flex:1;min-width:88px;padding:11px 6px;border-radius:12px;border:1.5px solid var(--line);background:#fff;
+  font-size:13px;font-weight:800;color:var(--sub);cursor:pointer;text-align:center}
+.tool.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.sent{background:var(--card);border-radius:14px;box-shadow:var(--shadow);padding:13px 15px;margin-bottom:10px;
+  cursor:pointer;border-left:4px solid transparent;transition:.15s}
+.sent.playing{border-left-color:var(--brand);background:#f2fbf7}
+.sent .en{font-size:17px;line-height:1.75;font-weight:600}
+.sent .zh{font-size:13.5px;color:var(--sub);line-height:1.6;margin-top:7px;display:none}
+.sent.show .zh{display:block}
+.sent .w{cursor:pointer;border-radius:4px;padding:0 1px}
+.sent .w:active{background:#d8f0e5}
+.sent .gl{margin-top:8px;background:#f2f8f5;border:1px solid var(--line);border-radius:10px;
+  padding:7px 10px;font-size:13px;font-weight:700;display:none}
+.sent .gl b{color:var(--brand)}
+.sent.hasgl .gl{display:block}
+.readbtn{display:block;width:100%;padding:16px;border:none;border-radius:14px;background:var(--brand);
+  color:#fff;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(14,159,110,.32);margin-top:4px}
+.readbtn:active{transform:scale(.98)}
+.readbtn.ghost{background:#e8f4ef;color:var(--brand);box-shadow:none;margin-top:10px}
+/* 小测 */
+.q{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:16px;margin-bottom:12px}
+.q .qt{font-size:15.5px;font-weight:800;line-height:1.5;margin-bottom:11px}
+.opt{padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:#fff;font-size:14.5px;
+  font-weight:700;margin-bottom:8px;cursor:pointer;line-height:1.5}
+.opt.pick{border-color:var(--brand);background:#f2fbf7}
+.opt.right{border-color:var(--ok);background:#e8f7f0;color:var(--ok)}
+.opt.wrong{border-color:var(--bad);background:#fdeceb;color:var(--bad)}
+.done{text-align:center;padding:26px 12px}
+.done .em{font-size:56px}
+.done h2{font-size:23px;margin:12px 0 6px}
+.done p{color:var(--sub);font-size:14.5px;margin:4px 0;line-height:1.7}
+.rec{margin-top:14px;background:#fff8ec;border:1px solid #f0dfc0;border-radius:12px;padding:12px 14px;
+  font-size:14px;font-weight:700;line-height:1.9;text-align:left;color:#7a5a1e}
+.foot{text-align:center;font-size:12px;color:var(--sub);margin-top:8px;line-height:1.7}
+@media (min-width:768px){
+  .wrap{max-width:680px;padding:24px}
+  h1{font-size:24px}
+  .sent .en{font-size:19px}
+  .sent .zh{font-size:15px}
+  .readbtn{font-size:18px;padding:18px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="home">
+  <header>
+    <a class="hublink" href="./">‹ 切换</a>
+    <h1 style="flex:1;text-align:center">📚 英语小故事</h1>
+    <span class="badge" id="totalBadge"></span>
+  </header>
+
+  <div class="card" id="rstats"></div>
+
+  <div class="card">
+    <div class="label">选难度</div>
+    <div class="chips" id="levels"></div>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="foot">故事都是公版经典寓言、童话，用简单英语重写<br>点句子听朗读 · 点单词看意思 · 读完做 3 道小题</div>
+</div>
+
+<div id="read">
+  <div class="topbar">
+    <span class="back" onclick="goHome()">‹</span>
+    <div class="rtitle"><b id="rt"></b><span id="rtz"></span></div>
+    <span class="badge" id="rcount"></span>
+  </div>
+  <div class="tools">
+    <button class="tool" id="tPlay" onclick="toggleAll()">🔊 整篇朗读</button>
+    <button class="tool" id="tZh" onclick="toggleZh()">🇨🇳 显示中文</button>
+    <button class="tool" id="tSlow" onclick="toggleSlow()">🐢 慢速</button>
+  </div>
+  <div id="sents"></div>
+  <button class="readbtn" onclick="startQuiz()">读完了，做 3 道小题 →</button>
+  <button class="readbtn ghost" onclick="goHome()">返回故事列表</button>
+  <div class="foot">点一句 = 听这句 + 看中文　点一个词 = 看这个词的意思</div>
+</div>
+
+<div id="quiz"></div>
+
+</div>
+<script>
+/* ============ 故事库：公版寓言/童话，用简单英语重写 ============ */
+const STORIES=[
+{id:1,lv:1,em:'🦁',t:'The Lion and the Mouse',tz:'狮子和老鼠',
+ s:[['A big lion is sleeping under a tree.','一头大狮子正在一棵树下睡觉。'],
+    ['A little mouse runs over his nose.','一只小老鼠从他的鼻子上跑过去。'],
+    ['The lion wakes up and catches the mouse.','狮子醒了，一把抓住了老鼠。'],
+    ['"Please let me go!" the mouse cries.','“求求你放了我吧！”老鼠哭着说。'],
+    ['"One day I will help you."','“总有一天我会帮你的。”'],
+    ['The lion laughs. "You? Help me?"','狮子大笑起来。“你？帮我？”'],
+    ['But he is kind, so he lets the mouse go.','但他心肠好，就把老鼠放走了。'],
+    ['A few days later, hunters catch the lion in a net.','几天以后，猎人用一张网抓住了狮子。'],
+    ['The little mouse hears him and bites the net open.','小老鼠听见了他的叫声，把网咬开了。'],
+    ['The lion is free again.','狮子重新自由了。'],
+    ['A small friend can be a big help.','再小的朋友，也能帮上大忙。']],
+ q:[{t:'老鼠为什么会吵醒狮子？',o:['它从狮子的鼻子上跑过去','它咬了狮子一口','它大声叫醒狮子'],r:0},
+    {t:'狮子最后为什么放了老鼠？',o:['因为他心肠好','因为老鼠跑得太快','因为猎人来了'],r:0},
+    {t:'这个故事想告诉我们什么？',o:['再小的朋友也能帮大忙','睡觉不要睡在树下','老鼠比狮子厉害'],r:0}]},
+
+{id:2,lv:1,em:'🍇',t:'The Fox and the Grapes',tz:'狐狸和葡萄',
+ s:[['A hungry fox walks into a garden.','一只饿狐狸走进了一个园子。'],
+    ['He sees some grapes high on a vine.','他看见藤上高高地挂着一些葡萄。'],
+    ['The grapes look big and sweet.','那些葡萄看起来又大又甜。'],
+    ['The fox jumps up, but he cannot reach them.','狐狸跳起来，却够不到它们。'],
+    ['He runs and jumps again and again.','他一次又一次地跑起来跳。'],
+    ['The grapes are still too high.','葡萄还是太高了。'],
+    ['At last the fox is very tired.','最后狐狸累坏了。'],
+    ['He walks away and says, "Those grapes are sour."','他一边走开一边说：“那些葡萄是酸的。”'],
+    ['It is easy to hate what you cannot get.','得不到的东西，人就容易说它不好。']],
+ q:[{t:'狐狸为什么走进园子？',o:['他饿了','他在找朋友','他在躲雨'],r:0},
+    {t:'狐狸最后吃到葡萄了吗？',o:['没有，他够不到','吃到了一颗','他把藤拉了下来'],r:0},
+    {t:'“那些葡萄是酸的”这句话说明什么？',o:['他得不到就说它不好','葡萄真的酸','他尝过了'],r:0}]},
+
+{id:3,lv:1,em:'🐦',t:'The Crow and the Pitcher',tz:'乌鸦喝水',
+ s:[['It is a very hot day.','这是非常热的一天。'],
+    ['A crow is thirsty and looks for water everywhere.','一只乌鸦口渴了，到处找水喝。'],
+    ['At last he finds a tall pitcher.','最后他找到一个高高的水罐。'],
+    ['There is only a little water in it.','里面只有一点点水。'],
+    ['The crow puts his beak in, but the water is too low.','乌鸦把嘴伸进去，可水太低了。'],
+    ['He thinks and thinks.','他想啊想。'],
+    ['Then he sees many small stones on the ground.','然后他看见地上有许多小石子。'],
+    ['He drops the stones into the pitcher one by one.','他把石子一颗一颗丢进水罐里。'],
+    ['The water comes up higher and higher.','水越升越高。'],
+    ['Now the crow can drink. He is very happy.','现在乌鸦能喝到水了。他非常开心。'],
+    ['Where there is a will, there is a way.','有志者，事竟成。']],
+ q:[{t:'乌鸦一开始为什么喝不到水？',o:['水太低了，嘴够不着','水罐是空的','水太烫了'],r:0},
+    {t:'乌鸦想了什么办法？',o:['把小石子一颗颗丢进罐里','把水罐推倒','叫来别的乌鸦帮忙'],r:0},
+    {t:'这个故事告诉我们？',o:['肯动脑筋就有办法','口渴要多喝水','石头很有用'],r:0}]},
+
+{id:4,lv:1,em:'🐢',t:'The Tortoise and the Hare',tz:'龟兔赛跑',
+ s:[['A hare laughs at a tortoise. "You are so slow!"','一只兔子嘲笑乌龟：“你也太慢了！”'],
+    ['"Let us have a race," says the tortoise.','“我们比一场吧。”乌龟说。'],
+    ['All the animals come to watch.','所有动物都来看比赛。'],
+    ['The hare runs very fast and soon he is far ahead.','兔子跑得飞快，很快就遥遥领先。'],
+    ['"The tortoise is far behind. I can sleep for a while."','“乌龟还远着呢，我可以睡一会儿。”'],
+    ['So the hare lies under a tree and falls asleep.','于是兔子躺在树下睡着了。'],
+    ['The tortoise walks on and on. He never stops.','乌龟一直走啊走，从不停下。'],
+    ['He passes the sleeping hare quietly.','他悄悄地从睡着的兔子身边走过。'],
+    ['When the hare wakes up, the tortoise is at the finish line.','等兔子醒来，乌龟已经到终点了。'],
+    ['Slow and steady wins the race.','慢而不停，才能赢。']],
+ q:[{t:'兔子为什么输了？',o:['他中途睡着了','他跑错了路','他跑得比乌龟慢'],r:0},
+    {t:'乌龟是怎么赢的？',o:['一直走，从不停下','抄了近路','让兔子让着他'],r:0},
+    {t:'这个故事想说明？',o:['坚持不停比跑得快更重要','兔子不会跑步','比赛前要睡够'],r:0}]},
+
+{id:5,lv:1,em:'🦴',t:'The Dog and His Bone',tz:'狗和它的骨头',
+ s:[['A dog finds a big bone.','一只狗找到了一根大骨头。'],
+    ['He takes it home over a small bridge.','他叼着骨头，走过一座小桥回家。'],
+    ['On the bridge he looks down into the water.','在桥上他往水里看。'],
+    ['He sees another dog with another bone!','他看见另一只狗，也叼着一根骨头！'],
+    ['"That bone looks bigger," he thinks.','“那根骨头看起来更大。”他想。'],
+    ['He barks at the dog in the water.','他冲着水里的狗大叫。'],
+    ['When he opens his mouth, his bone falls into the river.','他一张嘴，骨头就掉进河里了。'],
+    ['Now he has no bone at all.','现在他一根骨头也没有了。'],
+    ['The dog in the water was only himself.','水里的那只狗，其实就是他自己。'],
+    ['If you want too much, you may lose what you have.','想要的太多，反而会失去手里的。']],
+ q:[{t:'狗在水里看见的是什么？',o:['他自己的影子','另一只狗','他的朋友'],r:0},
+    {t:'骨头是怎么掉进河里的？',o:['他一张嘴叫，骨头就掉了','被别的狗抢走了','他自己扔的'],r:0},
+    {t:'这个故事提醒我们？',o:['太贪心会失去已有的','过桥要小心','骨头不能带回家'],r:0}]},
+
+{id:6,lv:1,em:'🐜',t:'The Ant and the Grasshopper',tz:'蚂蚁和蚱蜢',
+ s:[['It is summer. A grasshopper sings all day.','夏天到了。一只蚱蜢整天唱歌。'],
+    ['An ant carries food to his home again and again.','一只蚂蚁一趟又一趟地把食物搬回家。'],
+    ['"Why do you work so hard?" asks the grasshopper.','“你干嘛这么辛苦？”蚱蜢问。'],
+    ['"Winter is coming," says the ant. "I need food."','“冬天要来了，”蚂蚁说，“我需要食物。”'],
+    ['"Winter is far away! Come and sing with me."','“冬天还远着呢！过来跟我一起唱歌吧。”'],
+    ['Soon winter comes. Snow covers the ground.','很快冬天来了。雪盖住了地面。'],
+    ['The grasshopper has nothing to eat.','蚱蜢没有东西吃。'],
+    ['He is cold and hungry, so he goes to the ant for help.','他又冷又饿，就去找蚂蚁帮忙。'],
+    ['The ant gives him some food and says,','蚂蚁给了他一些食物，说：'],
+    ['"Next summer, work a little every day."','“明年夏天，每天都干一点儿活吧。”'],
+    ['Work first, play later.','先干活，再玩耍。']],
+ q:[{t:'夏天里蚂蚁在做什么？',o:['一趟趟把食物搬回家','跟蚱蜢一起唱歌','在睡觉'],r:0},
+    {t:'冬天来了，蚱蜢怎么样了？',o:['又冷又饿，没东西吃','存了很多食物','搬去了南方'],r:0},
+    {t:'蚂蚁最后给蚱蜢的建议是？',o:['明年夏天每天干一点活','以后别唱歌了','搬到蚂蚁家来住'],r:0}]},
+
+{id:7,lv:2,em:'🐺',t:'The Boy Who Cried Wolf',tz:'狼来了',
+ s:[['A young boy looked after sheep on a hill near a village.','一个小男孩在村子旁边的山上放羊。'],
+    ['The work was quiet, and he often felt bored.','这活儿很清闲，他常常觉得无聊。'],
+    ['One day he had an idea and shouted, "Wolf! Wolf!"','有一天他想出个主意，大喊：“狼来了！狼来了！”'],
+    ['All the people ran up the hill with sticks in their hands.','村民们全都拿着棍子跑上山来。'],
+    ['When they saw no wolf, the boy laughed at them.','他们没看见狼，男孩却嘲笑他们。'],
+    ['A few days later he did the same thing again.','过了几天，他又这样做了一次。'],
+    ['The people ran up the hill, and again there was no wolf.','村民又跑上山来，还是没有狼。'],
+    ['They went home angrily and said nothing to him.','他们生气地回了家，一句话也没跟他说。'],
+    ['Then one evening a real wolf came into the field.','后来有一天傍晚，真的有一只狼闯进了羊群。'],
+    ['The boy shouted "Wolf!" as loudly as he could.','男孩拼尽力气大喊：“狼来了！”'],
+    ['But this time nobody came to help him.','可是这一次，没有一个人来帮他。'],
+    ['"We do not believe a boy who always tells lies."','“老是撒谎的孩子，我们不信他。”'],
+    ['Nobody believes a liar, even when he tells the truth.','撒谎的人就算说了真话，也没人肯信。']],
+ q:[{t:'男孩第一次喊“狼来了”是为什么？',o:['他觉得无聊，想开个玩笑','他真的看见了狼','他想让大家上山帮忙'],r:0},
+    {t:'真的狼来了以后发生了什么？',o:['没有人再来帮他','村民很快赶来赶走了狼','狼被羊群吓跑了'],r:0},
+    {t:'这个故事想告诉我们？',o:['撒谎的人说真话也没人信','放羊很辛苦','喊得越大声越好'],r:0}]},
+
+{id:8,lv:2,em:'☀️',t:'The North Wind and the Sun',tz:'北风和太阳',
+ s:[['The North Wind and the Sun argued about who was stronger.','北风和太阳争论谁更有力量。'],
+    ['Just then a traveller came down the road in a warm coat.','正在这时，一个旅人穿着厚外套走在路上。'],
+    ['"Whoever can take off his coat is the stronger one," said the Sun.','太阳说：“谁能让他脱下外套，谁就更强。”'],
+    ['The North Wind tried first.','北风先来。'],
+    ['He blew hard and cold, and the leaves flew in the air.','他又猛又冷地吹，树叶漫天飞舞。'],
+    ['But the colder it became, the tighter the man held his coat.','可是天越冷，那人把外套裹得越紧。'],
+    ['At last the North Wind gave up.','最后北风放弃了。'],
+    ['Then the Sun came out from behind a cloud.','接着太阳从云后面出来了。'],
+    ['It shone gently and warmed the whole road.','阳光柔和地照着，把整条路都晒暖了。'],
+    ['The traveller began to feel hot.','旅人开始觉得热。'],
+    ['Soon he took off his coat and sat down under a tree.','很快他就脱下外套，坐到树下休息。'],
+    ['Being gentle is often stronger than being rough.','温和常常比强硬更有力量。']],
+ q:[{t:'北风和太阳在争什么？',o:['谁的力量更大','谁跑得更快','谁更暖和'],r:0},
+    {t:'北风为什么没能让旅人脱下外套？',o:['风越冷，旅人裹得越紧','旅人没有外套','风吹错了方向'],r:0},
+    {t:'太阳是怎么赢的？',o:['用温暖让旅人自己脱下外套','把外套晒破了','把旅人赶回了家'],r:0}]},
+
+{id:9,lv:2,em:'🥚',t:'The Goose with the Golden Eggs',tz:'下金蛋的鹅',
+ s:[['A farmer and his wife kept a goose behind their house.','一个农夫和妻子在屋后养了一只鹅。'],
+    ['One morning they found a golden egg in its nest.','一天早上，他们在鹅窝里发现了一个金蛋。'],
+    ['They could hardly believe their eyes.','他们简直不敢相信自己的眼睛。'],
+    ['They took the egg to town and sold it for a lot of money.','他们把金蛋拿到城里，卖了一大笔钱。'],
+    ['The next morning there was another golden egg.','第二天早上，又有一个金蛋。'],
+    ['Every day the goose laid one golden egg, and the family became rich.','鹅每天下一个金蛋，这家人富了起来。'],
+    ['But the farmer was not happy. He wanted the gold faster.','可农夫并不满足，他想更快拿到金子。'],
+    ['"There must be a pile of gold inside the goose," he said.','他说：“鹅肚子里一定有一堆金子。”'],
+    ['So he killed the goose and opened it.','于是他杀了鹅，把它剖开。'],
+    ['Inside there was no gold at all.','里面一点金子也没有。'],
+    ['It was just like any other goose.','它跟别的鹅没什么两样。'],
+    ['Now there were no more golden eggs.','从此再也没有金蛋了。'],
+    ['Greed often costs us what we already have.','贪心常常让人失去已经拥有的东西。']],
+ q:[{t:'这家人是怎么富起来的？',o:['鹅每天下一个金蛋','他们捡到了一袋金子','他们把鹅卖了'],r:0},
+    {t:'农夫为什么杀了鹅？',o:['他想一次拿到全部金子','鹅不再下蛋了','鹅生病了'],r:0},
+    {t:'最后结果怎样？',o:['鹅肚子里没有金子，金蛋也没了','他找到了一堆金子','鹅又活了过来'],r:0}]},
+
+{id:10,lv:2,em:'🐷',t:'The Three Little Pigs',tz:'三只小猪',
+ s:[['Three little pigs left home to build their own houses.','三只小猪离开家，各自去盖房子。'],
+    ['The first pig built his house of straw. It took him one hour.','老大用稻草盖房子，只花了一个小时。'],
+    ['The second pig built his house of sticks. It took him one day.','老二用木棍盖房子，花了一天。'],
+    ['The third pig built his house of bricks. It took him many weeks.','老三用砖头盖房子，花了好几个星期。'],
+    ['His brothers laughed at him. "You work too hard!"','两个哥哥笑话他：“你也太拼了吧！”'],
+    ['Then a hungry wolf came to the village.','后来，一只饿狼来到了村子。'],
+    ['He blew down the straw house, and the first pig ran away.','他吹倒了稻草房，老大逃走了。'],
+    ['He blew down the stick house, and the second pig ran away.','他吹倒了木棍房，老二也逃走了。'],
+    ['Both pigs hid in their brother’s brick house.','两只小猪都躲进了弟弟的砖房。'],
+    ['The wolf blew and blew, but the brick house did not move.','狼吹了又吹，砖房纹丝不动。'],
+    ['At last he gave up and ran into the forest.','最后狼放弃了，跑进了森林。'],
+    ['After that day the two brothers never laughed at hard work again.','从那天起，两个哥哥再也不笑话认真干活了。']],
+ q:[{t:'哪只小猪花的时间最长？',o:['用砖头盖房子的老三','用稻草的老大','用木棍的老二'],r:0},
+    {t:'狼为什么没能吹倒第三座房子？',o:['因为它是砖头盖的，很结实','因为狼太累了','因为门锁上了'],r:0},
+    {t:'这个故事想说明？',o:['认真做好的事才靠得住','盖房子要快','兄弟要住在一起'],r:0}]},
+
+{id:11,lv:2,em:'🥛',t:'The Milkmaid and Her Pail',tz:'挤奶姑娘和她的奶桶',
+ s:[['A milkmaid was walking to market with a pail of milk on her head.','一个挤奶姑娘头顶着一桶牛奶去集市。'],
+    ['As she walked, she began to dream.','走着走着，她做起了白日梦。'],
+    ['"I will sell this milk and buy three hundred eggs."','“我要把牛奶卖掉，买三百个鸡蛋。”'],
+    ['"The eggs will become chickens, and I will sell the chickens."','“鸡蛋会孵出小鸡，我再把小鸡卖了。”'],
+    ['"With that money I will buy a beautiful new dress."','“用那些钱，我要买一条漂亮的新裙子。”'],
+    ['"In my new dress I will go to the party."','“穿上新裙子，我就去参加聚会。”'],
+    ['"All the boys will talk to me, but I will just shake my head like this!"','“男孩们都会来跟我说话，我就这样摇摇头！”'],
+    ['And she shook her head.','说着她真的摇了摇头。'],
+    ['The pail fell down, and all the milk ran onto the ground.','奶桶掉了下来，牛奶全洒在地上。'],
+    ['There were no eggs, no chickens and no new dress.','鸡蛋没有了，小鸡没有了，新裙子也没有了。'],
+    ['Do not count your chickens before they are hatched.','蛋还没孵出来，别急着数小鸡。']],
+ q:[{t:'姑娘头上顶着什么？',o:['一桶牛奶','一篮鸡蛋','一条新裙子'],r:0},
+    {t:'牛奶是怎么洒的？',o:['她做梦时摇头，桶掉了下来','她被人撞倒了','桶破了个洞'],r:0},
+    {t:'这个故事提醒我们？',o:['事情还没成，别先当成真的','走路要小心','牛奶要盖好'],r:0}]},
+
+{id:12,lv:3,em:'🦢',t:'The Ugly Duckling',tz:'丑小鸭',
+ s:[['One summer a mother duck sat on her eggs by the river.','一年夏天，鸭妈妈在河边孵蛋。'],
+    ['One by one the eggs opened, and out came pretty yellow ducklings.','蛋一个接一个裂开，钻出漂亮的黄色小鸭。'],
+    ['But the last egg was bigger, and the duckling inside was grey and tall.','可最后一个蛋更大，里面的小鸭又灰又高。'],
+    ['"How ugly he is!" said the other ducks.','“他真丑！”别的鸭子说。'],
+    ['Everyone laughed at him, and even his brothers pushed him away.','大家都笑话他，连兄弟们也把他推开。'],
+    ['The poor duckling was so sad that he left the farm alone.','可怜的小鸭太难过了，独自离开了农场。'],
+    ['Autumn came, and the wind grew cold.','秋天来了，风也变冷了。'],
+    ['He hid among the reeds and lived through the long winter by himself.','他躲在芦苇丛里，一个人熬过了漫长的冬天。'],
+    ['He was often hungry, and no one came to help him.','他常常挨饿，没有人来帮他。'],
+    ['At last spring returned and the sun grew warm.','终于春天回来了，太阳暖了起来。'],
+    ['He saw three beautiful white birds on the lake.','他看见湖上有三只美丽的白鸟。'],
+    ['"They are swans. They will surely laugh at me too," he thought.','“那是天鹅，他们一定也会笑我。”他想。'],
+    ['But when he looked down at the water, he saw a white swan looking back.','可当他低头看水面时，水里是一只白天鹅在看着他。'],
+    ['The ugly duckling had grown into a swan.','丑小鸭已经长成了天鹅。'],
+    ['The other swans swam around him and welcomed him.','别的天鹅围着他游过来，欢迎他。'],
+    ['He had been a swan all the time. He only needed time to grow.','他一直都是天鹅，只是需要时间长大。']],
+ q:[{t:'小鸭为什么离开农场？',o:['大家都笑话他，他很难过','他想去看看外面的世界','鸭妈妈让他走的'],r:0},
+    {t:'他是怎么过冬的？',o:['独自躲在芦苇丛里，常常挨饿','住在别的农场里','和天鹅一起飞走了'],r:0},
+    {t:'他在水里看到了什么？',o:['一只白天鹅——就是他自己','三只丑小鸭','妈妈的影子'],r:0}]},
+
+{id:13,lv:3,em:'👑',t:"The Emperor's New Clothes",tz:'皇帝的新装',
+ s:[['Long ago there was an emperor who loved new clothes more than anything else.','很久以前，有个皇帝最爱的就是新衣服。'],
+    ['One day two strangers came to the palace.','有一天，两个陌生人来到王宫。'],
+    ['"We can make the finest clothes in the world," they said.','他们说：“我们能做出世上最好的衣服。”'],
+    ['"But only clever people can see them. Fools see nothing at all."','“不过只有聪明人看得见，蠢人什么也看不到。”'],
+    ['The emperor gave them gold, silk and a large room.','皇帝给了他们黄金、丝绸和一间大屋子。'],
+    ['Day after day they worked at empty machines.','他们一天又一天地在空织布机上忙活。'],
+    ['The emperor sent his oldest minister to have a look.','皇帝派最年长的大臣去看看。'],
+    ['The minister saw nothing, but he was afraid to look like a fool.','大臣什么也没看见，可他怕别人当他是蠢货。'],
+    ['"How beautiful!" he said, and everyone else said the same.','“真漂亮！”他说，其他人也都这么说。'],
+    ['At last the emperor put on the new clothes and walked through the town.','最后皇帝穿上新衣服，在城里游行。'],
+    ['All the people cheered, because nobody wanted to seem stupid.','人们都在欢呼，因为谁也不想显得笨。'],
+    ['Then a small child said in a loud voice, "But he is not wearing anything!"','这时一个小孩大声说：“可他什么也没穿呀！”'],
+    ['The people looked at each other, and soon everybody was saying it.','人们你看我我看你，很快都跟着这么说。'],
+    ['The emperor knew the child was right, but he walked on with his head high.','皇帝知道孩子说得对，却仍然昂着头走下去。'],
+    ['Sometimes only a child dares to say what everyone can see.','有时候，只有孩子敢说出大家都看见的事。']],
+ q:[{t:'两个陌生人说，什么样的人看不见新衣服？',o:['蠢人','小孩','没钱的人'],r:0},
+    {t:'大臣为什么说衣服很漂亮？',o:['他怕别人觉得他蠢','他真的看见了','皇帝给了他钱'],r:0},
+    {t:'谁先说出了真话？',o:['一个小孩','老大臣','皇帝自己'],r:0}]},
+
+{id:14,lv:3,em:'🔴',t:'Little Red Riding Hood',tz:'小红帽',
+ s:[['A girl always wore a red coat, so people called her Little Red Riding Hood.','有个女孩总穿红外套，大家就叫她小红帽。'],
+    ['One morning her mother said, "Grandma is ill. Please take her this bread and milk."','一天早上妈妈说：“外婆病了，把这些面包和牛奶送去。”'],
+    ['"Go straight there, and do not stop in the forest."','“一直走过去，别在林子里停下。”'],
+    ['On the way a wolf met her and asked where she was going.','路上一只狼碰见她，问她要去哪里。'],
+    ['"To Grandma’s house behind the three big trees," she said.','“去三棵大树后面外婆家。”她说。'],
+    ['"Look at those lovely flowers," said the wolf. "Pick some for her."','狼说：“看那些漂亮的花，摘几朵送给她吧。”'],
+    ['While the girl was picking flowers, the wolf ran to the house.','趁女孩摘花的时候，狼跑到了外婆家。'],
+    ['He shut Grandma in the cupboard and lay in her bed.','他把外婆关进柜子，躺到了她的床上。'],
+    ['When the girl arrived, she thought Grandma looked strange.','女孩到了以后，觉得外婆样子怪怪的。'],
+    ['"What big ears you have!" "All the better to hear you with."','“你的耳朵好大呀！”“这样才听得清你说话。”'],
+    ['"What big eyes you have!" "All the better to see you with."','“你的眼睛好大呀！”“这样才看得清你。”'],
+    ['"What a big mouth you have!" "All the better to eat you with!"','“你的嘴巴好大呀！”“这样才好把你吃掉！”'],
+    ['The wolf jumped out of the bed, and the girl screamed.','狼从床上扑出来，女孩尖叫起来。'],
+    ['A hunter was passing outside and heard her.','一个猎人正好从外面经过，听见了叫声。'],
+    ['He ran in and drove the wolf out of the house.','他冲进来，把狼赶出了屋子。'],
+    ['Grandma came out of the cupboard, safe but frightened.','外婆从柜子里出来，平安无事，只是吓坏了。'],
+    ['After that day, Little Red Riding Hood never talked to strangers in the forest.','从那天起，小红帽再也不在林子里跟陌生人说话了。']],
+ q:[{t:'妈妈叮嘱小红帽什么？',o:['一直走过去，别在林子里停下','路上要多摘些花','要跟遇到的人打招呼'],r:0},
+    {t:'狼用什么办法让女孩慢下来？',o:['骗她去摘花','把路挡住了','假装受伤'],r:0},
+    {t:'最后是谁救了她们？',o:['一个路过的猎人','她的妈妈','她自己跑掉了'],r:0}]},
+
+{id:15,lv:3,em:'🍬',t:'Hansel and Gretel',tz:'糖果屋',
+ s:[['A poor woodcutter lived at the edge of a great forest with his two children.','一个穷樵夫带着两个孩子住在大森林边上。'],
+    ['There was very little food at home, and the children often went to bed hungry.','家里吃的很少，孩子们常常饿着肚子睡觉。'],
+    ['One night Hansel filled his pockets with small white stones.','一天夜里，汉塞尔往口袋里装满了白色小石子。'],
+    ['The next day the family walked deep into the forest.','第二天，一家人走进了森林深处。'],
+    ['Hansel dropped the stones behind him, one by one.','汉塞尔一颗一颗地把石子丢在身后。'],
+    ['When the moon rose, the stones shone like silver and showed the way home.','月亮升起时，石子像银子一样闪光，指出了回家的路。'],
+    ['But the second time Hansel had only bread, and the birds ate every crumb.','可第二次他只有面包，鸟儿把面包屑吃得一点不剩。'],
+    ['Now the children were truly lost.','这下孩子们真的迷路了。'],
+    ['After two days they found a little house made of bread and sugar.','两天后，他们发现了一座面包和糖做的小屋。'],
+    ['They were so hungry that they began to eat the roof.','他们饿坏了，开始啃屋顶。'],
+    ['An old woman opened the door and smiled at them.','一个老婆婆开了门，冲他们微笑。'],
+    ['She gave them warm food, but at night she locked Hansel in a cage.','她给了他们热饭，夜里却把汉塞尔锁进了笼子。'],
+    ['She was a witch, and she wanted to eat him.','她是个女巫，想把他吃掉。'],
+    ['Every morning she felt his finger to see if he was fat enough.','每天早上她都摸摸他的手指，看他胖了没有。'],
+    ['Clever Hansel held out a thin bone instead, so the witch waited and waited.','聪明的汉塞尔伸出一根细骨头，女巫就一直等啊等。'],
+    ['One day Gretel pushed the witch into her own oven and shut the door.','有一天，格蕾特把女巫推进她自己的烤炉，关上了门。'],
+    ['The children filled their pockets with the witch’s treasure and ran.','孩子们把女巫的宝贝装满口袋，逃了出来。'],
+    ['A white bird showed them the way, and at last they saw their father’s house.','一只白鸟给他们带路，最后他们看见了爸爸的家。']],
+ q:[{t:'汉塞尔第一次是怎么找到回家的路的？',o:['沿路丢下白石子，月光下会发亮','记住了树上的记号','跟着一只白鸟'],r:0},
+    {t:'第二次为什么迷路了？',o:['面包屑被鸟吃光了','石子丢完了','天太黑看不见'],r:0},
+    {t:'姐弟俩最后是怎么脱身的？',o:['格蕾特把女巫推进烤炉','女巫把他们放了','爸爸找来救了他们'],r:0}]}
+];
+
+const LEVELS={1:['🐣 入门','lv1'],2:['🐤 进阶','lv2'],3:['🦅 挑战','lv3']};
+
+/* 题目录入时正确答案都写在第一个，这里按故事和题号做固定位移打散，
+   免得孩子发现「永远选第一个」；位移是确定的，同一题每次打开位置一样 */
+STORIES.forEach(function(st){
+  st.q.forEach(function(q,qi){
+    const n=q.o.length, sh=(st.id+qi)%n;
+    q.o=q.o.slice(sh).concat(q.o.slice(0,sh));
+    q.r=(q.r-sh+n)%n;
+  });
+});
+
+/* ============ 词典：点单词看意思 ============ */
+const DICT={
+'a':'一个','an':'一个','the':'这个（特指）','and':'和','but':'但是','so':'所以；如此','or':'或者',
+'is':'是','are':'是','was':'是（过去）','am':'是','be':'是','can':'能','cannot':'不能','will':'将要；意志',
+'he':'他','his':'他的','him':'他','she':'她','her':'她的','it':'它','its':'它的','they':'他们','you':'你',
+'i':'我','me':'我','my':'我的','we':'我们','us':'我们','himself':'他自己','all':'全部','only':'只有',
+'in':'在……里','on':'在……上','at':'在','to':'向；去','into':'进入','under':'在……下面','over':'越过；在……上方',
+'for':'为了','with':'和……一起','of':'……的','from':'从','away':'离开','up':'向上','down':'向下','out':'出来',
+'no':'没有','not':'不','too':'太；也','very':'非常','still':'仍然','again':'再一次','now':'现在','then':'然后',
+'when':'当……时','why':'为什么','what':'什么','where':'哪里','one':'一','many':'许多','some':'一些','another':'另一个',
+'day':'一天','days':'天','later':'后来','last':'最后','least':'最少','soon':'很快','never':'从不','always':'总是',
+'lion':'狮子','mouse':'老鼠','tree':'树','nose':'鼻子','hunter':'猎人','hunters':'猎人们','net':'网',
+'big':'大的','little':'小的','small':'小的','kind':'心肠好的；种类','free':'自由的','friend':'朋友','help':'帮助',
+'sleep':'睡觉','sleeping':'正在睡觉','run':'跑','runs':'跑','wake':'醒来','wakes':'醒来','catch':'抓住','catches':'抓住',
+'please':'请','let':'让','lets':'让','go':'走；去','cry':'哭；喊','cries':'哭喊','laugh':'笑','laughs':'笑',
+'hear':'听见','hears':'听见','bite':'咬','bites':'咬','open':'打开；张开','opens':'张开','few':'几个',
+'fox':'狐狸','grape':'葡萄','grapes':'葡萄','garden':'园子','vine':'藤','hungry':'饿的','sweet':'甜的','sour':'酸的',
+'walk':'走','walks':'走','see':'看见','sees':'看见','look':'看；看起来','looks':'看起来','jump':'跳','jumps':'跳',
+'reach':'够到','tired':'累的','say':'说','says':'说','those':'那些','easy':'容易的','hate':'讨厌','get':'得到','high':'高的',
+'crow':'乌鸦','pitcher':'水罐','water':'水','beak':'鸟嘴','stone':'石子','stones':'石子','ground':'地面','tall':'高的',
+'hot':'热的','thirsty':'渴的','everywhere':'到处','find':'找到','finds':'找到','put':'放','puts':'放','low':'低的',
+'think':'想','thinks':'想','drop':'丢下','drops':'丢下','come':'来','comes':'升起来；来','higher':'更高','drink':'喝',
+'happy':'开心的','there':'那里；有','way':'办法；路','tortoise':'乌龟','hare':'野兔','race':'赛跑','slow':'慢的',
+'animal':'动物','animals':'动物们','watch':'观看','fast':'快','far':'远','ahead':'在前面','behind':'在后面',
+'while':'一会儿','lie':'躺','lies':'躺','fall':'落下；掉','falls':'掉','asleep':'睡着的','stop':'停','stops':'停',
+'pass':'经过','passes':'经过','quietly':'悄悄地','finish':'终点；完成','line':'线','steady':'稳的','win':'赢','wins':'赢',
+'dog':'狗','bone':'骨头','take':'拿；带','takes':'带','home':'家','bridge':'桥','bark':'狗叫','barks':'狗叫',
+'mouth':'嘴','river':'河','bigger':'更大的','lose':'失去','want':'想要','much':'多','have':'有','has':'有',
+'summer':'夏天','winter':'冬天','grasshopper':'蚱蜢','ant':'蚂蚁','sing':'唱歌','sings':'唱歌','carry':'搬运','carries':'搬运',
+'food':'食物','work':'干活；工作','hard':'辛苦地；难的','ask':'问','asks':'问','need':'需要','coming':'要来了',
+'snow':'雪','cover':'盖住','covers':'盖住','nothing':'什么也没有','eat':'吃','cold':'冷的','give':'给','gives':'给',
+'goes':'去','next':'下一个','first':'先；第一','play':'玩','lot':'很多','one by one':'一个一个地',
+'by':'靠；被；在……旁边','do':'做；（助动词）','every':'每一个','if':'如果','may':'可能','that':'那个；那','them':'他们；它们',
+'about':'关于；大约','afraid':'害怕的','after':'在……之后','ago':'以前','air':'空气','alone':'独自','already':'已经',
+'among':'在……中间','angrily':'生气地','any':'任何','anything':'任何东西','argued':'争论（过去式）','around':'围着；到处',
+'arrived':'到达（过去式）','autumn':'秋天','back':'回来；背','beautiful':'美丽的','became':'变成（过去式）','because':'因为',
+'become':'变成','been':'是（完成时）','before':'在……之前','began':'开始（过去式）','believe':'相信','believes':'相信',
+'better':'更好','bird':'鸟','birds':'鸟','blew':'吹（过去式）','bored':'无聊的','both':'两个都','boy':'男孩','boys':'男孩们',
+'bread':'面包','brick':'砖','bricks':'砖','brother':'兄弟','brothers':'兄弟们','build':'建造','built':'建造（过去式）','buy':'买',
+'cage':'笼子','called':'叫做（过去式）','cheered':'欢呼（过去式）','chickens':'小鸡','child':'孩子','children':'孩子们',
+'clever':'聪明的','clothes':'衣服','cloud':'云','coat':'外套','costs':'让人付出（代价）','could':'能（过去）','count':'数',
+'crumb':'面包屑','cupboard':'柜子','dares':'敢','deep':'深的','did':'做（过去式）','door':'门','dream':'做梦；梦想',
+'dress':'连衣裙','dropped':'丢下（过去式）','drove':'赶走（过去式）','duck':'鸭子','duckling':'小鸭','ducklings':'小鸭们','ducks':'鸭子们',
+'each':'每一个','ears':'耳朵','edge':'边上','egg':'蛋','eggs':'蛋','else':'别的','emperor':'皇帝','empty':'空的','enough':'足够',
+'even':'甚至','evening':'傍晚','everybody':'每个人','everyone':'每个人','eyes':'眼睛','family':'一家人','farm':'农场',
+'farmer':'农夫','fat':'胖的','father':'爸爸','feel':'觉得；摸','felt':'觉得（过去式）','field':'田野','filled':'装满（过去式）',
+'finest':'最好的','finger':'手指','flew':'飞（过去式）','flowers':'花','fool':'蠢人','fools':'蠢人','forest':'森林',
+'frightened':'吓坏的','gentle':'温和的','gently':'温和地','girl':'女孩','gold':'金子','golden':'金的','goose':'鹅',
+'grandma':'外婆；奶奶','great':'大的；很好的','greed':'贪心','gretel':'格蕾特（女孩名）','grew':'长大；变得（过去式）',
+'grey':'灰色的','grow':'长大','grown':'长大了','hands':'手','hansel':'汉塞尔（男孩名）','hatched':'孵出来','head':'头',
+'held':'拿着（过去式）','hid':'躲（过去式）','hill':'小山','hood':'兜帽','hour':'小时','house':'房子','houses':'房子',
+'how':'怎样；多么','hundred':'一百','idea':'主意','ill':'生病的','inside':'在……里面','instead':'代替；反而','just':'正好；只是',
+'kept':'养着（过去式）','killed':'杀（过去式）','knew':'知道（过去式）','laid':'下（蛋）（过去式）','lake':'湖','large':'大的',
+'lay':'躺（过去式）','leaves':'树叶','left':'离开（过去式）；左边','liar':'撒谎的人','like':'像；喜欢','lived':'住（过去式）',
+'locked':'锁上（过去式）','long':'长的；久','loud':'大声的','loudly':'大声地','loved':'喜爱（过去式）','lovely':'可爱的',
+'machines':'机器','made':'做（过去式）','make':'做','man':'男人','market':'集市','met':'遇见（过去式）','milk':'牛奶',
+'milkmaid':'挤奶姑娘','minister':'大臣','money':'钱','moon':'月亮','more':'更多','morning':'早上','mother':'妈妈','move':'动',
+'must':'一定；必须','near':'靠近','nest':'窝','new':'新的','night':'夜里','nobody':'没有人','north':'北','off':'离开；脱下',
+'often':'常常','old':'老的','oldest':'最年长的','onto':'到……上','other':'别的','outside':'外面','oven':'烤炉','own':'自己的',
+'pail':'桶','palace':'王宫','party':'聚会','people':'人们','pick':'摘；挑','picking':'摘（正在）','pig':'猪','pigs':'猪',
+'pile':'一堆','pockets':'口袋','poor':'可怜的；穷的','pretty':'漂亮的','pushed':'推（过去式）','quiet':'安静的','real':'真的',
+'red':'红色的','reeds':'芦苇','returned':'回来（过去式）','rich':'富有的','riding':'骑（正在）','right':'对的；右边','road':'路',
+'roof':'屋顶','room':'房间','rose':'升起（过去式）','rough':'粗暴的','sad':'难过的','safe':'平安的','same':'同样的',
+'sat':'坐（过去式）','screamed':'尖叫（过去式）','second':'第二','seem':'显得','sell':'卖','sent':'派（过去式）','shake':'摇',
+'sheep':'羊','shone':'照耀（过去式）','shook':'摇（过去式）','shouted':'大喊（过去式）','showed':'指出（过去式）','shut':'关上',
+'silk':'丝绸','silver':'银子','smiled':'微笑（过去式）','sold':'卖（过去式）','sometimes':'有时候','spring':'春天','stick':'木棍',
+'sticks':'木棍','straight':'直接地；直的','strange':'奇怪的','strangers':'陌生人','straw':'稻草','stronger':'更强的',
+'stupid':'笨的','sugar':'糖','sun':'太阳','surely':'一定','swam':'游（过去式）','swan':'天鹅','swans':'天鹅','talk':'说话',
+'talked':'说话（过去式）','tells':'说；讲','than':'比','their':'他们的','thin':'细的；瘦的','third':'第三','this':'这个',
+'three':'三','through':'穿过','tighter':'更紧','time':'时间；次','town':'城里','traveller':'旅人','treasure':'宝贝',
+'tried':'试（过去式）','truly':'真正地','truth':'真话','two':'二','ugly':'丑的','village':'村子','voice':'声音',
+'waited':'等（过去式）','warm':'暖和的','warmed':'晒暖（过去式）','wearing':'穿着','weeks':'星期','welcomed':'欢迎（过去式）',
+'white':'白色的','who':'谁','whoever':'无论谁','whole':'整个的','wife':'妻子','wind':'风','witch':'女巫','wolf':'狼',
+'woman':'女人','woodcutter':'樵夫','wore':'穿（过去式）','world':'世界','yellow':'黄色的','young':'年轻的；小的','your':'你的'
+};
+const IRR={'went':'go','saw':'see','made':'make','took':'take','felt':'feel','found':'find','ran':'run','ate':'eat',
+'gave':'give','came':'come','fell':'fall','sat':'sit','said':'say','told':'tell','thought':'think','caught':'catch',
+'bit':'bite','heard':'hear','won':'win','lost':'lose','put':'put','was':'is','were':'are','had':'have'};
+function gloss(t){
+  const lc=t.toLowerCase().replace(/^['"]+|['".,!?]+$/g,'');
+  if(!lc)return null;
+  if(DICT[lc])return DICT[lc];
+  if(IRR[lc]){const b=IRR[lc];if(DICT[b])return DICT[b]+'（'+b+' 的变形）';}
+  const tries=[];
+  if(/ies$/.test(lc))tries.push([lc.slice(0,-3)+'y','复数/三单']);
+  if(/ing$/.test(lc)){tries.push([lc.slice(0,-3),'正在做']);tries.push([lc.slice(0,-3)+'e','正在做']);
+    tries.push([lc.replace(/(.)\1ing$/,'$1'),'正在做']);}
+  if(/ied$/.test(lc))tries.push([lc.slice(0,-3)+'y','过去式']);
+  if(/ed$/.test(lc)){tries.push([lc.slice(0,-2),'过去式']);tries.push([lc.slice(0,-1),'过去式']);}
+  if(/es$/.test(lc))tries.push([lc.slice(0,-2),'复数/三单']);
+  if(/s$/.test(lc))tries.push([lc.slice(0,-1),'复数/三单']);
+  if(/er$/.test(lc))tries.push([lc.slice(0,-2),'更……']);
+  if(/ly$/.test(lc))tries.push([lc.slice(0,-2),'……地']);
+  for(const pr of tries){if(DICT[pr[0]])return DICT[pr[0]]+'（'+pr[1]+'）';}
+  return null;
+}
+
+/* ============ 存档 ============ */
+const LS=JSON.parse(localStorage.getItem('storiesEN1')||'{}');
+LS.read=LS.read||{};        /* {故事id:'YYYY-MM-DD'} 读完过 */
+LS.quiz=LS.quiz||{};        /* {故事id:答对题数} 最好成绩 */
+LS.lv=LS.lv||0;             /* 0=全部难度 */
+LS.zh=LS.zh===true;
+LS.slow=LS.slow===true;
+LS.sent=typeof LS.sent==='number'?LS.sent:0;   /* 累计读过的句子数 */
+function save(){localStorage.setItem('storiesEN1',JSON.stringify(LS));}
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ============ 发音（与背单词页同一套，兼容鸿蒙/华为） ============ */
+let ENVOICE=null;
+function loadVoice(){
+  const vs=(window.speechSynthesis&&speechSynthesis.getVoices())||[];
+  if(!vs.length)return;
+  const good=['Samantha','Alex','Ava','Allison','Daniel','Karen','Moira','Serena','Google US English','Google UK English Female','Google UK English Male','Microsoft Zira','Microsoft Aria','Microsoft David','Microsoft Guy'];
+  ENVOICE = vs.find(v=>/^en[-_]?US/i.test(v.lang)&&good.some(g=>v.name.includes(g)))
+        || vs.find(v=>/^en[-_]?GB/i.test(v.lang)&&good.some(g=>v.name.includes(g)))
+        || vs.find(v=>/^en[-_]?US/i.test(v.lang)) || vs.find(v=>/^en[-_]?GB/i.test(v.lang))
+        || vs.find(v=>/^en/i.test(v.lang)) || null;
+}
+if('speechSynthesis'in window){ loadVoice(); speechSynthesis.onvoiceschanged=loadVoice; }
+if(/HarmonyOS|HUAWEI|HMSCore|HuaweiBrowser/i.test(navigator.userAgent))window.__noTTS=true;
+function ttsFallback(txt,onEnd){   /* 没有本地英文语音引擎时改用有道在线发音 */
+  try{
+    if(window.__ttsA){window.__ttsA.pause();}
+    var a=new Audio('https://dict.youdao.com/dictvoice?type=2&audio='+encodeURIComponent(txt));
+    a.playbackRate=LS.slow?0.7:1;
+    if(onEnd){a.onended=onEnd;a.onerror=onEnd;}
+    window.__ttsA=a; a.play().catch(function(){if(onEnd)onEnd();});
+  }catch(e){if(onEnd)onEnd();}
+}
+function speak(txt,onEnd){
+  if(window.__noTTS||!('speechSynthesis'in window)){ttsFallback(txt,onEnd);return;}
+  speechSynthesis.cancel();
+  if(!ENVOICE)loadVoice();
+  const u=new SpeechSynthesisUtterance(txt);
+  u.lang='en-US'; if(ENVOICE)u.voice=ENVOICE;
+  u.rate=LS.slow?0.6:0.85; u.pitch=1;
+  let fired=false,ended=false;
+  u.onstart=function(){fired=true;};
+  u.onend=function(){if(!ended){ended=true;if(onEnd)onEnd();}};
+  u.onerror=function(){if(!fired){fired=true;window.__noTTS=true;ttsFallback(txt,onEnd);}
+    else if(!ended){ended=true;if(onEnd)onEnd();}};
+  speechSynthesis.speak(u);
+  setTimeout(function(){
+    if(!fired){window.__noTTS=true;speechSynthesis.cancel();ttsFallback(txt,onEnd);}
+  },900);
+}
+function shutUp(){if(window.speechSynthesis)speechSynthesis.cancel();
+  if(window.__ttsA){try{window.__ttsA.pause();}catch(e){}}}
+
+/* ============ 首页 ============ */
+document.getElementById('totalBadge').textContent='共 '+STORIES.length+' 篇';
+function renderStats(){
+  const box=document.getElementById('rstats');
+  const readN=Object.keys(LS.read).length;
+  if(!readN){box.innerHTML='<div class="label">📖 我的阅读</div><div class="vempty">还没读过～读完第一篇就会出现 🏁</div>';return;}
+  const quizVals=Object.keys(LS.quiz).map(k=>LS.quiz[k]);
+  const full=quizVals.filter(v=>v===3).length;
+  box.innerHTML='<div class="label">📖 我的阅读</div><div class="mini">'+
+    '<div><b style="color:var(--ok)">'+readN+'</b><span>读完篇数</span></div>'+
+    '<div><b>'+LS.sent+'</b><span>累计句子</span></div>'+
+    '<div><b style="color:var(--warn)">'+full+'</b><span>小测全对</span></div>'+
+    '<div><b>'+(STORIES.length-readN)+'</b><span>还没读</span></div></div>';
+}
+function renderLevels(){
+  const box=document.getElementById('levels');box.innerHTML='';
+  [[0,'全部']].concat(Object.keys(LEVELS).map(k=>[+k,LEVELS[k][0]])).forEach(function(p){
+    const el=document.createElement('div');
+    el.className='chip'+(LS.lv===p[0]?' on':'');
+    el.textContent=p[1]+(p[0]?'（'+STORIES.filter(s=>s.lv===p[0]).length+'）':'');
+    el.onclick=function(){LS.lv=p[0];save();renderLevels();renderList();};
+    box.appendChild(el);
+  });
+}
+function wordCount(st){return st.s.reduce((n,p)=>n+p[0].split(/\s+/).length,0);}
+function renderList(){
+  const box=document.getElementById('list');box.innerHTML='';
+  const list=STORIES.filter(s=>!LS.lv||s.lv===LS.lv);
+  list.forEach(function(st){
+    const el=document.createElement('div');
+    const done=!!LS.read[st.id],score=LS.quiz[st.id];
+    el.className='st'+(done?' done':'');
+    el.innerHTML='<div class="em">'+st.em+'</div><div class="tx">'+
+      '<b>'+esc(st.tz)+'</b><span>'+esc(st.t)+'</span>'+
+      '<small><span class="lvtag '+LEVELS[st.lv][1]+'">'+LEVELS[st.lv][0]+'</span>'+
+      st.s.length+' 句 · '+wordCount(st)+' 词'+
+      (score!==undefined?' · 小测 '+score+'/3':'')+'</small></div><div class="go">›</div>'+
+      (done?'<span class="tick">✅ 读过</span>':'');
+    el.onclick=function(){openStory(st.id);};
+    box.appendChild(el);
+  });
+}
+
+/* ============ 阅读 ============ */
+let cur=null,playing=false,playIdx=0;
+function openStory(id){
+  cur=STORIES.filter(s=>s.id===id)[0];
+  document.getElementById('home').style.display='none';
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('read').style.display='block';
+  document.getElementById('rt').textContent=cur.tz;
+  document.getElementById('rtz').textContent=cur.t;
+  document.getElementById('rcount').textContent=cur.s.length+' 句';
+  document.getElementById('tZh').classList.toggle('on',LS.zh);
+  document.getElementById('tSlow').classList.toggle('on',LS.slow);
+  renderSents();
+  window.scrollTo(0,0);
+}
+function renderSents(){
+  const box=document.getElementById('sents');box.innerHTML='';
+  cur.s.forEach(function(p,i){
+    const el=document.createElement('div');
+    el.className='sent'+(LS.zh?' show':'');
+    el.innerHTML='<div class="en">'+wordsHtml(p[0])+'</div><div class="zh">'+esc(p[1])+'</div><div class="gl"></div>';
+    el.onclick=function(){ el.classList.add('show'); playOne(i); };
+    box.appendChild(el);
+  });
+}
+function wordsHtml(en){   /* 把句子切成一个个可点的单词，标点原样留着 */
+  return esc(en).split(/(\s+)/).map(function(tk){
+    if(/^\s+$/.test(tk))return tk;
+    const m=tk.match(/^([^A-Za-z']*)([A-Za-z']+)(.*)$/);
+    if(!m)return tk;
+    return m[1]+'<span class="w" onclick="showGloss(event,this)">'+m[2]+'</span>'+m[3];
+  }).join('');
+}
+function showGloss(ev,el){
+  ev.stopPropagation();
+  const sent=el.closest('.sent'),box=sent.querySelector('.gl'),w=el.textContent;
+  const g=gloss(w);
+  box.innerHTML='<b>'+esc(w)+'</b>　'+(g?esc(g):'（这个词字典里没有，听听整句吧）');
+  sent.classList.add('hasgl');
+  speak(w.replace(/[^A-Za-z']/g,''));
+}
+function playOne(i){
+  stopAll();
+  const els=document.querySelectorAll('#sents .sent');
+  els.forEach(e=>e.classList.remove('playing'));
+  if(els[i])els[i].classList.add('playing');
+  speak(cur.s[i][0]);
+}
+function toggleAll(){ playing?stopAll():playFrom(0); }
+function playFrom(i){
+  playing=true;playIdx=i;
+  document.getElementById('tPlay').classList.add('on');
+  document.getElementById('tPlay').textContent='⏹ 停止朗读';
+  step();
+}
+function step(){
+  if(!playing)return;
+  const els=document.querySelectorAll('#sents .sent');
+  els.forEach(e=>e.classList.remove('playing'));
+  if(playIdx>=cur.s.length){stopAll();return;}
+  const el=els[playIdx];
+  if(el){el.classList.add('playing');el.classList.add('show');
+    el.scrollIntoView({behavior:'smooth',block:'center'});}
+  const myIdx=playIdx;
+  speak(cur.s[playIdx][0],function(){
+    if(!playing||myIdx!==playIdx)return;
+    playIdx++; setTimeout(step,260);
+  });
+}
+function stopAll(){
+  playing=false;shutUp();
+  const b=document.getElementById('tPlay');
+  b.classList.remove('on');b.textContent='🔊 整篇朗读';
+  document.querySelectorAll('#sents .sent').forEach(e=>e.classList.remove('playing'));
+}
+function toggleZh(){
+  LS.zh=!LS.zh;save();
+  document.getElementById('tZh').classList.toggle('on',LS.zh);
+  document.querySelectorAll('#sents .sent').forEach(e=>e.classList.toggle('show',LS.zh));
+}
+function toggleSlow(){LS.slow=!LS.slow;save();document.getElementById('tSlow').classList.toggle('on',LS.slow);}
+function goHome(){
+  stopAll();
+  document.getElementById('read').style.display='none';
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('home').style.display='block';
+  renderStats();renderLevels();renderList();
+}
+
+/* ============ 读后小测 ============ */
+let picks=[];
+function startQuiz(){
+  stopAll();
+  picks=cur.q.map(function(){return -1;});
+  document.getElementById('read').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  renderQuiz(false);
+  window.scrollTo(0,0);
+}
+function renderQuiz(checked){
+  const box=document.getElementById('quiz');
+  let html='<div class="topbar"><span class="back" onclick="backToRead()">‹</span>'+
+    '<div class="rtitle"><b>读后小测</b><span>'+esc(cur.tz)+'</span></div>'+
+    '<span class="badge">3 题</span></div>';
+  cur.q.forEach(function(q,qi){
+    html+='<div class="q"><div class="qt">'+(qi+1)+'. '+esc(q.t)+'</div>';
+    q.o.forEach(function(o,oi){
+      let cls='opt';
+      if(checked){ if(oi===q.r)cls+=' right'; else if(picks[qi]===oi)cls+=' wrong'; }
+      else if(picks[qi]===oi)cls+=' pick';
+      html+='<div class="'+cls+'"'+(checked?'':' onclick="pick('+qi+','+oi+')"')+'>'+esc(o)+'</div>';
+    });
+    html+='</div>';
+  });
+  if(!checked)html+='<button class="readbtn" onclick="checkQuiz()">交卷 ✓</button>'+
+    '<button class="readbtn ghost" onclick="backToRead()">再读一遍课文</button>';
+  box.innerHTML=html;
+}
+function pick(qi,oi){picks[qi]=oi;renderQuiz(false);}
+function backToRead(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('read').style.display='block';
+  window.scrollTo(0,0);
+}
+function checkQuiz(){
+  if(picks.indexOf(-1)>=0){alert('还有题没选哦，三道都选上再交卷～');return;}
+  const ok=cur.q.filter(function(q,i){return picks[i]===q.r;}).length;
+  const first=!LS.read[cur.id];
+  const prev=LS.quiz[cur.id];
+  LS.read[cur.id]=today();
+  if(prev===undefined||ok>prev)LS.quiz[cur.id]=ok;
+  if(first)LS.sent+=cur.s.length;
+  save();
+  renderQuiz(true);
+  const box=document.getElementById('quiz');
+  let em,head;
+  if(ok===3){em='🎉';head='三题全对！';}
+  else if(ok===2){em='💪';head='答对 2 题，很不错';}
+  else if(ok===1){em='📖';head='答对 1 题，再读一遍就懂了';}
+  else{em='📖';head='这次没答对，别急，再读一遍';}
+  let recs=[];
+  if(first)recs.push('✅ 《'+cur.tz+'》读完啦，累计读了 '+LS.sent+' 句英文');
+  if(prev!==undefined&&ok>prev)recs.push('📈 比上次进步了，从 '+prev+'/3 到 '+ok+'/3');
+  const left=STORIES.filter(s=>!LS.read[s.id]);
+  if(left.length)recs.push('📚 还有 '+left.length+' 篇没读，下一篇：《'+left[0].tz+'》');
+  else recs.push('🏆 全部故事都读完了，厉害！');
+  const div=document.createElement('div');
+  div.className='card done';
+  div.innerHTML='<div class="em">'+em+'</div><h2>'+head+'</h2>'+
+    '<p>答对 <b style="color:var(--ok)">'+ok+'</b> / 3　绿色的是正确答案</p>'+
+    (recs.length?'<div class="rec">'+recs.join('<br>')+'</div>':'')+
+    '<div style="margin-top:16px;display:grid;gap:10px">'+
+      (left.length?'<button class="readbtn" onclick="openStory('+left[0].id+')">📖 读下一篇：'+esc(left[0].tz)+'</button>':'')+
+      '<button class="readbtn ghost" onclick="goHome()">返回故事列表</button></div>';
+  box.appendChild(div);
+  div.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+renderStats();renderLevels();renderList();
+</script>
+<script data-goatcounter="https://chloechan.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

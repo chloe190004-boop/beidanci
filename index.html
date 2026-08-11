@@ -32,6 +32,9 @@ header p{margin:0;font-size:14px;color:var(--sub)}
 .app-ma::before{background:linear-gradient(180deg,var(--ma2),var(--ma))}
 .app-pr::before{background:linear-gradient(180deg,#ffb340,#e8712b)}
 .app-pw::before{background:linear-gradient(180deg,#f78fb3,#e0489a)}
+.app-st::before{background:linear-gradient(180deg,#2fbc8a,#0e9f6e)}
+.app-st:hover{border-color:#0e9f6e}
+.app-st .go{color:#0e9f6e}
 .app-pw:hover{border-color:#e0489a}
 .app-pw .go{color:#e0489a}
 .app-en:hover{border-color:var(--en)}
@@ -133,6 +136,16 @@ header p{margin:0;font-size:14px;color:var(--sub)}
     <div class="go">›</div>
   </a>
 
+  <a class="app app-st" href="./stories.html">
+    <div class="ic">📚</div>
+    <div class="tx">
+      <b>英语小故事</b>
+      <span>公版寓言童话 · 15 篇 · 189 句 · 分三档难度</span>
+      <small>逐句朗读 · 整篇连读 · 点单词看意思 · 中英对照 · 读完做 3 道小题</small>
+    </div>
+    <div class="go">›</div>
+  </a>
+
   <a class="app app-ma" href="./math.html">
     <div class="ic">🔢</div>
     <div class="tx">
@@ -173,7 +186,7 @@ header p{margin:0;font-size:14px;color:var(--sub)}
 <script>
 /* ===== 每次更新只改这两行 ===== */
 var APP_VERSION='2026-08-11';
-var UPDATE_NOTE='新增「艾宾浩斯复习计划」！背过的词会按 1 天 → 2 天 → 4 天 → 7 天 → 15 天 → 30 天自动排复习，首页直接告诉你今天该复习几个词，一键开背；连着答对 6 轮就算记牢了。初中、小学两个背单词页都有。';
+var UPDATE_NOTE='两个大更新！①「艾宾浩斯复习计划」：背过的词按 1→2→4→7→15→30 天自动排复习，首页直接告诉你今天该复习几个词，一键开背（初中、小学背单词页都有）。②新增「英语小故事」：15 篇经典寓言童话，逐句朗读、点单词看意思、中英对照，读完还有 3 道小题。';
 /* ============================== */
 (function(){
   var key='learnerName', nm=document.getElementById('nm'), greet=document.getElementById('greet');
