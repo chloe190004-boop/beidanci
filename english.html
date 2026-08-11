@@ -131,6 +131,22 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
 .grade .gp i{display:block;height:100%;background:linear-gradient(90deg,#5b8def,#3b6ef0);width:0;transition:.3s}
 .ipa{font-size:15px;color:#7b8894;font-weight:700;margin-top:6px;letter-spacing:.3px}
 .a .ipa,.answer .ipa{margin-top:4px}
+/* 艾宾浩斯复习计划 */
+.ebcard{background:linear-gradient(135deg,#2a3f6b,#3b6ef0);color:#fff}
+.ebcard .label{color:#c9d8ff}
+.ebtop{display:flex;align-items:center;gap:14px}
+.ebtop .ebem{font-size:40px;line-height:1;flex-shrink:0}
+.ebtop b{display:block;font-size:22px;font-weight:800;line-height:1.3}
+.ebtop span{display:block;font-size:12.5px;color:#c9d8ff;font-weight:700;margin-top:3px;line-height:1.5}
+.ebmini{display:flex;gap:8px;margin-top:13px}
+.ebmini>div{flex:1;background:rgba(255,255,255,.13);border-radius:12px;padding:9px 4px;text-align:center}
+.ebmini b{display:block;font-size:19px;font-variant-numeric:tabular-nums;line-height:1.25}
+.ebmini span{font-size:10.5px;color:#c9d8ff;font-weight:700}
+.ebbtn{display:block;width:100%;margin-top:13px;padding:14px;border:none;border-radius:13px;
+  background:#fff;color:#2a3f6b;font-size:16px;font-weight:800;cursor:pointer}
+.ebbtn:active{transform:scale(.98)}
+.mode.wide{grid-column:1/3}
+.mode.wide .big{font-size:20px}
 </style>
 </head>
 <body>
@@ -142,6 +158,8 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
     <h1 style="flex:1;text-align:center">🦅 初中背单词</h1>
     <span class="badge" id="totalBadge"></span>
   </header>
+
+  <div class="card ebcard" id="ebcard"></div>
 
   <div class="card" id="vstats"></div>
 
@@ -170,6 +188,9 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
         <div class="big">⌨️</div><div class="t">拼写测试</div><div class="d">听/看中文拼单词</div></div>
       <div class="mode" data-mode="review" onclick="pickMode(this)">
         <div class="big">🔖</div><div class="t">复习不熟</div><div class="d">只背标记过的</div></div>
+      <div class="mode wide" data-mode="due" onclick="pickMode(this)">
+        <div class="big">🧠</div><div class="t">今日复习（艾宾浩斯）</div>
+        <div class="d" id="dueDesc">按遗忘曲线，把该忘的词捞回来</div></div>
     </div>
   </div>
 
@@ -224,6 +245,57 @@ function vStreak(){var days=[...new Set(LS.hist.map(function(r){return r.d;}))].
   if(!days.length)return 0; if(vDiff(days[days.length-1],vToday())>1)return 0;
   var n=1; for(var i=days.length-1;i>0;i--){if(vDiff(days[i-1],days[i])===1)n++;else break;} return n;}
 function learner(){return (localStorage.getItem('learnerName')||'').trim();}
+
+/* ---------- 艾宾浩斯复习计划 ----------
+   LS.learn[key] 旧格式是 1（只表示背过），新格式 {s:已通过轮次, nx:下次复习日期, d:上次日期}。
+   旧数据按「s=0 且今天到期」读，老用户升级后不丢进度、当天就能开始排复习。 */
+const EB_STEP=[1,2,4,7,15,30];   /* 第 s 轮答对后隔几天再见；走完 6 轮算牢记 */
+const EB_LIMIT=40;               /* 一轮复习最多背多少个，避免积压几百词一次全上 */
+function ebPlus(ds,n){var d=new Date(ds+'T00:00:00');d.setDate(d.getDate()+n);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function ebGet(k){var v=LS.learn[k];
+  if(!v)return null;
+  if(typeof v!=='object')return {s:0,nx:vToday(),d:''};
+  return {s:v.s||0,nx:v.nx||vToday(),d:v.d||''};}
+function ebSet(d,ok){
+  var k=wkey(d),cur=ebGet(k);
+  var s=ok?Math.min((cur?cur.s:0)+1,EB_STEP.length):0;
+  LS.learn[k]={s:s,nx:ebPlus(vToday(),s===0?1:EB_STEP[s-1]),d:vToday()};
+}
+function ebStat(){
+  var td=vToday(),tm=ebPlus(td,1),due=[],tomorrow=0,done=0,learning=0;
+  DATA.forEach(function(d){
+    var e=ebGet(wkey(d));if(!e)return;
+    if(e.s>=EB_STEP.length){done++;}else{learning++;}
+    if(e.nx<=td)due.push(d); else if(e.nx===tm)tomorrow++;
+  });
+  due.sort(function(a,b){return ebGet(wkey(a)).nx<ebGet(wkey(b)).nx?-1:1;});
+  return {due:due,tomorrow:tomorrow,done:done,learning:learning};
+}
+function renderEb(){
+  var s=ebStat(),box=document.getElementById('ebcard'),n=s.due.length;
+  var head,sub;
+  if(!s.learning&&!s.done){head='还没开始排复习';sub='背完第一组，这里就会按遗忘曲线安排复习：1 天 → 2 天 → 4 天 → 7 天 → 15 天 → 30 天';}
+  else if(n){head='今天该复习 '+n+' 个词';sub=n>EB_LIMIT?('这轮先背 '+EB_LIMIT+' 个，剩下的背完再来一轮'):'趁还没忘干净，捞回来最省劲';}
+  else if(s.tomorrow){head='今天没有到期的词 ✅';sub='明天有 '+s.tomorrow+' 个词到期，明天见';}
+  else{head='今天没有到期的词 ✅';sub='想多练就照常选单元背，背过的会自动排进复习计划';}
+  var html='<div class="label">🧠 艾宾浩斯复习计划</div>'+
+    '<div class="ebtop"><span class="ebem">'+(n?'⏰':(s.learning||s.done)?'🌤':'🌱')+'</span>'+
+    '<div style="flex:1;min-width:0"><b>'+head+'</b><span>'+sub+'</span></div></div>'+
+    '<div class="ebmini"><div><b>'+n+'</b><span>今天到期</span></div>'+
+    '<div><b>'+s.tomorrow+'</b><span>明天到期</span></div>'+
+    '<div><b>'+s.learning+'</b><span>复习中</span></div>'+
+    '<div><b>'+s.done+'</b><span>🏆 已牢记</span></div></div>';
+  if(n)html+='<button class="ebbtn" onclick="startDue()">🧠 开始今日复习（'+Math.min(n,EB_LIMIT)+'）</button>';
+  box.innerHTML=html;
+  var dd=document.getElementById('dueDesc');
+  if(dd)dd.textContent=n?('今天有 '+n+' 个词到期'):'今天没有到期的词';
+}
+function startDue(){
+  LS.mode='due';save();
+  document.querySelectorAll('.mode').forEach(function(m){m.classList.toggle('on',m.dataset.mode==='due');});
+  start();
+}
 function renderVStats(){
   var box=document.getElementById('vstats'),H=LS.hist,nm=learner();
   var title=(nm?esc(nm)+' 的记录':'我的记录');
@@ -382,7 +454,9 @@ function start(){
   const sel=LS.units[LS.grade]||[];
   mode=LS.mode;
   let pool;
-  if(mode==='review'){ pool=DATA.filter(d=>d.g===LS.grade&&LS.marked[wkey(d)]);
+  if(mode==='due'){ pool=ebStat().due.slice(0,EB_LIMIT);   /* 跨册取到期词，按到期日最早优先 */
+    if(pool.length===0){alert('今天没有到期要复习的词 ✅\n照常选单元背新词吧，背过的会自动排进复习计划');return;} }
+  else if(mode==='review'){ pool=DATA.filter(d=>d.g===LS.grade&&LS.marked[wkey(d)]);
     if(pool.length===0){alert('这一册的错词本还是空的～\n先用其它方式背，拼错或点「不熟」的词会自动收进错词本');return;} }
   else { if(sel.length===0){alert('请先选至少一个单元');return;}
     pool=DATA.filter(d=>d.g===LS.grade&&sel.includes(d.u)); }
@@ -397,7 +471,7 @@ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random
 function goHome(){document.getElementById('study').style.display='none';
   document.getElementById('home').style.display='block';
   if(window.speechSynthesis)speechSynthesis.cancel();
-  renderWrong();renderVStats();}
+  renderWrong();renderVStats();renderEb();}
 
 function exBlock(d){
   if(!LS.ex||!d.se) return '';
@@ -466,9 +540,10 @@ function render(){
   document.getElementById('count').textContent=idx+'/'+queue.length;
   if(idx>=queue.length){done();return;}
   const d=queue[idx];
-  const realMode=mode==='review'?'en2zh':mode;
+  const realMode=(mode==='review'||mode==='due')?'en2zh':mode;
   const marked=LS.marked[wkey(d)];
-  const tag=d.g.replace('年级','')+' '+d.u;
+  let tag=d.g.replace('年级','')+' '+d.u;
+  if(mode==='due'){const e=ebGet(wkey(d));if(e)tag+=' · 第'+(e.s+1)+'轮';}
   const star=d.st?'<span class="star">★星标词</span>':'';
 
   if(realMode==='spell'){
@@ -529,7 +604,7 @@ function checkSpell(){
   const acts=document.getElementById('spacts');
   const __norm=function(t){return t.toLowerCase().replace(/[.。．]+$/,'').replace(/\s+/g,' ').trim();};
   const __ok=[__norm(d.w),__norm(d.w.replace(/\([^)]*\)/g,' ')),__norm(d.w.replace(/[()]/g,' '))].indexOf(__norm(val))>=0;
-  if(__ok){LS.learn[wkey(d)]=1;save();
+  if(__ok){ebSet(d,true);save();
     sp.classList.add('right');right++;
     delete LS.marked[wkey(d)];save();
     document.getElementById('sphint').innerHTML='✅ 正确！'+(d.ph?' <span style="color:#7b8894;font-weight:700">/'+esc(d.ph)+'/</span>':'');
@@ -539,7 +614,7 @@ function checkSpell(){
     setTimeout(function(){if(idx===myIdx)next();},(LS.ex&&d.se)?1800:1000);
   }else{
     sp.classList.add('wrong');wrong++;
-    LS.marked[wkey(d)]=1;save();
+    LS.marked[wkey(d)]=1;ebSet(d,false);save();
     document.getElementById('sphint').innerHTML=
       '❌ 正确拼写：<b style="color:var(--ok)">'+esc(d.w)+'</b>'+(d.ph?' <span style="color:#7b8894">/'+esc(d.ph)+'/</span>':'')+'<br>已记入错词本 🔖';
     speak(d.w);
@@ -550,7 +625,7 @@ function spellGiveUp(){
   if(spellState!=='input')return;
   const d=queue[idx];
   spellState='done';skipped++;
-  LS.marked[wkey(d)]=1;save();
+  LS.marked[wkey(d)]=1;ebSet(d,false);save();
   document.getElementById('spex').innerHTML=exBlock(d);
   document.getElementById('sphint').innerHTML=
     '正确拼写：<b style="color:var(--ok)">'+esc(d.w)+'</b><br>已记入错词本 🔖';
@@ -558,8 +633,8 @@ function spellGiveUp(){
   document.getElementById('spacts').innerHTML=
     '<button class="act no wide" onclick="next()">下一个 →</button>';
 }
-function mark(){const d=queue[idx];LS.marked[wkey(d)]=1;save();wrong++;next();}
-function markKnow(){const d=queue[idx];delete LS.marked[wkey(d)];LS.learn[wkey(d)]=1;save();right++;next();}
+function mark(){const d=queue[idx];LS.marked[wkey(d)]=1;ebSet(d,false);save();wrong++;next();}
+function markKnow(){const d=queue[idx];delete LS.marked[wkey(d)];ebSet(d,true);save();right++;next();}
 function next(){idx++;render();}
 function updProgress(){
   document.querySelectorAll('.grade').forEach(function(el){
@@ -594,6 +669,10 @@ function done(){
       else if(lastRate!==null&&rate>lastRate)recs.push('📈 比上一组进步了 '+(rate-lastRate)+' 个百分点'); }
     if(st>=2)recs.push('🔥 已经连续背了 '+st+' 天，别断哦');
   }
+  const ebs=ebStat();
+  if(ebs.due.length)recs.push('🧠 复习计划：今天还有 '+ebs.due.length+' 个词到期');
+  else if(ebs.tomorrow)recs.push('🧠 复习计划：明天有 '+ebs.tomorrow+' 个词到期，明天见');
+  else if(mode==='due')recs.push('🧠 今天的复习全部清空，干得漂亮 ✅');
   let head, em;
   if(total===0){em='📖';head='这轮没有单词';}
   else if(perfect){em='🎉';head='全部搞定！太棒了';}
@@ -611,7 +690,8 @@ function done(){
       '<p>'+LS.grade+' 错词本里现在有 <b>'+markedCount+'</b> 个词</p>'+
       (recs.length?'<div class="rec">'+recs.join('<br>')+'</div>':'')+
       '<div style="margin-top:18px;display:grid;gap:10px">'+
-        (markedCount?'<button class="btn" onclick="reviewMarked()">🔖 立即复习错词本</button>':'')+
+        (ebs.due.length?'<button class="btn" onclick="startDue()">🧠 继续复习到期词（'+Math.min(ebs.due.length,EB_LIMIT)+'）</button>':'')+
+        (markedCount?'<button class="btn'+(ebs.due.length?' ghost':'')+'" onclick="reviewMarked()">🔖 立即复习错词本</button>':'')+
         '<button class="btn ghost" onclick="goHome()">返回首页</button>'+
       '</div>'+
     '</div>';
@@ -622,7 +702,7 @@ function reviewMarked(){mode='review';
   if(LS.shuffle)pool=shuffle(pool.slice());
   queue=pool;idx=0;right=0;wrong=0;skipped=0;render();}
 
-renderWrong();renderVStats();
+renderWrong();renderVStats();renderEb();
 </script>
 <script data-goatcounter="https://chloechan.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </body>
