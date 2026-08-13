@@ -96,6 +96,13 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
 .btn:active{transform:scale(.98)}
 .btn.ghost{background:#eeedfa;color:var(--brand);box-shadow:none;margin-top:10px}
 .btn.sm{padding:13px;font-size:15px}
+.essay{width:100%;min-height:150px;font-size:15.5px;line-height:1.9;padding:13px;border:2px solid var(--line);
+  border-radius:14px;outline:none;margin-top:14px;font-family:inherit;resize:vertical}
+.essay:focus{border-color:var(--brand)}
+.model{white-space:pre-wrap;font-size:15px;line-height:1.9;background:rgba(255,255,255,.75);
+  border-radius:10px;padding:11px 13px;margin-top:8px}
+.selfcheck{margin-top:9px;font-size:13px;color:#7a5a1e;background:#fff8ec;border:1px solid #f0dfc0;
+  border-radius:10px;padding:9px 11px;line-height:1.8;font-weight:700}
 /* 阅读原文 */
 .psg{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:17px;margin-bottom:12px}
 .psg .pm{font-size:11.5px;color:var(--sub);font-weight:700;margin-bottom:9px;line-height:1.7}
@@ -415,6 +422,130 @@ const SETS=[
   ex:'根据前句"The temperature has risen over the years."可知，此处说的是气温上升带来的后果。故选 B 项。'}
 ]},
 
+{id:'u1-s3w-jc',ord:108,u:1,sec:'Section 3　Speaking & Writing',tag:'基础',em:'✏️',mins:10,type:'fill',
+ qs:[
+ {n:1,src:'2025 江苏南京调研',t:'Qi Baishi, a famous Chinese calligrapher and painter, was regarded as "People\'s ___".',
+  hint:'用所给词的适当形式：art',a:['artist'],w:'artist',
+  ex:'句意为：齐白石，中国著名的书法家和画家，被认为是"人民艺术家"。根据"Qi Baishi, a famous Chinese calligrapher and painter"可知，此处表示艺术家；结合 a 和 People\'s，故填 Artist。'},
+ {n:2,t:'She played some ___ of music on the grass.',
+  hint:'用所给词的适当形式：piece',a:['pieces'],w:'piece',
+  ex:'句意为：她在草地上演奏了几首乐曲。piece 是可数名词，空前有 some 修饰，名词应用其复数形式。故填 pieces。'},
+ {n:3,src:'2025 上海金山区质检',t:'Children can learn a lot about life and ___ from keeping dogs and cats.',
+  hint:'用所给词的适当形式：die',a:['death'],w:'death',
+  ex:'句意为：孩子们可以从养狗和猫中学到很多关于生与死（的事情）。根据 life and 可知，此处应用名词作宾语，die 的名词形式是 death，意为"死亡"，为不可数名词。故填 death。'},
+ {n:4,src:'2025 云南玉溪调研',t:"—It's cold in winter. I can't wait for spring any more.　—Me too. I look forward to ___ the beauty of flowers.",
+  hint:'音标提示：/ədˈmaɪərɪŋ/',a:['admiring']},
+ {n:5,src:'2025 江苏扬州期末',t:'The block with traditional and ___ features is quite popular with travellers.',
+  hint:'音标提示：/ˈmɒdn/',a:['modern']},
+ {n:6,src:'2025 陕西西安质检',zh:'我们一起观看了春晚，整个房间充满了笑声。',
+  t:'We watched the Spring Festival Gala together, and ___ was full of laughter.',
+  hint:'根据汉语意思完成句子（每空一词，共 3 空）',a:['the whole room'],w:'whole'},
+ {n:7,src:'2025 广东江门期中',zh:'在我看来，老舍是中国最伟大的作家之一。',
+  t:'In my opinion, Lao She is ___ in China.',
+  hint:'根据汉语意思完成句子（每空一词，共 5 空）',a:['one of the greatest writers']},
+ {n:8,src:'2025 广东深圳调研',zh:'《日出·印象》是法国著名画家克洛德·莫奈画的。',
+  t:'Impression, Sunrise was painted by ___ Claude Monet.',
+  hint:'根据汉语意思完成句子（每空一词，共 4 空）',a:['the famous French painter']},
+ {n:9,zh:'我出生在合肥并且在那里长大，所以合肥是我的家乡。',
+  t:'I ___ Hefei and grew up there, so Hefei is my home town.',
+  hint:'根据汉语意思完成句子（每空一词，共 3 空）',a:['was born in'],w:'birth'},
+ {n:10,src:'2025 广东广州调研',zh:'引擎有问题。它正发出奇怪的噪音。',
+  t:"There ___ with the engine. It's making strange noises.",
+  hint:'根据汉语意思完成句子（每空一词，共 3 空）',a:['is something wrong']}
+]},
+
+{id:'u1-s3w-ci',ord:109,u:1,sec:'Section 3　写作词汇积累',tag:'写作',em:'🖊',mins:5,type:'fill',
+ qs:[
+ {n:1,zh:'出生（n.）',t:'___',hint:'写出这个词的英文',a:['birth'],w:'birth'},
+ {n:2,zh:'原来的；起初的',t:'___',hint:'写出这个词的英文',a:['original'],w:'original'},
+ {n:3,zh:'一种',t:'___',hint:'写出这个短语的英文（3 个词）',a:['a type of','a kind of'],w:'a type of'},
+ {n:4,zh:'在……上有天赋',t:'___',hint:'写出这个短语的英文',a:['be talented in','show talent for','be talented at'],w:'talented'}
+]},
+
+{id:'u1-s3w-xz',ord:110,u:1,sec:'Section 3　刷写作',tag:'写作',em:'📝',mins:20,type:'essay',
+ psg:{meta:'写作任务　[2025 四川绵阳质检]　假定你是李华，请回复你的笔友 Dale 的邮件。词数 100 左右，开头和结尾已给出，不计入总词数。\n提示词：modern times, Shaoxing, Dawn Blossoms Plucked at Dusk（《朝花夕拾》）, be made into movies, admire',
+  title:'Dale 的来信',
+  text:"To: Li Hua\nFrom: Dale\n\nHi Li Hua,\n　　How's it going?\n　　Recently I've read a book named The Diary of a Madman. I'm interested in the writer Lu Xun. Could you tell me something about him?\n　　Looking forward to hearing from you.\n　　　　　　　　　　　　　　　　　　Dale"},
+ qs:[
+ {n:1,essay:true,zh:'在童年时期，她学会了演奏各种乐器。',
+  t:'把这句话翻译成英文',hint:'提示：用 learn to do sth',
+  model:'During the childhood, she learnt to play all kinds of instruments.'},
+ {n:2,essay:true,zh:'鲁迅的作品具有幽默的语言特色。',
+  t:'把这句话翻译成英文',hint:'提示：用 have a special style',
+  model:"Lu Xun's works have a special style with humorous language."},
+ {n:3,essay:true,zh:'给 Dale 回一封邮件，介绍鲁迅（100 词左右）',
+  t:'上面是 Dale 的来信，现在以李华的身份回信',
+  hint:'提示词：modern times, Shaoxing, Dawn Blossoms Plucked at Dusk（《朝花夕拾》）, be made into movies, admire　　开头 Hi Dale, 结尾 Li Hua 已给出，不计入词数',
+  model:"Hi Dale,\n　　Lu Xun is one of the greatest writers in modern times. He was born in Shaoxing, Zhejiang in 1881. In 1902 he went to Japan to study medicine and was engaged in literary work later. In 1936, he died of illness in Shanghai.\n　　Lu Xun's great works include The Diary of a Madman and Dawn Blossoms Plucked at Dusk. His works have a special style with humorous language. Some of his works were made into movies. Lu Xun is deeply admired by Chinese people.\n　　If you want to read more Chinese works, I can introduce some to you.\n　　　　　　　　　　　　　　　　　　Li Hua"}
+]},
+
+{id:'u1-s4c-jc',ord:111,u:1,sec:'Section 4　Checking your progress',tag:'基础',em:'✏️',mins:20,type:'fill',
+ qs:[
+ {n:1,t:'Xie knows the difference between special education and ___ education.',
+  hint:'首字母提示：g',a:['general'],w:'general education'},
+ {n:2,src:'2025 江苏无锡期中',t:'You will find lots of newspapers on different ___ in our school library.',
+  hint:'首字母提示：s',a:['subjects']},
+ {n:3,src:'2025 重庆沙坪坝区期末',t:'In ancient Europe, terrible living conditions ___ water pollution and broken houses.',
+  hint:'首字母提示：i',a:['included']},
+ {n:4,t:'Our country ___ more and more help to satisfy（满足）the needs of children in poor areas.',
+  hint:'首字母提示：p',a:['provides']},
+ {n:5,t:'—It is my ___ time taking a vacation in Dongying.　—Me too. Everything here is so fresh and nice. I love the city.',
+  hint:'首字母提示：f',a:['first']},
+ {n:6,src:'2025 上海调研',t:'You can ___ your own playlist（播放清单）according to your music taste.',
+  hint:'首字母提示：c',a:['create']},
+ {n:7,src:'2025 浙江杭州期中',t:'Whatever the policeman asked, the man said ___ and remained silent.',
+  hint:'首字母提示：n',a:['nothing']},
+ {n:8,src:'2025 广东深圳期末',t:'It is widely ___ that the Great Wall is one of the seven wonders in the world. Many people have heard of or even visited it.',
+  hint:'首字母提示：k',a:['known']},
+ {n:9,t:'The ___ checks the articles for spelling mistakes before they are published.',
+  hint:'从方框里选词，用适当形式填空：edit｜information｜be similar to｜organize｜play an important role｜quick｜record｜use',
+  a:['editor'],w:'editor',
+  ex:'句意为：编辑在文章发表前检查拼写错误。根据句意可知，此处表示编辑，此处应用名词作主语，editor 意为"编辑"；结合 checks。故填 editor。'},
+ {n:10,t:'The community centre also ___ activities for people in the community every week.',
+  hint:'从方框里选词，用适当形式填空：edit｜information｜be similar to｜organize｜play an important role｜quick｜record｜use',
+  a:['organizes','organises'],w:'organize',
+  ex:'句意为：社区中心每周还为社区的人们组织活动。根据句意可知，此处应选 organize，本句应用一般现在时，主语是 The community centre，动词用第三人称单数形式。故填 organizes。'},
+ {n:11,src:'2025 江苏无锡调研',t:'—Will the famous singer attend the fashion show tomorrow afternoon?　—I am afraid not. But she ___ a new song after the show.',
+  hint:'从方框里选词，用适当形式填空：edit｜information｜be similar to｜organize｜play an important role｜quick｜record｜use',
+  a:['will record'],w:'record',
+  ex:'句意为：——明天下午那位著名歌手将会出席时装演出吗？——恐怕不会。但她将在演出结束后录一首新歌。根据 a new song 可知，此处表示录歌，应选 record；根据 after the show 可知，时态为一般将来时。故填 will record。'},
+ {n:12,t:'Parents ___ in a family because they are the first teachers to children.',
+  hint:'从方框里选词，用适当形式填空：edit｜information｜be similar to｜organize｜play an important role｜quick｜record｜use',
+  a:['play an important role'],w:'play an important role',
+  ex:'句意为：父母在家庭中扮演着重要的角色，因为他们是孩子的第一任老师。根据 they are the first teachers to children 可知，此处指父母扮演着重要的角色；主语是 Parents，时态为一般现在时。故填 play an important role。'},
+ {n:13,t:'This dictionary is old, but it is very ___ for us to learn English.',
+  hint:'从方框里选词，用适当形式填空：edit｜information｜be similar to｜organize｜play an important role｜quick｜record｜use',
+  a:['useful'],
+  ex:'句意为：这个词典很旧了，但是它对于我们学英语是很有用的。分析句子结构可知，此处为"it is+形容词+for sb to do sth"结构，意为"对某人来说做某事是……的"，所以此处应填形容词；根据 This dictionary 和 but 可知，此处表示"有用的"。故填 useful。'},
+ {n:14,src:'2025 云南昆明质检',t:'In Yunnan, a high-speed railway was built. People can go for a trip much more ___ now.',
+  hint:'从方框里选词，用适当形式填空：edit｜information｜be similar to｜organize｜play an important role｜quick｜record｜use',
+  a:['quickly'],
+  ex:'根据语境及所给词（短语）可知，空处表示"快地"，应用副词 quickly 修饰动词。故填 quickly。'},
+ {n:15,src:'2025 重庆沙坪坝区质检',t:'Students can use the internet to get lots of ___ to help with their study.',
+  hint:'从方框里选词，用适当形式填空：edit｜information｜be similar to｜organize｜play an important role｜quick｜record｜use',
+  a:['information'],
+  ex:'句意为：学生可以利用因特网获取大量信息来帮助他们的学习。根据句意及所给词（短语）可知，此处表示得到很多信息，且 information 为不可数名词。故填 information。'},
+ {n:16,t:'The DNA of gorillas（大猩猩）___ that of humans. They are one of the closest living relatives to humans.',
+  hint:'从方框里选词，用适当形式填空：edit｜information｜be similar to｜organize｜play an important role｜quick｜record｜use',
+  a:['is similar to'],w:'be similar to',
+  ex:'根据"They are one of the closest living relatives to humans."及所给词（短语）可知，此处指"与人类的相似"，be similar to 意为"与……相似"；主语是 The DNA of gorillas，时态为一般现在时。故填 is similar to。'},
+ {n:17,src:'2025 江苏南京期末',zh:'把这句话改成同义句：Kitty loves Nanjing because she loves its long history.',
+  t:'Kitty loves Nanjing because it ___ in history.',
+  hint:'按要求完成句子（每空一词，共 5 空）',a:['goes back a long way'],w:'go back a long way'},
+ {n:18,src:'2025 江苏南京期中',zh:'把这句话改成同义句：He uses a knife to cut the apple.',
+  t:'He ___ the apple ___ a knife.',
+  hint:'按要求完成句子（前后各 1 空，中间用空格隔开）',a:['cuts with']},
+ {n:19,zh:'把这句话改成同义句：Wall Street is a world-famous trade centre.',
+  t:'As a trade centre, Wall Street is ___.',
+  hint:'按要求完成句子（每空一词，共 4 空）',a:['famous all over the world','famous all around the world']},
+ {n:20,src:'2025 山西太原调研',essay:true,zh:'把这句话改为一般疑问句，并作否定回答：Lily bought some flowers for her mum as her birthday gifts.',
+  t:'写出改好的问句和答句',hint:'注意：some 在疑问句中要变成 any；bought 的原形是 buy',
+  model:'—Did Lily buy any flowers for her mum as her birthday gifts?\n—No, she didn\'t.'},
+ {n:21,zh:'连词成句：these, in, Please, order, put, things',
+  t:'把这些词连成一句话（注意首字母大写和句号）',
+  hint:'提示：in order 意为"按顺序"',a:['please put these things in order'],w:'order'}
+]},
+
 {id:'u1-s1r1-nl',ord:102,u:1,sec:'Section 1　Reading (Ⅰ)',tag:'能力',em:'📖',mins:8,type:'read',
  psg:{meta:'体裁：应用文　题材：历史与社会　词数：213　难度：★★★　[2025 广东广州期中]',
   title:'Albert Einstein (1879—1955)',
@@ -611,11 +742,12 @@ function renderQ(){
     q.o.forEach(function(o,i){html+='<div class="opt" data-i="'+i+'" onclick="pick('+i+')"><i>'+LT[i]+'.</i><div>'+esc(o)+'</div></div>';});
     html+='</div>';
   }else{
-    html+='<div class="qhint">'+esc(q.hint||'')+'</div>'+
-      '<input class="ans" id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="在这里填答案…">';
+    html+='<div class="qhint">'+esc(q.hint||'')+'</div>';
+    if(q.essay)html+='<textarea class="essay" id="essay" placeholder="在这里写…写完点下面的按钮看参考答案"></textarea>';
+    else html+='<input class="ans" id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="在这里填答案…">';
   }
   html+='<div class="res" id="res"></div></div>'+
-    '<button class="btn" id="okbtn" onclick="submit()">确定 ✓</button>';
+    '<button class="btn" id="okbtn" onclick="submit()">'+(q.essay?'写好了，看参考答案 →':'确定 ✓')+'</button>';
   box.innerHTML=html;
   var inp=document.getElementById('ans');
   if(inp){inp.focus();inp.addEventListener('keydown',function(e){
@@ -639,6 +771,16 @@ function submit(){
   var q=cur.qs[qi],res=document.getElementById('res'),btn=document.getElementById('okbtn');
   if(answered){qi++;renderQ();return;}
   var ok,mine;
+  if(q.essay){                    /* 写作题：不判对错，给参考答案让孩子自己比 */
+    answered=true;right++;LS.tot++;save();
+    res.className='res ok show';
+    res.innerHTML='<div class="rt">📝 参考答案</div><div class="model">'+esc(q.model)+'</div>'+
+      '<div class="selfcheck">自己比一比：①意思都写全了吗？②时态对不对？③单词拼写和大小写有没有错？<br>'+
+      '差得多的话，照着参考答案再写一遍，比只看一眼管用。</div>';
+    btn.textContent=(qi+1>=cur.qs.length)?'看成绩 →':'下一题 →';
+    res.scrollIntoView({behavior:'smooth',block:'nearest'});
+    return;
+  }
   if(q.o){
     if(picked<0){res.className='res no show';res.innerHTML='<div class="rt">先选一个答案哦</div>';return;}
     ok=picked===q.r; mine=LT[picked];
@@ -681,8 +823,10 @@ function submit(){
 function finish(){
   var n=cur.qs.length,rate=n?Math.round(right/n*100):0;
   if(!cur.onlyWrong){LS.done[cur.id]={n:n,ok:right,d:today()};save();}
+  var essayMode=cur.qs.every(function(q){return q.essay;});
   var em,head;
-  if(rate===100){em='🎉';head='全对！漂亮';}
+  if(essayMode){em='📝';head='写作练习完成';}
+  else if(rate===100){em='🎉';head='全对！漂亮';}
   else if(rate>=80){em='💪';head='做得不错';}
   else if(rate>=60){em='📖';head='及格了，错的再看看';}
   else{em='📖';head='这组有点难，把解析读一遍';}
@@ -693,9 +837,11 @@ function finish(){
   if(wn)recs.push('🔖 错题本里现在有 '+wn+' 题，回首页可以只刷错题');
   if(rate===100&&cur.onlyWrong)recs.push('✨ 错题全部清空，厉害！');
   var html='<div class="card done"><div class="em">'+em+'</div><h2>'+head+'</h2>'+
-    '<div class="stat"><div><b style="color:var(--ok)">'+right+'</b><span>答对</span></div>'+
-    '<div><b style="color:var(--bad)">'+(n-right)+'</b><span>答错</span></div>'+
-    '<div><b>'+rate+'%</b><span>正确率</span></div></div>';
+    (essayMode
+      ? '<p>一共写了 <b>'+n+'</b> 段　对照参考答案改一改，进步最快</p>'
+      : '<div class="stat"><div><b style="color:var(--ok)">'+right+'</b><span>答对</span></div>'+
+        '<div><b style="color:var(--bad)">'+(n-right)+'</b><span>答错</span></div>'+
+        '<div><b>'+rate+'%</b><span>正确率</span></div></div>');
   if(wrongThis.length){
     html+='<div class="wlist">';
     wrongThis.forEach(function(q){
