@@ -35,6 +35,9 @@ header p{margin:0;font-size:14px;color:var(--sub)}
 .app-st::before{background:linear-gradient(180deg,#2fbc8a,#0e9f6e)}
 .app-st:hover{border-color:#0e9f6e}
 .app-st .go{color:#0e9f6e}
+.app-dr::before{background:linear-gradient(180deg,#7d76e8,#5b53d9)}
+.app-dr:hover{border-color:#5b53d9}
+.app-dr .go{color:#5b53d9}
 .app-pw:hover{border-color:#e0489a}
 .app-pw .go{color:#e0489a}
 .app-en:hover{border-color:var(--en)}
@@ -136,6 +139,16 @@ header p{margin:0;font-size:14px;color:var(--sub)}
     <div class="go">›</div>
   </a>
 
+  <a class="app app-dr" href="./drill.html">
+    <div class="ic">✍️</div>
+    <div class="tx">
+      <b>必刷题 · 八年级上</b>
+      <span>沪教牛津版 · Unit 1 已上线（其余单元陆续录入）</span>
+      <small>一题一屏 · 做完就判分 · 错了讲思路 · 错题本 · 做错的单词自动回背单词复习</small>
+    </div>
+    <div class="go">›</div>
+  </a>
+
   <a class="app app-st" href="./stories.html">
     <div class="ic">📚</div>
     <div class="tx">
@@ -185,8 +198,8 @@ header p{margin:0;font-size:14px;color:var(--sub)}
 </div>
 <script>
 /* ===== 每次更新只改这两行 ===== */
-var APP_VERSION='2026-08-11';
-var UPDATE_NOTE='两个大更新！①「艾宾浩斯复习计划」：背过的词按 1→2→4→7→15→30 天自动排复习，首页直接告诉你今天该复习几个词，一键开背（初中、小学背单词页都有）。②新增「英语小故事」：15 篇经典寓言童话，逐句朗读、点单词看意思、中英对照，读完还有 3 道小题。';
+var APP_VERSION='2026-08-13';
+var UPDATE_NOTE='新增「必刷题 · 八年级上」！《初中必刷题》英语八上（沪教牛津版）搬进来了：一题一屏，填完就判分，答错直接给书上的详细解析；做错的题进错题本，做错的单词还会自动放回背单词的复习计划，明天再背一遍。目前 Unit 1 已上线，其余单元陆续录入。';
 /* ============================== */
 (function(){
   var key='learnerName', nm=document.getElementById('nm'), greet=document.getElementById('greet');

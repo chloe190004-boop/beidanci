@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="必刷题">
+<meta name="theme-color" content="#5b53d9">
+<title>必刷题 · 英语八年级上</title>
+<style>
+:root{
+  --bg:#f5f5fb; --card:#ffffff; --ink:#1c2434; --sub:#6b7688;
+  --brand:#5b53d9; --brand2:#7d76e8; --ok:#18a06a; --warn:#e8813a; --bad:#e14b5a;
+  --gold:#d9a441; --line:#e8e8f2; --shadow:0 8px 30px rgba(40,35,90,.08);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--ink);min-height:100vh;padding:env(safe-area-inset-top) 0 30px}
+.wrap{max-width:600px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;justify-content:space-between;margin:6px 2px 14px}
+h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
+.badge{font-size:12px;color:var(--sub);background:#eeedfa;padding:4px 10px;border-radius:20px}
+.hublink{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:800;text-decoration:none;
+  padding:5px 11px;border-radius:20px;flex-shrink:0;color:var(--brand);background:#eeedfa}
+.card{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+.label{font-size:12px;color:var(--sub);font-weight:700;margin-bottom:8px;letter-spacing:.5px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:9px 14px;border-radius:12px;border:1.5px solid var(--line);background:#fff;
+  font-size:13.5px;font-weight:700;color:var(--sub);cursor:pointer;transition:.15s;user-select:none}
+.chip.on{background:var(--brand);border-color:var(--brand);color:#fff;box-shadow:0 4px 12px rgba(91,83,217,.28)}
+.chip.lock{opacity:.42}
+.mini{display:flex;gap:9px;flex-wrap:wrap;margin-top:4px}
+.mini>div{flex:1;min-width:80px;background:#f6f6fc;border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center}
+.mini b{display:block;font-size:22px;font-variant-numeric:tabular-nums;line-height:1.2}
+.mini span{font-size:11px;color:var(--sub)}
+.vempty{font-size:13px;color:var(--sub);text-align:center;padding:10px 0;line-height:1.6}
+/* 题组卡片 */
+.set{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:16px;box-shadow:var(--shadow);
+  padding:14px 15px;margin-bottom:11px;cursor:pointer;border:2px solid transparent;transition:.15s;position:relative}
+.set:active{transform:scale(.99)}
+.set.done{border-color:#d8d5f3;background:#fbfbff}
+.set .em{font-size:30px;line-height:1;flex-shrink:0;width:40px;text-align:center}
+.set .tx{flex:1;min-width:0}
+.set .tx b{display:block;font-size:15.5px;font-weight:800;line-height:1.35}
+.set .tx span{display:block;font-size:12px;color:var(--sub);font-weight:700;margin-top:3px}
+.set .tx small{display:block;font-size:11px;color:var(--sub);margin-top:5px}
+.set .tx small .tg{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:8px;margin-right:5px}
+.tg-jc{background:#eeedfa;color:#5b53d9} .tg-nl{background:#fff1e6;color:#c9702a}
+.tg-yf{background:#e6f6ee;color:#0e8a5c} .tg-xz{background:#fdecef;color:#c9455c}
+.set .go{font-size:20px;color:var(--brand);font-weight:800;flex-shrink:0}
+.rate{position:absolute;top:9px;right:12px;font-size:11.5px;font-weight:800}
+/* 做题 */
+#do,#done{display:none}
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.back{font-size:24px;cursor:pointer;color:var(--sub);padding:4px 10px}
+.progress{flex:1;height:9px;background:#e6e6f0;border-radius:6px;overflow:hidden}
+.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--brand),var(--brand2));width:0;transition:.3s}
+.count{font-size:13px;color:var(--sub);font-weight:700;min-width:70px;text-align:right;font-variant-numeric:tabular-nums}
+.qcard{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:18px 17px}
+.qsrc{display:inline-block;font-size:11px;color:var(--sub);background:#f2f2f8;padding:3px 9px;border-radius:9px;
+  font-weight:700;margin-bottom:11px}
+.qtag{display:inline-block;font-size:11px;color:#c9702a;background:#fff1e6;padding:3px 9px;border-radius:9px;
+  font-weight:800;margin:0 0 11px 6px}
+.qzh{font-size:15px;font-weight:800;line-height:1.7;margin-bottom:9px}
+.qt{font-size:16.5px;line-height:1.95;font-weight:600}
+.qt u{text-decoration:none;border-bottom:2px solid var(--brand);padding:0 22px;margin:0 3px}
+.qt b.bk{color:var(--brand);font-weight:800}
+.qhint{margin-top:11px;font-size:13px;color:var(--sub);font-weight:700;background:#f6f6fc;
+  border:1px solid var(--line);border-radius:10px;padding:8px 11px}
+.ans{width:100%;font-size:20px;font-weight:800;text-align:center;padding:14px;border:2px solid var(--line);
+  border-radius:14px;outline:none;margin-top:14px;font-family:inherit}
+.ans:focus{border-color:var(--brand)}
+.ans.right{border-color:var(--ok);background:#e8f7f0;color:var(--ok)}
+.ans.wrong{border-color:var(--bad);background:#fdeceb;color:var(--bad)}
+.opt{padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:#fff;font-size:15px;
+  font-weight:600;margin-top:9px;cursor:pointer;line-height:1.6;display:flex;gap:9px}
+.opt i{font-style:normal;font-weight:800;color:var(--sub);flex-shrink:0}
+.opt.pick{border-color:var(--brand);background:#f4f3fd}
+.opt.right{border-color:var(--ok);background:#e8f7f0}
+.opt.right i{color:var(--ok)}
+.opt.wrong{border-color:var(--bad);background:#fdeceb}
+.opt.wrong i{color:var(--bad)}
+.res{margin-top:14px;border-radius:14px;padding:13px 15px;font-size:14px;line-height:1.85;display:none}
+.res.show{display:block}
+.res.ok{background:#e8f7f0;border:1px solid #bfe6d4}
+.res.no{background:#fdeceb;border:1px solid #f5c9c9}
+.res .rt{font-size:15px;font-weight:800;margin-bottom:6px}
+.res .rk{font-weight:800;color:var(--ok)}
+.res .ex{color:#4a5462;font-size:13.5px;line-height:1.9;margin-top:6px}
+.res .wd{margin-top:9px;font-size:13px;background:rgba(255,255,255,.7);border-radius:9px;padding:8px 10px;font-weight:700}
+.res .recall{margin-top:8px;font-size:12.5px;color:#c9702a;font-weight:800}
+.btn{display:block;width:100%;padding:16px;border:none;border-radius:14px;background:var(--brand);
+  color:#fff;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 6px 18px rgba(91,83,217,.32);margin-top:14px}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:#eeedfa;color:var(--brand);box-shadow:none;margin-top:10px}
+.btn.sm{padding:13px;font-size:15px}
+/* 阅读原文 */
+.psg{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:17px;margin-bottom:12px}
+.psg .pm{font-size:11.5px;color:var(--sub);font-weight:700;margin-bottom:9px;line-height:1.7}
+.psg .pt{font-size:17px;font-weight:800;margin-bottom:9px}
+.psg .pb{font-size:15.5px;line-height:1.95;white-space:pre-wrap}
+.psg .pb u{text-decoration:underline;text-decoration-color:var(--brand);text-underline-offset:3px}
+.psgfold{max-height:150px;overflow:hidden;position:relative}
+.psgfold::after{content:'';position:absolute;left:0;right:0;bottom:0;height:56px;
+  background:linear-gradient(180deg,rgba(255,255,255,0),#fff)}
+.psgmore{text-align:center;font-size:13px;font-weight:800;color:var(--brand);padding:9px 0 0;cursor:pointer}
+/* 成绩 */
+.done{text-align:center;padding:26px 12px}
+.done .em{font-size:56px}
+.done h2{font-size:23px;margin:12px 0 6px}
+.done p{color:var(--sub);font-size:14.5px;margin:4px 0;line-height:1.7}
+.stat{display:flex;justify-content:center;gap:22px;margin:18px 0}
+.stat b{font-size:26px;display:block}
+.stat span{font-size:12px;color:var(--sub)}
+.rec{margin-top:14px;background:#fff8ec;border:1px solid #f0dfc0;border-radius:12px;padding:12px 14px;
+  font-size:14px;font-weight:700;line-height:1.9;text-align:left;color:#7a5a1e}
+.wlist{margin-top:12px;text-align:left;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.witem{padding:10px 13px;border-bottom:1px solid var(--line);font-size:13.5px;line-height:1.7}
+.witem:last-child{border-bottom:none}
+.witem b{color:var(--bad)}
+.witem span{color:var(--ok);font-weight:800}
+.foot{text-align:center;font-size:12px;color:var(--sub);margin-top:8px;line-height:1.8}
+@media (min-width:768px){
+  .wrap{max-width:680px;padding:24px}
+  h1{font-size:24px}
+  .qt{font-size:18px}
+  .btn{font-size:18px;padding:18px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="home">
+  <header>
+    <a class="hublink" href="./">‹ 切换</a>
+    <h1 style="flex:1;text-align:center">✍️ 必刷题 8 上</h1>
+    <span class="badge" id="totalBadge"></span>
+  </header>
+
+  <div class="card" id="dstats"></div>
+
+  <div class="card">
+    <div class="label">选单元</div>
+    <div class="chips" id="units"></div>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="card" id="wrongbook"></div>
+
+  <div class="foot">题目来自《初中必刷题》英语八年级上册（沪教牛津版）<br>做错的单词会自动放回背单词的复习计划</div>
+</div>
+
+<div id="do"></div>
+<div id="done"></div>
+
+</div>
+<script>
+/* ================= 题库 =================
+   sets：一组题 = 书上的一个板块（刷基础 / 刷能力 …）
+   题型 fill=填空（首字母/词形/汉译英三类合一，靠 hint 区分）　choice=选择　read=阅读（带原文）
+   w 字段 = 这题考的词库单词，答错会自动打回背单词的复习计划 */
+const UNITS=[
+ {u:1,t:'Look it up!',zh:'查一查'},
+ {u:2,t:'Amazing numbers',zh:'奇妙的数字'},
+ {u:3,t:'Our digital lives',zh:'我们的数字生活'},
+ {u:4,t:'Inventions',zh:'发明'},
+ {u:5,t:'Going on an exchange trip',zh:'交换生之旅'},
+ {u:6,t:'Wisdom counts',zh:'智慧的力量'},
+ {u:7,t:'The secret of memory',zh:'记忆的秘密'},
+ {u:8,t:'Pets and us',zh:'宠物与我们'}
+];
+
+const SETS=[
+{id:'u1-s1r1-jc',u:1,sec:'Section 1　Reading (Ⅰ)',tag:'基础',em:'✏️',mins:20,type:'fill',
+ qs:[
+ {n:1,src:'2025 四川宜宾期末',t:'The dolphin is an ___ sea animal. It is as clever as a child of 6—7 years old.',
+  hint:'首字母提示：i',a:['intelligent'],w:'intelligent'},
+ {n:2,src:'2025 山东泰安调研',t:"Since（既然）you can't answer the question, ___ we'd better ask someone else.",
+  hint:'首字母提示：p',a:['perhaps','probably'],w:'perhaps'},
+ {n:3,src:'2025 黑龙江大庆质检',t:'So far, new-energy ___ have been used widely. You can see them on the street.',
+  hint:'首字母提示：v',a:['vehicles'],w:'vehicle'},
+ {n:4,t:'This famous ___ is going to give a concert in our city next week. He plays the piano well.',
+  hint:'首字母提示：p',a:['pianist','performer']},
+ {n:5,src:'2025 云南昆明期末',t:'My Maths teacher is very patient, and she always ___ the problems clearly to us.',
+  hint:'首字母提示：e',a:['explains']},
+ {n:6,t:'I know little about Chinese ink ___. Could you tell me something about them?',
+  hint:'首字母提示：p',a:['paintings']},
+ {n:7,src:'2025 广东江门期末',t:'With great efforts and strong will, she ___ a hopeless situation into a wonderful success yesterday.',
+  hint:'首字母提示：c',a:['changed']},
+ {n:8,t:'He wonders what may happen if he could travel back to the ___ period.',
+  hint:'首字母提示：p',a:['prehistoric','past'],w:'prehistoric'},
+ {n:9,src:'2025 广东深圳质检',t:'There were different kinds of ___ on Earth millions of years ago.',
+  hint:'用所给词的适当形式：dinosaur',a:['dinosaurs'],w:'dinosaur',
+  ex:'句意为：数百万年前，地球上有不同种类的恐龙。dinosaur 是可数名词，different kinds of 后跟可数名词复数。故填 dinosaurs。'},
+ {n:10,src:'2025 湖北武汉期中',t:'—Beethoven is a ___ musician. His Ninth Symphony is a fantastic piece of music.　—He created it though he couldn\'t hear anything.',
+  hint:'用所给词的适当形式：talent',a:['talented'],w:'talented',
+  ex:'句意为：——贝多芬是一位有才能的音乐家。他的《第九交响曲》是一首美妙的乐曲。——虽然他什么都听不见，但他创作了这首乐曲。分析句子结构可知，此处应填形容词作定语修饰 musician；talented 为形容词，意为"有才能的"，符合语境。故填 talented。'},
+ {n:11,src:'2025 上海浦东新区质检',t:'I ___ agree that healthy living habits help people balance work and play.',
+  hint:'用所给词的适当形式：complete',a:['completely'],w:'completely',
+  ex:'句意为：我完全同意健康的生活习惯帮助人们平衡工作和娱乐。空处缺少副词修饰动词 agree，complete 的副词形式 completely（完全地）符合语境。故填 completely。'},
+ {n:12,src:'2025 江苏南京期末',t:'They were unsure when it first ___.',
+  hint:'用所给词的适当形式：appear',a:['appeared'],
+  ex:'根据 were 和 first 可知句子是一般过去时，所以动词用过去式。故填 appeared。知识拓展：disappear v. 消失　appearance n. 外貌'},
+ {n:13,t:'Yuan Longping, one of the greatest ___, made important contributions（贡献）to the world.',
+  hint:'用所给词的适当形式：science',a:['scientists'],
+  ex:'句意为：袁隆平，最伟大的科学家之一，为世界作出了重要贡献。根据 Yuan Longping 可知，此处表示科学家，"one of the+形容词最高级+可数名词复数"为固定搭配，意为"最……的……之一"。故填 scientists。'},
+ {n:14,src:'2025 江苏淮安期末',t:'Jerry tried to keep warm by ___ his body with scarves in the wind.',
+  hint:'用所给词的适当形式：cover',a:['covering'],
+  ex:'句意为：杰里试图在风中通过用围巾把身体包住来保持温暖。根据句意及 by 可知，此处应用动词-ing 形式。故填 covering。'},
+ {n:15,t:'The young dancer comes from a very ___ family.',
+  hint:'用所给词的适当形式：artist',a:['artistic'],w:'artistic',
+  ex:'句意为：这位年轻的舞者出身于艺术世家。空处作定语修饰名词 family，应用形容词 artistic，意为"有艺术天赋的"。故填 artistic。'},
+ {n:16,t:'As a pilot, I must pay attention to all the excellent ___ safety during their trip.',
+  hint:'用所给词的适当形式：music',a:["musicians'","musicians’"],
+  ex:'music 意为"音乐"。根据"all the excellent… safety"可知，此处表示音乐家们的安全，应用名词复数的所有格形式修饰 safety。故填 musicians\'。'},
+ {n:17,src:'2025 广东广州期末',zh:'要是我们不立刻采取措施，这些动物很快就会灭绝了。',
+  t:"If we don't take action right now, these animals will ___ very soon.",
+  hint:'根据汉语意思完成句子（每空一词，共 2 空）',a:['die out'],w:'die out'},
+ {n:18,zh:'他们花费大量时间研发一种新型智能手机。',
+  t:'They spend a large amount of time in developing ___ smart phone.',
+  hint:'根据汉语意思完成句子（每空一词，共 4 空）',a:['a new type of','a new kind of'],w:'a type of'},
+ {n:19,src:'2025 广东广州期中',zh:'从很小的时候，她就开始练习跳水，并盼望成为一名世界冠军。',
+  t:'___, she began to practise diving, and looked forward to becoming a world champion.',
+  hint:'根据汉语意思完成句子（每空一词，共 4 空）',a:['from an early age','from a young age']},
+ {n:20,src:'2025 陕西安康调研',zh:'爷爷教我制作了一些不同形状的风筝。',
+  t:'My grandpa taught me to ___ in different shapes.',
+  hint:'根据汉语意思完成句子（每空一词，共 3 空）',a:['make some kites']},
+ {n:21,zh:'美洲驼和骆驼属于同一物种。',
+  t:'The llama is ___ the camel.',
+  hint:'根据汉语意思完成句子（每空一词，共 2 空）',a:['related to'],w:'be related to'}
+]},
+
+{id:'u1-s1r1-nl',u:1,sec:'Section 1　Reading (Ⅰ)',tag:'能力',em:'📖',mins:8,type:'read',
+ psg:{meta:'体裁：应用文　题材：历史与社会　词数：213　难度：★★★　[2025 广东广州期中]',
+  title:'Albert Einstein (1879—1955)',
+  text:'Early Life\nAlbert Einstein was born in 1879 in Germany. He had been an <u>extraordinary</u> person since he was born. He was always interested in things around him and full of imagination. He loved watching things carefully and asking a lot of questions about them. His questions were often hard to answer for teachers.\n\nSchooling\nEinstein started school in 1885. He did well in Maths and Science. Einstein finished grammar school in Germany and entered a university. He graduated（大学毕业）with the subject teacher diploma for Maths and Physics in 1900.\n\nScientific Work\nAfter graduation, Einstein worked at the Swiss Patent Office. He spent much time studying physics. By 1909, Einstein had become a top scientist. Though he became successful in the field of science, he still worked hard on scientific research. Finally, he was awarded the Nobel Prize for Physics for the year 1921.\n\nLater Life\nEinstein kept doing his research until he died in 1955. Scientists studied his brain after his death to see if there was anything special about it. However, there was no answer.\nToday, many famous scientists still think Einstein is the smartest man in the world.'},
+ qs:[
+ {n:1,tag:'新考法·文章出处',t:'Where can you probably find this passage?',
+  o:['In an encyclopaedia.','In an advertisement（广告）.','In a travel guide.','In a dictionary.'],r:0,
+  ex:'推理判断题。通读全文可知，本文主要介绍了爱因斯坦的生平，可能在百科全书中出现。故选 A 项。'},
+ {n:2,t:'From the passage, we can learn that Albert Einstein ___.',
+  o:['was not good at asking questions.','did well in all his schoolwork.','worked as a doctor after he graduated.','had great achievements in Physics.'],r:3,
+  ex:'细节理解题。根据"Finally, he was awarded the Nobel Prize for Physics for the year 1921."可知，爱因斯坦在物理方面有很大的成就。故选 D 项。'},
+ {n:3,t:'What does the underlined word "extraordinary" mean in Chinese?',
+  o:['幽默的','笨拙的','非凡的','普通的'],r:2,
+  ex:'词义猜测题。根据"He was always interested in things around him and full of imagination. He loved watching things carefully and asking a lot of questions about them. His questions were often hard to answer for teachers."可知，爱因斯坦是一个不同寻常的人，因此画线单词的意思是"非凡的"。故选 C 项。'},
+ {n:4,tag:'新考法·顺序排列',t:'Which of the following shows the order of Einstein\'s experience?\na. Albert Einstein asked a lot of questions about things.\nb. Albert Einstein won the Nobel Prize for Physics.\nc. Albert Einstein started his school life in Germany.\nd. Albert Einstein became a top scientist in the world.\ne. Albert Einstein got a job at the Swiss Patent Office.',
+  o:['a-c-b-e-d','a-c-e-d-b','c-a-b-e-d','c-a-e-d-b'],r:1,
+  ex:'细节理解题。根据"He loved… asking a lot of questions about them.""Einstein started school in 1885.""After graduation, Einstein worked at the Swiss Patent Office.""By 1909, Einstein had become a top scientist.""he was awarded the Nobel Prize for Physics for the year 1921."可知顺序为 a-c-e-d-b。故选 B 项。'},
+ {n:5,t:'What can we know from the last two paragraphs?',
+  o:['Nobody could be smarter than Albert Einstein.','Scientists found out why Albert Einstein was so smart.','Scientists showed great interest in Albert Einstein\'s brain.','Albert Einstein couldn\'t keep on working in his later life.'],r:2,
+  ex:'细节理解题。根据最后两段"Scientists studied his brain after his death to see if there was anything special about it."可知，科学家对爱因斯坦的大脑表现出极大的兴趣。故选 C 项。'}
+]}
+];
+
+/* 词库主键：做错时把这个词打回背单词的复习计划（八年级上 266 条，与 english.html 词库一致） */
+const WORDKEY={"dinosaur":"八年级上|dinosaur|恐龙","intelligent":"八年级上|intelligent|有才智的；聪明的","talented":"八年级上|talented|有才能的；天才的","artistic":"八年级上|artistic|有艺术天赋的；（尤指）有美术才能的","perhaps":"八年级上|perhaps|可能；大概；也许","notebook":"八年级上|notebook|笔记本","vehicle":"八年级上|vehicle|交通工具；车辆","prehistoric":"八年级上|prehistoric|史前的","completely":"八年级上|completely|完全地；彻底地","original":"八年级上|original|原来的；起初的","birth":"八年级上|birth|出生","suffering":"八年级上|suffering|苦难；疼痛","artist":"八年级上|artist|艺术家；（尤指）画家","death":"八年级上|death|死；死亡","whole":"八年级上|whole|全部的；所有的","piece":"八年级上|piece|一首，（一篇）作品","editor":"八年级上|editor|（书籍的）编辑","organize":"八年级上|organize|安排；组织","order":"八年级上|order|顺序","record":"八年级上|record|记录","die out":"八年级上|die out|灭绝","a type of":"八年级上|a type of|一种","be related to":"八年级上|be related to|与……属于同一种类","general education":"八年级上|general  education|通识教育","go back a long way":"八年级上|go back a long way|历史悠久","be similar to":"八年级上|be similar to|与……相似","alphabetical order":"八年级上|alphabetical  order|字母顺序","play an important role":"八年级上|play an important role|起到重要作用"};
+
+/* ================= 存档 ================= */
+const LS=JSON.parse(localStorage.getItem('drill8A')||'{}');
+LS.done=LS.done||{};      /* {题组id:{n,ok,d}} 最近一次成绩 */
+LS.wrong=LS.wrong||{};    /* {题组id#题号:1} 错题本 */
+LS.u=LS.u||1;
+LS.tot=LS.tot||0;         /* 累计做过的题数 */
+function save(){localStorage.setItem('drill8A',JSON.stringify(LS));}
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+/* 原文里允许保留 <u> 下划线标记 */
+function escKeepU(s){return esc(s).replace(/&lt;u&gt;/g,'<u>').replace(/&lt;\/u&gt;/g,'</u>');}
+function norm(s){return String(s).toLowerCase().replace(/[’‘]/g,"'").replace(/[.。．,，!！?？;；:：]+$/,'').replace(/\s+/g,' ').trim();}
+
+/* 做错 → 把这个词打回背单词的复习计划（写 english.html 用的 vocabMS2，规则与它一致） */
+const EB_STEP=[1,2,4,7,15,30];
+function ebPlus(ds,n){var d=new Date(ds+'T00:00:00');d.setDate(d.getDate()+n);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function recallWord(w){
+  if(!w)return null;
+  var key=WORDKEY[String(w).toLowerCase()];
+  if(!key)return null;
+  try{
+    var V=JSON.parse(localStorage.getItem('vocabMS2')||'{}');
+    V.marked=V.marked||{}; V.learn=V.learn||{};
+    V.marked[key]=1;                                    /* 进错词本 */
+    V.learn[key]={s:0,nx:ebPlus(today(),1),d:today()};   /* 打回第 0 轮，明天重新复习 */
+    localStorage.setItem('vocabMS2',JSON.stringify(V));
+    return key.split('|')[1]+'　'+key.split('|')[2];
+  }catch(e){return null;}
+}
+function wordMean(w){
+  var key=WORDKEY[String(w||'').toLowerCase()];
+  return key?(key.split('|')[1]+'　'+key.split('|')[2]):null;
+}
+
+/* ================= 首页 ================= */
+function allQs(s){return s.qs.length;}
+document.getElementById('totalBadge').textContent='共 '+SETS.reduce(function(n,s){return n+allQs(s);},0)+' 题';
+function renderStats(){
+  var box=document.getElementById('dstats');
+  var doneIds=Object.keys(LS.done);
+  if(!doneIds.length){box.innerHTML='<div class="label">✍️ 我的刷题</div><div class="vempty">还没做过～做完第一组就会出现 🏁</div>';return;}
+  var n=0,ok=0;doneIds.forEach(function(k){n+=LS.done[k].n;ok+=LS.done[k].ok;});
+  var wrongN=Object.keys(LS.wrong).length;
+  box.innerHTML='<div class="label">✍️ 我的刷题</div><div class="mini">'+
+    '<div><b>'+doneIds.length+'</b><span>做完组数</span></div>'+
+    '<div><b>'+LS.tot+'</b><span>累计题数</span></div>'+
+    '<div><b style="color:var(--ok)">'+(n?Math.round(ok/n*100):0)+'%</b><span>最近正确率</span></div>'+
+    '<div><b style="color:var(--bad)">'+wrongN+'</b><span>错题本</span></div></div>';
+}
+function renderUnits(){
+  var box=document.getElementById('units');box.innerHTML='';
+  UNITS.forEach(function(u){
+    var has=SETS.some(function(s){return s.u===u.u;});
+    var el=document.createElement('div');
+    el.className='chip'+(LS.u===u.u?' on':'')+(has?'':' lock');
+    el.textContent='U'+u.u+' '+u.zh+(has?'':' · 待录入');
+    el.onclick=function(){ if(!has){alert('Unit '+u.u+'「'+u.t+'」的题目还在录入中～\n先做已经有的单元吧');return;}
+      LS.u=u.u;save();renderUnits();renderList();};
+    box.appendChild(el);
+  });
+}
+const TAGCLS={'基础':'tg-jc','能力':'tg-nl','语法':'tg-yf','写作':'tg-xz'};
+function renderList(){
+  var box=document.getElementById('list');box.innerHTML='';
+  var list=SETS.filter(function(s){return s.u===LS.u;});
+  if(!list.length){box.innerHTML='<div class="card vempty">这个单元还没录入题目</div>';return;}
+  list.forEach(function(s){
+    var d=LS.done[s.id],el=document.createElement('div');
+    el.className='set'+(d?' done':'');
+    var rate=d?Math.round(d.ok/d.n*100):null;
+    el.innerHTML='<div class="em">'+s.em+'</div><div class="tx">'+
+      '<b>'+esc(s.sec)+'</b><span>'+(s.type==='read'?'阅读理解 · '+allQs(s)+' 题':'共 '+allQs(s)+' 题')+
+      ' · 建议 '+s.mins+' 分钟</span>'+
+      '<small><span class="tg '+(TAGCLS[s.tag]||'tg-jc')+'">刷'+s.tag+'</span>'+
+      (d?'上次 '+d.ok+'/'+d.n+'　'+d.d:'还没做过')+'</small></div><div class="go">›</div>'+
+      (rate!==null?'<span class="rate" style="color:'+(rate>=80?'var(--ok)':rate>=60?'var(--warn)':'var(--bad)')+'">'+rate+'%</span>':'');
+    el.onclick=function(){startSet(s.id);};
+    box.appendChild(el);
+  });
+}
+function wrongList(){
+  var out=[];
+  SETS.forEach(function(s){s.qs.forEach(function(q){ if(LS.wrong[s.id+'#'+q.n])out.push({s:s,q:q}); });});
+  return out;
+}
+function renderWrong(){
+  var box=document.getElementById('wrongbook'),list=wrongList();
+  box.innerHTML='<div class="label">🔖 错题本'+(list.length?'（'+list.length+' 题）':'')+'</div>';
+  if(!list.length){
+    box.innerHTML+='<div class="vempty">还没有错题～做错的题会自动收进来，可以只刷错题</div>';return;
+  }
+  var w=document.createElement('div');w.className='wlist';
+  list.slice(0,8).forEach(function(x){
+    var it=document.createElement('div');it.className='witem';
+    it.innerHTML='<b>'+esc(x.s.sec)+' 第 '+x.q.n+' 题</b>　<span>'+
+      esc(x.q.a?x.q.a[0]:(x.q.o?'ABCD'[x.q.r]:''))+'</span>';
+    w.appendChild(it);
+  });
+  box.appendChild(w);
+  if(list.length>8){var m=document.createElement('div');m.className='vempty';m.style.padding='8px 0 0';
+    m.textContent='…… 还有 '+(list.length-8)+' 题';box.appendChild(m);}
+  var b=document.createElement('button');b.className='btn ghost sm';b.style.marginTop='10px';
+  b.textContent='🔖 只刷错题（'+list.length+'）';
+  b.onclick=function(){startWrong();};
+  box.appendChild(b);
+}
+
+/* ================= 做题 ================= */
+var cur=null,qi=0,right=0,answered=false,picked=-1,wrongThis=[],recalled=[];
+function startSet(id){
+  var s=SETS.filter(function(x){return x.id===id;})[0];
+  cur={id:s.id,sec:s.sec,type:s.type,psg:s.psg,qs:s.qs.slice(),onlyWrong:false,set:s};
+  beginRun();
+}
+function startWrong(){
+  var list=wrongList();
+  if(!list.length)return;
+  cur={id:'__wrong__',sec:'错题重刷',type:'mix',qs:list.map(function(x){
+    var q=JSON.parse(JSON.stringify(x.q));q.__set=x.s.id;q.__psg=x.s.psg;q.__sec=x.s.sec;return q;}),onlyWrong:true};
+  beginRun();
+}
+function beginRun(){
+  qi=0;right=0;wrongThis=[];recalled=[];
+  document.getElementById('home').style.display='none';
+  document.getElementById('done').style.display='none';
+  document.getElementById('do').style.display='block';
+  if(cur.psg){showPassage();}else{renderQ();}
+  window.scrollTo(0,0);
+}
+function showPassage(){
+  var box=document.getElementById('do');
+  box.innerHTML='<div class="topbar"><span class="back" onclick="goHome()">‹</span>'+
+    '<div style="flex:1;text-align:center;font-size:15px;font-weight:800">'+esc(cur.sec)+'</div>'+
+    '<span class="badge">'+cur.qs.length+' 题</span></div>'+
+    '<div class="psg"><div class="pm">'+esc(cur.psg.meta)+'</div>'+
+    '<div class="pt">'+esc(cur.psg.title||'')+'</div>'+
+    '<div class="pb">'+escKeepU(cur.psg.text)+'</div></div>'+
+    '<button class="btn" onclick="renderQ()">读完了，开始答题 →</button>'+
+    '<button class="btn ghost" onclick="goHome()">返回</button>';
+  window.scrollTo(0,0);
+}
+function renderQ(){
+  answered=false;picked=-1;
+  var box=document.getElementById('do');
+  if(qi>=cur.qs.length){finish();return;}
+  var q=cur.qs[qi],psg=cur.psg||q.__psg;
+  var html='<div class="topbar"><span class="back" onclick="goHome()">‹</span>'+
+    '<div class="progress"><i style="width:'+(qi/cur.qs.length*100)+'%"></i></div>'+
+    '<span class="count">'+(qi+1)+'/'+cur.qs.length+'</span></div>';
+  if(psg){
+    html+='<div class="psg" id="psgbox"><div class="psgfold" id="psgin">'+
+      '<div class="pt">'+esc(psg.title||'')+'</div><div class="pb">'+escKeepU(psg.text)+'</div></div>'+
+      '<div class="psgmore" onclick="togglePsg()" id="psgmore">▾ 展开原文</div></div>';
+  }
+  html+='<div class="qcard">';
+  if(q.src)html+='<span class="qsrc">['+esc(q.src)+']</span>';
+  if(q.tag)html+='<span class="qtag">'+esc(q.tag)+'</span>';
+  if(q.__sec)html+='<span class="qsrc" style="background:#eeedfa;color:#5b53d9">'+esc(q.__sec)+'</span>';
+  if(q.zh)html+='<div class="qzh">'+esc(q.zh)+'</div>';
+  html+='<div class="qt">'+qtHtml(q.t)+'</div>';
+  if(q.o){
+    html+='<div id="opts">';
+    q.o.forEach(function(o,i){html+='<div class="opt" data-i="'+i+'" onclick="pick('+i+')"><i>'+'ABCD'[i]+'.</i><div>'+esc(o)+'</div></div>';});
+    html+='</div>';
+  }else{
+    html+='<div class="qhint">'+esc(q.hint||'')+'</div>'+
+      '<input class="ans" id="ans" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="在这里填答案…">';
+  }
+  html+='<div class="res" id="res"></div></div>'+
+    '<button class="btn" id="okbtn" onclick="submit()">确定 ✓</button>';
+  box.innerHTML=html;
+  var inp=document.getElementById('ans');
+  if(inp){inp.focus();inp.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){e.preventDefault();submit();}});}
+  window.scrollTo(0,0);
+}
+function qtHtml(t){
+  return esc(t).replace(/___+/g,'<u></u>').replace(/\n/g,'<br>');
+}
+function togglePsg(){
+  var el=document.getElementById('psgin'),m=document.getElementById('psgmore');
+  if(el.classList.contains('psgfold')){el.classList.remove('psgfold');m.textContent='▴ 收起原文';}
+  else{el.classList.add('psgfold');m.textContent='▾ 展开原文';}
+}
+function pick(i){
+  if(answered)return;
+  picked=i;
+  document.querySelectorAll('#opts .opt').forEach(function(e,j){e.classList.toggle('pick',j===i);});
+}
+function submit(){
+  var q=cur.qs[qi],res=document.getElementById('res'),btn=document.getElementById('okbtn');
+  if(answered){qi++;renderQ();return;}
+  var ok,mine;
+  if(q.o){
+    if(picked<0){res.className='res no show';res.innerHTML='<div class="rt">先选一个答案哦</div>';return;}
+    ok=picked===q.r; mine='ABCD'[picked];
+    document.querySelectorAll('#opts .opt').forEach(function(e,j){
+      e.classList.remove('pick');
+      if(j===q.r)e.classList.add('right');
+      else if(j===picked)e.classList.add('wrong');
+    });
+  }else{
+    var inp=document.getElementById('ans');
+    mine=inp.value.trim();
+    if(!mine){res.className='res no show';res.innerHTML='<div class="rt">先把答案填上再确定～</div>';return;}
+    ok=q.a.some(function(a){return norm(a)===norm(mine);});
+    inp.classList.add(ok?'right':'wrong');
+    inp.blur();
+  }
+  answered=true;
+  var qid=(q.__set||cur.id)+'#'+q.n;
+  if(ok){right++;delete LS.wrong[qid];}
+  else{LS.wrong[qid]=1;wrongThis.push(q);}
+  LS.tot++;save();
+  var html='';
+  if(ok)html+='<div class="rt">✅ 答对了</div>';
+  else{
+    html+='<div class="rt">❌ 答错了</div>';
+    html+='<div>正确答案：<span class="rk">'+esc(q.o?('ABCD'[q.r]+'. '+q.o[q.r]):q.a.join(' / '))+'</span></div>';
+  }
+  if(q.ex)html+='<div class="ex">'+esc(q.ex)+'</div>';
+  var wm=wordMean(q.w);
+  if(wm)html+='<div class="wd">📖 '+esc(wm)+'</div>';
+  if(!ok&&q.w){
+    var r=recallWord(q.w);
+    if(r){recalled.push(r);html+='<div class="recall">🧠 已把「'+esc(r.split('　')[0])+'」放回背单词的复习计划，明天再背一次</div>';}
+  }
+  res.className='res '+(ok?'ok':'no')+' show';
+  res.innerHTML=html;
+  btn.textContent=(qi+1>=cur.qs.length)?'看成绩 →':'下一题 →';
+  res.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function finish(){
+  var n=cur.qs.length,rate=n?Math.round(right/n*100):0;
+  if(!cur.onlyWrong){LS.done[cur.id]={n:n,ok:right,d:today()};save();}
+  var em,head;
+  if(rate===100){em='🎉';head='全对！漂亮';}
+  else if(rate>=80){em='💪';head='做得不错';}
+  else if(rate>=60){em='📖';head='及格了，错的再看看';}
+  else{em='📖';head='这组有点难，把解析读一遍';}
+  var recs=[];
+  if(recalled.length)recs.push('🧠 '+recalled.length+' 个做错的单词已放回背单词的复习计划：'+
+    recalled.map(function(r){return r.split('　')[0];}).join('、'));
+  var wn=Object.keys(LS.wrong).length;
+  if(wn)recs.push('🔖 错题本里现在有 '+wn+' 题，回首页可以只刷错题');
+  if(rate===100&&cur.onlyWrong)recs.push('✨ 错题全部清空，厉害！');
+  var html='<div class="card done"><div class="em">'+em+'</div><h2>'+head+'</h2>'+
+    '<div class="stat"><div><b style="color:var(--ok)">'+right+'</b><span>答对</span></div>'+
+    '<div><b style="color:var(--bad)">'+(n-right)+'</b><span>答错</span></div>'+
+    '<div><b>'+rate+'%</b><span>正确率</span></div></div>';
+  if(wrongThis.length){
+    html+='<div class="wlist">';
+    wrongThis.forEach(function(q){
+      html+='<div class="witem"><b>第 '+q.n+' 题</b>　正确答案：<span>'+
+        esc(q.o?('ABCD'[q.r]+'. '+q.o[q.r]):q.a.join(' / '))+'</span></div>';
+    });
+    html+='</div>';
+  }
+  if(recs.length)html+='<div class="rec">'+recs.join('<br>')+'</div>';
+  html+='<div style="margin-top:16px;display:grid;gap:10px">'+
+    (wrongThis.length?'<button class="btn" onclick="redoWrong()">🔖 立刻重做这组错题（'+wrongThis.length+'）</button>':'')+
+    '<button class="btn ghost" onclick="goHome()">返回题目列表</button></div></div>';
+  document.getElementById('do').style.display='none';
+  document.getElementById('done').style.display='block';
+  document.getElementById('done').innerHTML=html;
+  window.scrollTo(0,0);
+}
+function redoWrong(){
+  var qs=wrongThis.slice();
+  cur={id:cur.id,sec:cur.sec+' · 错题重做',type:cur.type,psg:cur.psg,qs:qs,onlyWrong:true};
+  beginRun();
+}
+function goHome(){
+  document.getElementById('do').style.display='none';
+  document.getElementById('done').style.display='none';
+  document.getElementById('home').style.display='block';
+  renderStats();renderUnits();renderList();renderWrong();
+  window.scrollTo(0,0);
+}
+
+renderStats();renderUnits();renderList();renderWrong();
+</script>
+<script data-goatcounter="https://chloechan.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>
