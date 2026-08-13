@@ -102,6 +102,7 @@ h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px}
 .psg .pt{font-size:17px;font-weight:800;margin-bottom:9px}
 .psg .pb{font-size:15.5px;line-height:1.95;white-space:pre-wrap}
 .psg .pb u{text-decoration:underline;text-decoration-color:var(--brand);text-underline-offset:3px}
+.psg .pb b.bk{color:var(--brand);font-weight:800;background:#eeedfa;border-radius:6px;padding:0 5px}
 .psgfold{max-height:150px;overflow:hidden;position:relative}
 .psgfold::after{content:'';position:absolute;left:0;right:0;bottom:0;height:56px;
   background:linear-gradient(180deg,rgba(255,255,255,0),#fff)}
@@ -175,7 +176,7 @@ const UNITS=[
 ];
 
 const SETS=[
-{id:'u1-s1r1-jc',u:1,sec:'Section 1　Reading (Ⅰ)',tag:'基础',em:'✏️',mins:20,type:'fill',
+{id:'u1-s1r1-jc',ord:101,u:1,sec:'Section 1　Reading (Ⅰ)',tag:'基础',em:'✏️',mins:20,type:'fill',
  qs:[
  {n:1,src:'2025 四川宜宾期末',t:'The dolphin is an ___ sea animal. It is as clever as a child of 6—7 years old.',
   hint:'首字母提示：i',a:['intelligent'],w:'intelligent'},
@@ -234,7 +235,187 @@ const SETS=[
   hint:'根据汉语意思完成句子（每空一词，共 2 空）',a:['related to'],w:'be related to'}
 ]},
 
-{id:'u1-s1r1-nl',u:1,sec:'Section 1　Reading (Ⅰ)',tag:'能力',em:'📖',mins:8,type:'read',
+{id:'u1-s1r2-jc',ord:103,u:1,sec:'Section 1　Reading (Ⅱ) & Listening',tag:'基础',em:'✏️',mins:20,type:'fill',
+ qs:[
+ {n:1,src:'2025 江苏盐城调研',t:'She said the long wait in a foreign country was full of struggles（斗争）and ___.',
+  hint:'音标提示：/ˈsʌfərɪŋ/',a:['suffering'],w:'suffering'},
+ {n:2,t:'Jason quickly took a picture of the whale before it ___ in the ocean.',
+  hint:'音标提示：/ˌdɪsəˈpɪəd/',a:['disappeared']},
+ {n:3,src:'2025 广东深圳质检',t:'Our school has ___ bins for recycling waste products.',
+  hint:'音标提示：/ˈdɪfərənt/',a:['different']},
+ {n:4,src:'2025 江苏扬州期中',t:'Suzy together with her friends ___ offers help to people in need.',
+  hint:'音标提示：/ˈjuːʒuəli/',a:['usually']},
+ {n:5,src:'2025 山东青岛期末',t:'The show ___ paintings by masters.',
+  hint:'音标提示：/ɪnˈkluːdz/',a:['includes']},
+ {n:6,t:'After class, he returned all the ___ to his schoolbag.',
+  hint:'从方框里选词，用适当形式填空：at birth｜complete｜intelligent｜Italy｜live on｜notebook｜origin｜other｜relate to｜small',
+  a:['notebooks'],w:'notebook',
+  ex:'句意为：下课后，他把所有的笔记本都放回了书包。notebook 意为"笔记本"，为可数名词，符合语境；根据 all 可知，此空应填其复数形式。故填 notebooks。'},
+ {n:7,src:'2025 广东广州质检',t:'Rose showed high ___ from an early age.',
+  hint:'从方框里选词，用适当形式填空：at birth｜complete｜intelligent｜Italy｜live on｜notebook｜origin｜other｜relate to｜small',
+  a:['intelligence'],w:'intelligent',
+  ex:'句意为：罗斯从小就表现出很高的智力。此空位于动词 show 后，应填名词作宾语，根据句意及所给内容可知，此处应选 intelligent，其对应的名词为 intelligence，为不可数名词。故填 intelligence。'},
+ {n:8,src:'2025 湖北武汉期中',t:'___ it was a bedroom, but we turned it into a study.',
+  hint:'从方框里选词，用适当形式填空：at birth｜complete｜intelligent｜Italy｜live on｜notebook｜origin｜other｜relate to｜small',
+  a:['originally'],w:'original',
+  ex:'句意为：最初这是一间卧室，但我们把它改成了一间书房。根据句子结构及所给词可知，空处应填副词修饰整个句子；副词形式 originally（最初）符合语境，且设空位于句首，单词首字母应大写。故填 Originally。'},
+ {n:9,src:'2025 江苏南京期中',t:'Jim never gave up in the past and he did everything he could ___ his work.',
+  hint:'从方框里选词，用适当形式填空：at birth｜complete｜intelligent｜Italy｜live on｜notebook｜origin｜other｜relate to｜small',
+  a:['to complete'],
+  ex:'句意为：吉姆过去从不放弃，而且他尽一切努力完成他的工作。分析句子结构可知，此处应用动词不定式结构表示目的；结合 work 和所给词语可知，此处应选 complete。故填 to complete。'},
+ {n:10,t:'The baby giant panda looks like a little mouse ___.',
+  hint:'从方框里选词，用适当形式填空：at birth｜complete｜intelligent｜Italy｜live on｜notebook｜origin｜other｜relate to｜small',
+  a:['at birth'],w:'birth',
+  ex:'句意为：大熊猫幼崽出生时看起来像一只小老鼠。at birth 为固定搭配，意为"出生时"，符合语境。故填 at birth。知识拓展：be born in 在……出生'},
+ {n:11,t:"A study showed that people's mood is ___ the weather.",
+  hint:'从方框里选词，用适当形式填空：at birth｜complete｜intelligent｜Italy｜live on｜notebook｜origin｜other｜relate to｜small',
+  a:['related to'],w:'be related to',
+  ex:'句意为：一项研究表明，人的情绪与天气有关。be related to 意为"和……有关"，是固定短语，符合语境。故填 related to。'},
+ {n:12,t:'Christopher Columbus was ___. He was one of the first people to discover the Americas.',
+  hint:'从方框里选词，用适当形式填空：at birth｜complete｜intelligent｜Italy｜live on｜notebook｜origin｜other｜relate to｜small',
+  a:['Italian'],
+  ex:'句意为：克里斯托弗·哥伦布是意大利人。他是第一批发现美洲的人之一。根据句意及所给词语可知，此空表示"意大利人"。故填 Italian。'},
+ {n:13,src:'2025 辽宁盘锦期末',t:'We are ___ the same planet. We should take care of it together.',
+  hint:'从方框里选词，用适当形式填空：at birth｜complete｜intelligent｜Italy｜live on｜notebook｜origin｜other｜relate to｜small',
+  a:['living on'],
+  ex:'句意为：我们生活在同一个地球上。我们应该一起照顾它。根据 the same planet 及所给词语可知，此处表示生活在同一个地球上，应选 live on；根据 are 可知，句子时态为现在进行时。故填 living on。'},
+ {n:14,t:'Some students are playing football over there, and ___ are chatting under the tree.',
+  hint:'从方框里选词，用适当形式填空：at birth｜complete｜intelligent｜Italy｜live on｜notebook｜origin｜other｜relate to｜small',
+  a:['others'],
+  ex:'句意为：一些学生在那边踢足球，其他人在树下聊天。此处表示"其他人"。故填 others。'},
+ {n:15,t:'The coat is too big. Do you have a ___ one?',
+  hint:'从方框里选词，用适当形式填空：at birth｜complete｜intelligent｜Italy｜live on｜notebook｜origin｜other｜relate to｜small',
+  a:['smaller','small'],
+  ex:'句意为：这件外套太大了。你有一件小（一点）的吗？根据"The coat is too big."及所给词语可知，此处表示一件小（一些）的外套，smaller 和 small 均符合语境。故填 smaller/small。'},
+ {n:16,src:'2025 陕西渭南调研',zh:'每个人在一些方面都有天赋，我们应该尽最大努力去发现它们。',
+  t:'Everyone ___ some aspects and we should try our best to discover them.',
+  hint:'根据汉语意思完成句子（每空一词，共 3 空）',a:['is talented in','is gifted in'],w:'talented'},
+ {n:17,src:'2025 江苏淮安期末',zh:'作为医生，你再细心也不为过。毕竟，失之毫厘，谬以千里。',
+  t:"As a doctor, you can't be too careful. After all, a miss is ___ a mile.",
+  hint:'根据汉语意思完成句子（每空一词，共 3 空）',a:['as good as']},
+ {n:18,zh:'杰克总是通过把他需要学的东西和生活中有趣的东西相联系来学习。',
+  t:'Jack always learns by connecting what he needs to learn with ___ in life.',
+  hint:'根据汉语意思完成句子（每空一词，共 2 空）',a:['something interesting','interesting things']},
+ {n:19,zh:'爱好使他成长为一位著名的科学家。',
+  t:'Hobbies made him grow as ___.',
+  hint:'根据汉语意思完成句子（每空一词，共 3 空）',a:['a famous scientist','a well-known scientist']},
+ {n:20,src:'2025 广东汕头期末',zh:'学做家务对我们来说是有必要的。',
+  t:"It's necessary for us to ___.",
+  hint:'根据汉语意思完成句子（每空一词，共 4 空）',a:['learn to do housework','learn to do chores']}
+]},
+
+{id:'u1-s2g-yf',ord:106,u:1,sec:'Section 2　Grammar',tag:'语法',em:'🔤',mins:10,type:'fill',
+ qs:[
+ {n:1,t:"I am very thirsty but there isn't ___ water in the bottle.",
+  hint:'用 some、any 或复合不定代词填空',a:['any']},
+ {n:2,t:'—Did you have ___ noodles for supper?　—Yes, I did.',
+  hint:'用 some、any 或复合不定代词填空',a:['any']},
+ {n:3,t:"—Could you buy ___ bananas for me?　—Sorry, I don't have ___ money.",
+  hint:'用 some、any 或复合不定代词填空（两个空，中间用空格隔开）',a:['some any']},
+ {n:4,t:"I can see ___ chickens on the farm, but I can't see ___ sheep.",
+  hint:'用 some、any 或复合不定代词填空（两个空，中间用空格隔开）',a:['some any']},
+ {n:5,t:'—May I ask you ___ questions, Miss Yang?　—Sure.',
+  hint:'用 some、any 或复合不定代词填空',a:['some']},
+ {n:6,t:'She is friendly to ___. We all like to make friends with her.',
+  hint:'用 some、any 或复合不定代词填空',a:['everyone','everybody']},
+ {n:7,t:'I am so thirsty. Shall we get ___ to drink?',
+  hint:'用 some、any 或复合不定代词填空',a:['something']},
+ {n:8,t:"There is ___ in the new house. It's empty.",
+  hint:'用 some、any 或复合不定代词填空',a:['nothing']},
+ {n:9,t:"—Jane, did you meet Mark in the classroom this morning?　—No. In fact, I didn't meet ___ there.",
+  hint:'用 some、any 或复合不定代词填空',a:['anyone','anybody']},
+ {n:10,t:'I seem to hear ___ knocking at the door.',
+  hint:'用 some、any 或复合不定代词填空',a:['someone','somebody']},
+ {n:11,zh:'我们需要讨论一些关于我们未来计划的重要事情。',
+  t:'We need to discuss ___ about our future plans.',
+  hint:'根据汉语意思完成句子（每空一词，共 2 空）',a:['something important']},
+ {n:12,src:'2025 陕西西安调研',zh:'这次经历让我们意识到保护环境需要每个人的努力。',
+  t:'This experience made us realize that protecting the environment requires ___.',
+  hint:'根据汉语意思完成句子（每空一词，共 2 空）',
+  a:["everyone's effort","everyone's efforts","everybody's effort","everybody's efforts"]},
+ {n:13,zh:'在寒冷的一天，还有什么比一杯热茶更好的吗？',
+  t:'Is there ___ a cup of hot tea on a cold day?',
+  hint:'根据汉语意思完成句子（每空一词，共 3 空）',a:['anything better than']},
+ {n:14,zh:'上周电视上的比赛太无聊了，因为根本没有队伍进球。',
+  t:'Last week the match on TV was so boring because ___ teams scored ___.',
+  hint:'根据汉语意思完成句子（前 1 空 + 后 2 空，中间用空格隔开）',a:['no at all']},
+ {n:15,zh:'在我们街区，如果任何人有任何麻烦，邻居们都会来帮忙。',
+  t:'In our neighbourhood, if ___, the neighbours will come to help.',
+  hint:'根据汉语意思完成句子（每空一词，共 4 空）',a:['anyone has any trouble','anybody has any trouble']}
+]},
+
+{id:'u1-s2g-nl',ord:107,u:1,sec:'Section 2　Grammar 语法填空',tag:'能力',em:'🐼',mins:8,type:'read',
+ psg:{meta:'[2025 广东深圳期末·节选]　语篇导读：本文介绍了大熊猫',
+  title:'The giant panda',
+  text:"The giant panda is a national treasure of China. It is famous __1__ the living fossil. Most pandas have black-and-white fur. They look very cute and have higher __2__ (intelligent) than many animals. They can follow the zookeepers' __3__ (instruction) without difficulty. That's why almost everyone __4__ (like) them.\n\nGiant pandas love eating bamboo best. But they also enjoy other food, including birds, fish __5__ some small animals. A panda at __6__ (born) only weighs about 120 grammes, while a grown-up panda's weight can rise up to about 120 kilogrammes.\n\nWild giant pandas live in cool and wet bamboo forests of central and western China, high up in the mountains. They show great ability to climb trees from __7__ early age.\n\nThe living giant panda was __8__ (one) found in Sichuan by a Frenchman. Because giant pandas were in danger of __9__ (die) out, they were on the list of the endangered species. Luckily, in 2016, __10__ (science) changed the level of giant pandas on the list. It's China's success in rebuilding bamboo forests."},
+ qs:[
+ {n:1,t:'第 (1) 空',hint:'不给词，根据句意填一个词',a:['as'],
+  ex:'句意为：它作为活化石而闻名。根据 the living fossil 可知，此处表示作为活化石而闻名，be famous as 意为"作为……而闻名"。故填 as。知识拓展：be famous for 因……而出名'},
+ {n:2,t:'第 (2) 空',hint:'用所给词的适当形式：intelligent',a:['intelligence'],w:'intelligent',
+  ex:'句意为：它们看起来很可爱，而且有比很多动物更高的智力。分析句子可知，此处应用名词作宾语，intelligent 意为"聪明的"，其名词形式为 intelligence，意为"智力"，为不可数名词。故填 intelligence。'},
+ {n:3,t:'第 (3) 空',hint:'用所给词的适当形式：instruction',a:['instructions'],
+  ex:'句意为：它们可以毫无困难地听从动物园管理员的指示。instruction 意为"指示"时为可数名词，此处应用名词复数。故填 instructions。'},
+ {n:4,t:'第 (4) 空',hint:'用所给词的适当形式：like',a:['likes'],
+  ex:'句意为：这就是为什么几乎每个人都喜欢它们。此句时态为一般现在时，主语是 everyone。故填 likes。'},
+ {n:5,t:'第 (5) 空',hint:'不给词，根据句意填一个词',a:['and'],
+  ex:'句意为：但它们也喜欢其他食物，包括鸟类、鱼类和一些小动物。根据句意可知，此处表示并列。故填 and。'},
+ {n:6,t:'第 (6) 空',hint:'用所给词的适当形式：born',a:['birth'],w:'birth',
+  ex:'句意为：一只熊猫出生时只有大约 120 克重，而一只成年熊猫的体重可达约 120 千克。at birth 意为"在出生时"，为固定短语，符合语境。故填 birth。'},
+ {n:7,t:'第 (7) 空',hint:'不给词，根据句意填一个词',a:['an'],
+  ex:'from an early age 意为"从很小的时候"，符合语境。故填 an。'},
+ {n:8,t:'第 (8) 空',hint:'用所给词的适当形式：one',a:['first'],
+  ex:'根据语境可知，此处指最先被发现，应用 first。故填 first。'},
+ {n:9,t:'第 (9) 空',hint:'用所给词的适当形式：die',a:['dying'],w:'die out',
+  ex:'句意为：由于大熊猫有灭绝的危险，它们被列入濒危物种的名单。of 是介词，后跟动名词作宾语。故填 dying。'},
+ {n:10,t:'第 (10) 空',hint:'用所给词的适当形式：science',a:['scientists'],
+  ex:'句意为：幸运的是，2016 年，科学家们改变了大熊猫在名单中的等级。根据语境可知，此处表示"科学家"，空前无限定词。故填 scientists。'}
+]},
+
+{id:'u1-s1r2-cloze',ord:104,u:1,sec:'Section 1　Reading (Ⅱ) 完形填空',tag:'能力',em:'🧩',mins:7,type:'read',
+ psg:{meta:'体裁：说明文　题材：饮食　词数：197　难度：★★★　语篇导读：本文主要介绍了通过研究发现的茶的作用',
+  title:'A cup of tea helps solve problems',
+  text:'A cup of tea helps solve problems. Drinking tea can __1__ your ability to create and imagine something. Scientists from Peking University made a __2__. It found that drinking tea makes you better at solving problems.\n\nThe study offered people tea or water __3__ they were asked to play a word game and solve some riddles（谜语）. Those who were given __4__ got better grades at both tasks. They got 13.89 in the word game and 10.94 in the riddles. __5__, the water drinkers\' grades were 12.94 and 9.0.\n\nTea is known for making people __6__. However, people in the study were not given __7__ tea to cheer them up. So __8__ made the tea drinkers better? The researchers thought the improvement was all in the __9__. "Some research has found that people are likely to connect tea drinking with a certain set of good characters（性格）such as being smart and creative. So tea drinkers think they should be __10__ and more creative, and their brains work that way," the researchers said. All in all, drinking tea really does good to us.'},
+ qs:[
+ {n:1,t:'第 (1) 空',o:['say','copy','find','improve'],r:3,
+  ex:'根据"A cup of tea helps solve problems."和第一段最后一句可知，此处指提高创造力和想象力。'},
+ {n:2,t:'第 (2) 空',o:['way','study','game','story'],r:1,
+  ex:'根据 It found that 和 The study offered people tea or water 可知，此处是指一项研究。'},
+ {n:3,t:'第 (3) 空',o:['before','though','after','since'],r:0,
+  ex:'根据下文可知，应该是在解谜之前给他们提供茶或水。'},
+ {n:4,t:'第 (4) 空',o:['tea','water','coffee','juice'],r:0,
+  ex:'根据本段第一句和"They got 13.89 in the word game and 10.94 in the riddles. ___, the water drinkers\' grades were 12.94 and 9.0."可知，此处指被提供茶的人。'},
+ {n:5,t:'第 (5) 空',o:['Anyway','However','Then','Also'],r:1,
+  ex:'上下文之间为转折关系，故选 B 项。'},
+ {n:6,t:'第 (6) 空',o:['nervous','weak','excited','strong'],r:2,
+  ex:'根据下一句和常识可知，此处表示茶使人兴奋。'},
+ {n:7,t:'第 (7) 空',o:['nice','little','clean','enough'],r:3,
+  ex:'根据上下文可知，此处指研究中的人没有得到足够的茶来使他们振奋起来。'},
+ {n:8,t:'第 (8) 空',o:['what','where','when','how'],r:0,
+  ex:'根据下句可知，此处指是什么让喝茶者更好。'},
+ {n:9,t:'第 (9) 空',o:['body','mind','heart','health'],r:1,
+  ex:'根据下文可知，此处表示全是因为心理暗示。'},
+ {n:10,t:'第 (10) 空',o:['lazier','busier','smarter','poorer'],r:2,
+  ex:'根据空后的 more creative 及上句中的 being smart and creative 可知，此处表示"更聪明的"。'}
+]},
+
+{id:'u1-s1r2-restore',ord:105,u:1,sec:'Section 1　Reading (Ⅱ) 阅读还原',tag:'能力',em:'🧷',mins:6,type:'read',
+ psg:{meta:'体裁：说明文　题材：历史与社会　词数：203　难度：★★　[2024 广东广州期中]　语篇导读：本文介绍了威尼斯',
+  title:'A city without cars',
+  text:'A city without cars would be very strange, right? But Venice is such a city. Venice is in the northeast of Italy. It wasn\'t built on land, like Beijing or Shanghai, but on more than 110 islands. __11__\n\nEven so, travel isn\'t difficult. The waterways have always been the best way to get around. There are many waterways and more than 400 bridges that can guide you where you want to go. __12__ They like to enjoy the scenery and cool summer nights while taking boat trips. They can talk to other people as they go along.\n\nVenice grew out of small islands in saltwater lakes when some people escaped from a war many years ago and built homes there. __13__ Once, people used too much underground water. This made the city get lower little by little. __14__ Another problem is the rising seawater. The temperature has risen over the years. __15__\n\nEvery year, the high water hits the city. When a lot of water comes, more than half of the city is underwater. Scientists are trying different ways to stop the city from getting even lower.\n\n【备选句子】\nA. Water makes the city special, but it is also a big problem.\nB. This has made the ice of the Arctic Ocean melt.\nC. Seawater is everywhere around the city.\nD. Now the city has gone down by more than 20 centimetres.\nE. People in Venice move from place to place by boat.'},
+ qs:[
+ {n:11,t:'第 (11) 空该填哪一句？',o:['Water makes the city special, but it is also a big problem.','This has made the ice of the Arctic Ocean melt.','Seawater is everywhere around the city.','Now the city has gone down by more than 20 centimetres.','People in Venice move from place to place by boat.'],r:2,
+  ex:'根据前句"It wasn\'t built on land, like Beijing or Shanghai, but on more than 110 islands."并结合后文可知，此处说的是这座城市周围到处都是海水。'},
+ {n:12,t:'第 (12) 空该填哪一句？',o:['Water makes the city special, but it is also a big problem.','This has made the ice of the Arctic Ocean melt.','Seawater is everywhere around the city.','Now the city has gone down by more than 20 centimetres.','People in Venice move from place to place by boat.'],r:4,
+  ex:'根据上文"The waterways have always been the best way to get around."和空后两句可知，此处指"威尼斯人乘船从一个地方移动到另一个地方"。'},
+ {n:13,t:'第 (13) 空该填哪一句？',o:['Water makes the city special, but it is also a big problem.','This has made the ice of the Arctic Ocean melt.','Seawater is everywhere around the city.','Now the city has gone down by more than 20 centimetres.','People in Venice move from place to place by boat.'],r:0,
+  ex:'根据下文"Once, people used too much underground water. This made the city get lower little by little."可知，此处应描述水带来的问题。A 项描述与此处相符。'},
+ {n:14,t:'第 (14) 空该填哪一句？',o:['Water makes the city special, but it is also a big problem.','This has made the ice of the Arctic Ocean melt.','Seawater is everywhere around the city.','Now the city has gone down by more than 20 centimetres.','People in Venice move from place to place by boat.'],r:3,
+  ex:'根据前文"Once, people used too much underground water. This made the city get lower little by little."可知，此处与城市下沉有关。故选 D 项。'},
+ {n:15,t:'第 (15) 空该填哪一句？',o:['Water makes the city special, but it is also a big problem.','This has made the ice of the Arctic Ocean melt.','Seawater is everywhere around the city.','Now the city has gone down by more than 20 centimetres.','People in Venice move from place to place by boat.'],r:1,
+  ex:'根据前句"The temperature has risen over the years."可知，此处说的是气温上升带来的后果。故选 B 项。'}
+]},
+
+{id:'u1-s1r1-nl',ord:102,u:1,sec:'Section 1　Reading (Ⅰ)',tag:'能力',em:'📖',mins:8,type:'read',
  psg:{meta:'体裁：应用文　题材：历史与社会　词数：213　难度：★★★　[2025 广东广州期中]',
   title:'Albert Einstein (1879—1955)',
   text:'Early Life\nAlbert Einstein was born in 1879 in Germany. He had been an <u>extraordinary</u> person since he was born. He was always interested in things around him and full of imagination. He loved watching things carefully and asking a lot of questions about them. His questions were often hard to answer for teachers.\n\nSchooling\nEinstein started school in 1885. He did well in Maths and Science. Einstein finished grammar school in Germany and entered a university. He graduated（大学毕业）with the subject teacher diploma for Maths and Physics in 1900.\n\nScientific Work\nAfter graduation, Einstein worked at the Swiss Patent Office. He spent much time studying physics. By 1909, Einstein had become a top scientist. Though he became successful in the field of science, he still worked hard on scientific research. Finally, he was awarded the Nobel Prize for Physics for the year 1921.\n\nLater Life\nEinstein kept doing his research until he died in 1955. Scientists studied his brain after his death to see if there was anything special about it. However, there was no answer.\nToday, many famous scientists still think Einstein is the smartest man in the world.'},
@@ -258,7 +439,7 @@ const SETS=[
 ];
 
 /* 词库主键：做错时把这个词打回背单词的复习计划（八年级上 266 条，与 english.html 词库一致） */
-const WORDKEY={"dinosaur":"八年级上|dinosaur|恐龙","intelligent":"八年级上|intelligent|有才智的；聪明的","talented":"八年级上|talented|有才能的；天才的","artistic":"八年级上|artistic|有艺术天赋的；（尤指）有美术才能的","perhaps":"八年级上|perhaps|可能；大概；也许","notebook":"八年级上|notebook|笔记本","vehicle":"八年级上|vehicle|交通工具；车辆","prehistoric":"八年级上|prehistoric|史前的","completely":"八年级上|completely|完全地；彻底地","original":"八年级上|original|原来的；起初的","birth":"八年级上|birth|出生","suffering":"八年级上|suffering|苦难；疼痛","artist":"八年级上|artist|艺术家；（尤指）画家","death":"八年级上|death|死；死亡","whole":"八年级上|whole|全部的；所有的","piece":"八年级上|piece|一首，（一篇）作品","editor":"八年级上|editor|（书籍的）编辑","organize":"八年级上|organize|安排；组织","order":"八年级上|order|顺序","record":"八年级上|record|记录","die out":"八年级上|die out|灭绝","a type of":"八年级上|a type of|一种","be related to":"八年级上|be related to|与……属于同一种类","general education":"八年级上|general  education|通识教育","go back a long way":"八年级上|go back a long way|历史悠久","be similar to":"八年级上|be similar to|与……相似","alphabetical order":"八年级上|alphabetical  order|字母顺序","play an important role":"八年级上|play an important role|起到重要作用"};
+const WORDKEY={"dinosaur":"八年级上|dinosaur|恐龙","intelligent":"八年级上|intelligent|有才智的；聪明的","talented":"八年级上|talented|有才能的；天才的","artistic":"八年级上|artistic|有艺术天赋的；（尤指）有美术才能的","perhaps":"八年级上|perhaps|可能；大概；也许","notebook":"八年级上|notebook|笔记本","vehicle":"八年级上|vehicle|交通工具；车辆","prehistoric":"八年级上|prehistoric|史前的","completely":"八年级上|completely|完全地；彻底地","original":"八年级上|original|原来的；起初的","birth":"八年级上|birth|出生","suffering":"八年级上|suffering|苦难；疼痛","artist":"八年级上|artist|艺术家；（尤指）画家","death":"八年级上|death|死；死亡","whole":"八年级上|whole|全部的；所有的","piece":"八年级上|piece|一首，（一篇）作品","editor":"八年级上|editor|（书籍的）编辑","organize":"八年级上|organize|安排；组织","order":"八年级上|order|顺序","record":"八年级上|record|记录","die out":"八年级上|die out|灭绝","a type of":"八年级上|a type of|一种","be related to":"八年级上|be related to|与……属于同一种类","general education":"八年级上|general  education|通识教育","go back a long way":"八年级上|go back a long way|历史悠久","be similar to":"八年级上|be similar to|与……相似","alphabetical order":"八年级上|alphabetical  order|字母顺序","play an important role":"八年级上|play an important role|起到重要作用","flight":"八年级上|flight|（尤指乘飞机的）航程","schedule":"八年级上|schedule|日程安排","everywhere":"八年级上|everywhere|到处；各个地方","challenge":"八年级上|challenge|向 （某人）挑战","prize":"八年级上|prize|奖赏；奖励","promise":"八年级上|promise|承诺；保证","chessboard":"八年级上|chessboard|国际象棋棋盘","silver":"八年级上|silver|银","reply":"八年级上|reply|回复；答复","hesitation":"八年级上|hesitation|犹豫","wonder":"八年级上|wonder|想知道；琢磨","agree":"八年级上|agree|同意；赞成","per cent":"八年级上|per cent|百分之……","currently":"八年级上|currently|目前；当前","check":"八年级上|check|检查；核查","budget":"八年级上|budget|预算","province":"八年级上|province|省份","sharply":"八年级上|sharply|急剧地；突然大幅度地","count":"八年级上|count|计算（或清点）总数","system":"八年级上|system|系统","symbol":"八年级上|symbol|符号；记号","represent":"八年级上|represent|代表","exactly":"八年级上|exactly|准确地 ；确切地","flight schedule":"八年级上|flight  schedule|航班时刻表","price tag":"八年级上|price tag|价格标签","for a moment":"八年级上|for a moment|片刻；一会儿","without hesitation":"八年级上|without hesitation|毫不犹豫","go up":"八年级上|go up|上升","go down":"八年级上|go down|下降","write down":"八年级上|write down|写下；记下","instead of":"八年级上|instead of|代替；作为……的替换","network":"八年级上|network|网络","flood":"八年级上|flood|洪水；水灾","multimedia":"八年级上|multimedia|多媒体","expert":"八年级上|expert|专家","mobile":"八年级上|mobile|可移动的","payment":"八年级上|payment|付款；支付","warn":"八年级上|warn|提醒注意；警告","treatment":"八年级上|treatment|治疗；疗法","data":"八年级上|data|数据","company":"八年级上|company|公司","traffic":"八年级上|traffic|路上行驶的车辆；交通","flow":"八年级上|flow|（人或事物）涌流；流动","smoothly":"八年级上|smoothly|平稳地；连续而流畅地","laptop":"八年级上|laptop|笔记本电脑","screen":"八年级上|screen|屏幕","weight":"八年级上|weight|重量","digital":"八年级上|digital|数码的","social":"八年级上|social|社交的","message":"八年级上|message|（书面或口头的）信息","interview":"八年级上|interview|采访","positive":"八年级上|positive|正面的；积极的","negative":"八年级上|negative|消极的","effect":"八年级上|effect|影响","opinion":"八年级上|opinion|意见；看法","novel":"八年级上|novel|（长篇）小说","comment":"八年级上|comment|评论","basis":"八年级上|basis|基础","microprocessor":"八年级上|microprocessor|微处理器","microchip":"八年级上|microchip|微芯片；芯片","major":"八年级上|major|主要的；重要的","breakthrough":"八年级上|breakthrough|突破；重大进展","electronic":"八年级上|electronic|电子的","software":"八年级上|software|软件","app":"八年级上|app|（application的缩写）应用程序；应用软件","era":"八年级上|era|时代；纪元","download":"八年级上|download|下载","tiny":"八年级上|tiny|微小的","connect to":"八年级上|connect to|连接","bring big changes to":"八年级上|bring big changes to|给……带来重大变化","mobile payment":"八年级上|mobile payment|移动支付","take … for example":"八年级上|take … for example|以……为例","rubbish bin":"八年级上|rubbish bin|垃圾箱","social media":"八年级上|social media|社交媒体","in person":"八年级上|in person|亲自；亲身","the general public":"八年级上|the general public|公众；大众","balloon":"八年级上|balloon|气球","wheel":"八年级上|wheel|轮；车轮","central":"八年级上|central|在中心的","although":"八年级上|although|虽然；尽管；即使","attach":"八年级上|attach|把……固定；把……附（在……上）","pull":"八年级上|pull|拉；拽；扯；拖","international":"八年级上|international|国际的","path":"八年级上|path|小路；小径","technique":"八年级上|technique|技巧；技艺","depend":"八年级上|depend|需要；依靠","doubt":"八年级上|doubt|疑惑；疑问","personally":"八年级上|personally|就个人意见","prediction":"八年级上|prediction|预言；预测","statement":"八年级上|statement|说明","benefit":"八年级上|benefit|益处；优势","wing":"八年级上|wing|（飞行器的）翅膀；机翼","distance":"八年级上|distance|距离","petrol":"八年级上|petrol|汽油","avoid":"八年级上|avoid|避免；防止","anywhere":"八年级上|anywhere|在（或去）任何地方","notice":"八年级上|notice|看（或听）到；注意到","type":"八年级上|type|（印刷用的）活字","mixture":"八年级上|mixture|混合物","heat":"八年级上|heat|加热；变热","press":"八年级上|press|（被） 压","metal":"八年级上|metal|金属","steam locomotive":"八年级上|steam locomotive|蒸汽机车","crewed spacecraft":"八年级上|crewed spacecraft|载人航天器","on foot":"八年级上|on foot|步行","a number of":"八年级上|a number of|几个；若干","take place":"八年级上|take place|发生；进行","for instance":"八年级上|for instance|例如；比如","large amounts of":"八年级上|large amounts of|大量","international trade":"八年级上|international trade|国际贸易","depend on":"八年级上|depend on|依靠；依赖","3d printer":"八年级上|3D printer|3D打印机","without doubt":"八年级上|without doubt|毫无疑问","of all time":"八年级上|of all time|自古以来；有史以来","make fun of":"八年级上|make fun of|取笑；拿……开玩笑","traffic jam":"八年级上|traffic jam|堵车；交通阻塞","exchange":"八年级上|exchange|交流","nervous":"八年级上|nervous|焦虑的；担忧的","grateful":"八年级上|grateful|感激的","chopstick":"八年级上|chopstick|筷子","tour":"八年级上|tour|旅行；旅游","tai chi":"八年级上|tai chi|太极（拳）","yet":"八年级上|yet|尚（未）；还；仍","independent":"八年级上|independent|自主的","content":"八年级上|content|内容","feeling":"八年级上|feeling|感觉；感情","shock":"八年级上|shock|震惊；令人震惊的事","foreign":"八年级上|foreign|外国的","confused":"八年级上|confused|糊涂的；迷惑的","anxious":"八年级上|anxious|焦虑的；忧虑的","phase":"八年级上|phase|阶段；时期","honeymoon":"八年级上|honeymoon|蜜月","unfamiliar":"八年级上|unfamiliar|陌生的；不熟悉的","homesick":"八年级上|homesick|想家的","lonely":"八年级上|lonely|孤独的","deal":"八年级上|deal|对付；应付","expect":"八年级上|expect|期待；盼望","situation":"八年级上|situation|情况","accept":"八年级上|accept|接受","adaptation":"八年级上|adaptation|适应","beijing opera":"八年级上|Beijing opera|京剧","host family":"八年级上|host family|寄宿家庭","snake its way":"八年级上|snake its way|蜿蜒","culture shock":"八年级上|culture shock|文化冲击","deal with":"八年级上|deal with|解决；处理","feel at home":"八年级上|feel at home|感到舒适自在","author":"八年级上|author|作者；作家","remains":"八年级上|remains|遗迹；遗址","locate":"八年级上|locate|把……安置在（或建造于）","soldier":"八年级上|soldier|士兵","captain":"八年级上|captain|首领；领导者","empty":"八年级上|empty|空的","victory":"八年级上|victory|胜利；成功","joke":"八年级上|joke|笑话；玩笑","midnight":"八年级上|midnight|午夜","except":"八年级上|except|除……之外","hide":"八年级上|hide|藏；隐蔽","secretly":"八年级上|secretly|秘密地","enter":"八年级上|enter|进来；进入","succeed":"八年级上|succeed|达到目的；成功","trick":"八年级上|trick|诡计","fight":"八年级上|fight|打仗；战斗","beat":"八年级上|beat|敲打","pretend":"八年级上|pretend|假装；佯装","enemy":"八年级上|enemy|敌人","fail":"八年级上|fail|失败；未能（做到）","therefore":"八年级上|therefore|因此；所以","within":"八年级上|within|在（某段时间）之内","fill":"八年级上|fill|（使）充满；（使）装满","towards":"八年级上|towards|向；朝；对着","attack":"八年级上|attack|袭击；攻击","fog":"八年级上|fog|雾","make jokes about":"八年级上|make jokes about|开……的玩笑","succeed in":"八年级上|succeed in|在……方面成功","be tired of":"八年级上|be tired of|厌烦","go on board":"八年级上|go on board|上船","be jealous of":"八年级上|be jealous of|嫉妒","be full of":"八年级上|be full of|装满；充满","regularly":"八年级上|regularly|有规律地","repeat":"八年级上|repeat|重复","note":"八年级上|note|笔记；记录","visual":"八年级上|visual|视觉的","mentally":"八年级上|mentally|精神上","link":"八年级上|link|联系；相联系","list":"八年级上|list|清单","especially":"八年级上|especially|尤其","diet":"八年级上|diet|日常饮食","maintain":"八年级上|maintain|维持；保持","nut":"八年级上|nut|坚果","relax":"八年级上|relax|放松；休息","stressed":"八年级上|stressed|心力交瘁的；焦虑不安的","tend":"八年级上|tend|往往会；常常就","normal":"八年级上|normal|正常的","loss":"八年级上|loss|丧失；损失","fork":"八年级上|fork|餐叉","onion":"八年级上|onion|洋葱","ant":"八年级上|ant|蚂蚁","context":"八年级上|context|上下文；语境","image":"八年级上|image|图像","sense":"八年级上|sense|感觉官能（即视、听、嗅、味、触五觉）","summary":"八年级上|summary|总结；概括","contain":"八年级上|contain|包含；含有","particular":"八年级上|particular|专指的；特指的","chemistry":"八年级上|chemistry|化学性质；化学","flash card":"八年级上|flash card|识字卡片","make a point of doing something":"八年级上|make a point of doing something|（因重要或必要）保证做","last but not least":"八年级上|last but not least|最后但同样重要的","natural disaster":"八年级上|natural disaster|自然灾害","figure out":"八年级上|figure out|弄懂；弄清楚","faithful":"八年级上|faithful|忠实的；忠诚的","hold":"八年级上|hold|抱着；拿着","responsible":"八年级上|responsible|可信任的；可信赖的","awake":"八年级上|awake|醒着","flat":"八年级上|flat|公寓","choice":"八年级上|choice|选择","advise":"八年级上|advise|劝告；建议","cause":"八年级上|cause|引起；造成；导致","complain":"八年级上|complain|抱怨；投诉","litter":"八年级上|litter|垃圾","unlikely":"八年级上|unlikely|不大可能发生的","relieve":"八年级上|relieve|方便；解手","indoors":"八年级上|indoors|在室内","magical":"八年级上|magical|有魔力的","wealth":"八年级上|wealth|钱财；财富","queen":"八年级上|queen|女王；王后","servant":"八年级上|servant|仆人；佣人","pride":"八年级上|pride|自豪；骄傲","among":"八年级上|among|在……中","relationship":"八年级上|relationship|关系","grow up":"八年级上|grow up|长大；成熟","care for":"八年级上|care for|照顾；照料","in short":"八年级上|in short|总之；简言之","have no choice but to do":"八年级上|have no choice but to do|别无选择；只能……","run free":"八年级上|run free|四处自由走动","lie around":"八年级上|lie around|懒散度日；游手好闲","complain about":"八年级上|complain about|抱怨","in addition":"八年级上|in addition|除……以外（还）","catch the eye of somebody":"八年级上|catch the eye of somebody|引起某人的注意"};
 
 /* ================= 存档 ================= */
 const LS=JSON.parse(localStorage.getItem('drill8A')||'{}');
@@ -268,10 +449,13 @@ LS.u=LS.u||1;
 LS.tot=LS.tot||0;         /* 累计做过的题数 */
 function save(){localStorage.setItem('drill8A',JSON.stringify(LS));}
 function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+const LT='ABCDEF';   /* 选项序号，阅读还原有 5 个选项 */
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 /* 原文里允许保留 <u> 下划线标记 */
-function escKeepU(s){return esc(s).replace(/&lt;u&gt;/g,'<u>').replace(/&lt;\/u&gt;/g,'</u>');}
-function norm(s){return String(s).toLowerCase().replace(/[’‘]/g,"'").replace(/[.。．,，!！?？;；:：]+$/,'').replace(/\s+/g,' ').trim();}
+function escKeepU(s){return esc(s).replace(/&lt;u&gt;/g,'<u>').replace(/&lt;\/u&gt;/g,'</u>')
+  .replace(/__(\d+)__/g,'<b class="bk">($1)</b>');}   /* 完形/还原的空位标成醒目的 (1)(2) */
+function norm(s){return String(s).toLowerCase().replace(/[’‘]/g,"'").replace(/[.。．,，!！?？;；:：]+$/,'')
+  .replace(/[;；,，、\/]/g,' ').replace(/\s+/g,' ').trim();}   /* 两空题 some;any 写成 some any 也算对 */
 
 /* 做错 → 把这个词打回背单词的复习计划（写 english.html 用的 vocabMS2，规则与它一致） */
 const EB_STEP=[1,2,4,7,15,30];
@@ -325,7 +509,8 @@ function renderUnits(){
 const TAGCLS={'基础':'tg-jc','能力':'tg-nl','语法':'tg-yf','写作':'tg-xz'};
 function renderList(){
   var box=document.getElementById('list');box.innerHTML='';
-  var list=SETS.filter(function(s){return s.u===LS.u;});
+  var list=SETS.filter(function(s){return s.u===LS.u;})
+    .sort(function(a,b){return (a.ord||0)-(b.ord||0);});   /* 按书上的先后顺序排 */
   if(!list.length){box.innerHTML='<div class="card vempty">这个单元还没录入题目</div>';return;}
   list.forEach(function(s){
     var d=LS.done[s.id],el=document.createElement('div');
@@ -356,7 +541,7 @@ function renderWrong(){
   list.slice(0,8).forEach(function(x){
     var it=document.createElement('div');it.className='witem';
     it.innerHTML='<b>'+esc(x.s.sec)+' 第 '+x.q.n+' 题</b>　<span>'+
-      esc(x.q.a?x.q.a[0]:(x.q.o?'ABCD'[x.q.r]:''))+'</span>';
+      esc(x.q.a?x.q.a[0]:(x.q.o?LT[x.q.r]:''))+'</span>';
     w.appendChild(it);
   });
   box.appendChild(w);
@@ -423,7 +608,7 @@ function renderQ(){
   html+='<div class="qt">'+qtHtml(q.t)+'</div>';
   if(q.o){
     html+='<div id="opts">';
-    q.o.forEach(function(o,i){html+='<div class="opt" data-i="'+i+'" onclick="pick('+i+')"><i>'+'ABCD'[i]+'.</i><div>'+esc(o)+'</div></div>';});
+    q.o.forEach(function(o,i){html+='<div class="opt" data-i="'+i+'" onclick="pick('+i+')"><i>'+LT[i]+'.</i><div>'+esc(o)+'</div></div>';});
     html+='</div>';
   }else{
     html+='<div class="qhint">'+esc(q.hint||'')+'</div>'+
@@ -456,7 +641,7 @@ function submit(){
   var ok,mine;
   if(q.o){
     if(picked<0){res.className='res no show';res.innerHTML='<div class="rt">先选一个答案哦</div>';return;}
-    ok=picked===q.r; mine='ABCD'[picked];
+    ok=picked===q.r; mine=LT[picked];
     document.querySelectorAll('#opts .opt').forEach(function(e,j){
       e.classList.remove('pick');
       if(j===q.r)e.classList.add('right');
@@ -479,7 +664,7 @@ function submit(){
   if(ok)html+='<div class="rt">✅ 答对了</div>';
   else{
     html+='<div class="rt">❌ 答错了</div>';
-    html+='<div>正确答案：<span class="rk">'+esc(q.o?('ABCD'[q.r]+'. '+q.o[q.r]):q.a.join(' / '))+'</span></div>';
+    html+='<div>正确答案：<span class="rk">'+esc(q.o?(LT[q.r]+'. '+q.o[q.r]):q.a.join(' / '))+'</span></div>';
   }
   if(q.ex)html+='<div class="ex">'+esc(q.ex)+'</div>';
   var wm=wordMean(q.w);
@@ -515,7 +700,7 @@ function finish(){
     html+='<div class="wlist">';
     wrongThis.forEach(function(q){
       html+='<div class="witem"><b>第 '+q.n+' 题</b>　正确答案：<span>'+
-        esc(q.o?('ABCD'[q.r]+'. '+q.o[q.r]):q.a.join(' / '))+'</span></div>';
+        esc(q.o?(LT[q.r]+'. '+q.o[q.r]):q.a.join(' / '))+'</span></div>';
     });
     html+='</div>';
   }
