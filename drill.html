@@ -179,7 +179,10 @@ const UNITS=[
  {u:5,t:'Going on an exchange trip',zh:'交换生之旅'},
  {u:6,t:'Wisdom counts',zh:'智慧的力量'},
  {u:7,t:'The secret of memory',zh:'记忆的秘密'},
- {u:8,t:'Pets and us',zh:'宠物与我们'}
+ {u:8,t:'Pets and us',zh:'宠物与我们'},
+ {u:9,t:'期中综合测试',zh:'Unit 1-4'},
+ {u:10,t:'中考新考向备训',zh:'新题型'},
+ {u:11,t:'期末综合测试',zh:'全册'}
 ];
 
 const SETS=[
@@ -766,6 +769,33 @@ const SETS=[
   t:'[2024 广东清远期中] 上周五，你们学校举办了一年一度的科技节，全校学生都参与其中。假设你是李华，请根据以下表格内容给校报投稿，介绍你校科技节的情况，并谈谈自己的感受。\n\n　活动 1：三分之二的学生看电影 —— 观看一部有关发明家爱迪生的电影\n　活动 2：其余学生参加机器人比赛\n　　　外观：一些机器人像汽车一样大，一些像杯子一样小\n　　　功能：① 回答学生的问题，减少电脑和手机的使用　②……（自行补充至少一点）\n　感受：① 有意义　②……（自行补充至少一点）\n\n要求：①80 词左右（开头和结尾已给出，不计入总词数）；②文中不得出现真实的姓名和校名；③文章须包含表格提示的全部内容，可适当增加细节；④标点正确，书面整洁。\n参考词汇：机器人 robot　爱迪生 Edison　比赛 competition',
   hint:'标题 The Science Festival in Our School　开头：Last Friday, our school held a science festival. All the students had a really good time.　结尾：I can\'t wait to take part in the science festival next year.',
   model:"The Science Festival in Our School\n\n　　Last Friday, our school held a science festival. All the students had a really good time.\n\n　　Two thirds of the students went to the cinema. They watched a film about the inventor Edison. The rest of the students attended the robot competition. These robots have different shapes. Some robots are as big as cars. Some are as small as cups. Some robots can answer the students' questions. This reduces the use of computers and mobile phones. Some robots are like snakes. When the buildings fall down, this kind of robots can help look for people under the buildings. I think this festival is meaningful. I'm amazed at how fast technology is developing.\n\n　　I can't wait to take part in the science festival next year."}
+]},
+
+{id:'m1-cloze',ord:901,u:9,sec:'期中综合测试 · 完形填空',tag:'能力',em:'🏠',mins:10,type:'read',
+ psg:{meta:'期中综合测试（建议 60 分钟）第Ⅰ题　完形填空（10 分）　[2024 广东广州期末]　语篇导读：本文介绍了格林夫妇在美国的房子是怎样由电脑控制的',
+  title:"The Greens' computer-controlled house",
+  text:"Mr and Mrs Green's house in America is controlled by a computer. The computer has known the couple's __1__ well. It can do something properly. Every morning the computer __2__ the lights at 6:30 which is their waking up time. The water in the shower keeps at a right temperature for the couple to __3__ it. If someone goes to the toilet in the night, floor lights will come on automatically（自动地）to show the way to the __4__. The air conditioner（空调）keeps the house at a comfortable temperature. The fridge keeps a check on the food that is put inside it, and __5__ the local supermarket an email when more food is needed. A camera works when a stranger gets __6__ to the house, but it does not work if it is a family member or friend. The microwave（微波炉）is also often __7__ the internet. It can cook the food for the right time.\n\nThe couple love their home, but they don't like one thing. They sometimes feel that the computer is their __8__. \"One night, we came home later __9__ usual, but the computer had turned on the lights at the regular（固定的）time. We felt like bad kids, and __10__ said 'Sorry' to the computer,\" said Mrs Green."},
+ qs:[
+ {n:1,t:'第 (1) 空',o:['problems','habits','plans','friends'],r:1,
+  ex:'结合下文"Every morning the computer… the lights at 6:30 which is their waking up time."可知，此处表示格林夫妇的习惯。'},
+ {n:2,t:'第 (2) 空',o:['turns on','turns up','turns down','turns off'],r:0,
+  ex:'根据 which is their waking up time 可知，6:30 是格林夫妇的起床时间，因此这个时候电脑会把灯打开。'},
+ {n:3,t:'第 (3) 空',o:['drink','wash','clean','use'],r:3,
+  ex:'根据 The water in the shower keeps at a right temperature 可知，此处表示用浴室的水。'},
+ {n:4,t:'第 (4) 空',o:['door','bedroom','bathroom','window'],r:2,
+  ex:'根据 If someone goes to the toilet in the night 可知，此处表示通往洗手间的路。'},
+ {n:5,t:'第 (5) 空',o:['passes','sends','promises','refuses'],r:1,
+  ex:'此处表示给当地的超市发送电子邮件，应用 sends。'},
+ {n:6,t:'第 (6) 空',o:['painful','friendly','helpful','close'],r:3,
+  ex:'根据"when a stranger gets… to the house"可知，此处应用固定短语 get close to，表示"接近"。'},
+ {n:7,t:'第 (7) 空',o:['connected with','filled with','helped with','agreed with'],r:0,
+  ex:'根据"The microwave is also often… the internet. It can cook the food for the right time."可知，微波炉也与因特网相连。'},
+ {n:8,t:'第 (8) 空',o:['boss','friend','student','grandmother'],r:3,
+  ex:'句意为：他们有时觉得电脑是他们的祖母。根据 we felt like bad kids 可知选 D 项。'},
+ {n:9,t:'第 (9) 空',o:['like','as','than','from'],r:2,
+  ex:'句意为：一天晚上，我们比平常晚回家，但是电脑在固定的时间打开了灯。此处表示比较，因此用 than。'},
+ {n:10,t:'第 (10) 空',o:['hardly','nearly','completely','always'],r:1,
+  ex:'结合语境可知，他们感觉自己像个坏孩子，就差对电脑说"对不起"了。nearly（差不多）符合语境。'}
 ]},
 
 {id:'u3-s1r1-jc',ord:301,u:3,sec:'Section 1　Reading (Ⅰ)',tag:'基础',em:'✏️',mins:20,type:'fill',
