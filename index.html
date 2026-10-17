@@ -35,6 +35,9 @@ header p{margin:0;font-size:14px;color:var(--sub)}
 .app-st::before{background:linear-gradient(180deg,#2fbc8a,#0e9f6e)}
 .app-st:hover{border-color:#0e9f6e}
 .app-st .go{color:#0e9f6e}
+.app-rc::before{background:linear-gradient(180deg,#d69e2e,#b7791f)}
+.app-rc:hover{border-color:#b7791f}
+.app-rc .go{color:#b7791f}
 .app-dr::before{background:linear-gradient(180deg,#7d76e8,#5b53d9)}
 .app-dr:hover{border-color:#5b53d9}
 .app-dr .go{color:#5b53d9}
@@ -149,6 +152,16 @@ header p{margin:0;font-size:14px;color:var(--sub)}
     <div class="go">›</div>
   </a>
 
+  <a class="app app-rc" href="./recite.html">
+    <div class="ic">📜</div>
+    <div class="tx">
+      <b>知识清单背诵 · 七年级上</b>
+      <span>沪教牛津版 · 8 个单元 · 词汇拓展 / 重点短语 / 重点句型 共 503 条</span>
+      <small>遮住中文或英文默背 · 点卡片看答案 · 英文可朗读 · 背会打 ✓ · 只看没背会的</small>
+    </div>
+    <div class="go">›</div>
+  </a>
+
   <a class="app app-st" href="./stories.html">
     <div class="ic">📚</div>
     <div class="tx">
@@ -198,8 +211,8 @@ header p{margin:0;font-size:14px;color:var(--sub)}
 </div>
 <script>
 /* ===== 每次更新只改这两行 ===== */
-var APP_VERSION='2026-09-04';
-var UPDATE_NOTE='「必刷题 · 八年级上」全书录完啦！八个单元 + 期中/期末综合测试 + 中考新考向备训，一共 1541 道题，每道错题都有书上的详细讲解。做错的单词还会自动放回背单词的复习计划，明天再背一遍。';
+var APP_VERSION='2026-10-17';
+var UPDATE_NOTE='新增「知识清单背诵 · 七年级上」：8 个单元的词汇拓展、重点短语、重点句型共 503 条，可以遮住中文或英文自己默背，点一下看答案，背会了打 ✓，还能只看没背会的。';
 /* ============================== */
 (function(){
   var key='learnerName', nm=document.getElementById('nm'), greet=document.getElementById('greet');
